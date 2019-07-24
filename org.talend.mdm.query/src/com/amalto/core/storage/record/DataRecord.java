@@ -313,6 +313,20 @@ public class DataRecord {
         }
     }
 
+    /**
+     * If value is list, set value to new list, not add to old list
+     * @param field
+     * @param o
+     */
+    public void setListValue(FieldMetadata field, Object o) {
+        if (field == null) {
+            throw new IllegalArgumentException("Field can not be null.");
+        }
+        if (field.isMany() && o instanceof LinkedList) {
+            fieldToValue.put(field, o);
+        }
+    }
+
     public Set<FieldMetadata> getSetFields() {
         return fieldToValue.keySet();
     }
