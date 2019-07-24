@@ -15,14 +15,11 @@ import com.amalto.core.storage.record.DataRecord;
 import com.amalto.core.storage.record.metadata.UnsupportedDataRecordMetadata;
 import org.apache.commons.lang.StringUtils;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
-import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
-import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 class TypeValue implements Setter, Getter {
 
@@ -86,6 +83,9 @@ class TypeValue implements Setter, Getter {
             if (subField.getName().equals(fieldName)) {
                 return subField;
             }
+        }
+        if (containedField.getType().getName().equals(fieldName)) {
+            return containedField.getContainedType();
         }
         return null;
     }

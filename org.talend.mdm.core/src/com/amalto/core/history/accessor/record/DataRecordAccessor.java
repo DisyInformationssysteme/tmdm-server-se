@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
+import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
@@ -54,7 +55,7 @@ public class DataRecordAccessor implements Accessor {
 
     @SuppressWarnings("rawtypes")
     private static LinkedList<PathElement> getPath(DataRecord dataRecord, String path) {
-        LinkedList<PathElement> elements = new LinkedList<PathElement>();
+        LinkedList<PathElement> elements = new LinkedList<>();
         StringTokenizer tokenizer = new StringTokenizer(path, "/"); //$NON-NLS-1$
         DataRecord current = dataRecord;
         while (tokenizer.hasMoreElements()) {
@@ -94,7 +95,7 @@ public class DataRecordAccessor implements Accessor {
                         throw new IllegalStateException();
                     }
                 } else {
-                    pathElement.field = current.getType().getField(element);
+                    pathElement.field = getFieldMetadata(current.getType(), element);
                     pathElement.setter = SimpleValue.SET;
                     pathElement.getter = SimpleValue.GET;
                     if (pathElement.field instanceof ContainedTypeFieldMetadata
@@ -131,7 +132,7 @@ public class DataRecordAccessor implements Accessor {
                 } else {
                     List<Object> list = (List) current.get(pathElement.field);
                     if (list == null) {
-                        list = new ArrayList<Object>();
+                        list = new ArrayList<>();
                         current.set(pathElement.field, list);
                     }
                     while (pathElement.index > list.size() - 1) { // Expand list size
@@ -170,7 +171,7 @@ public class DataRecordAccessor implements Accessor {
             } else {
                 List<Object> list = (List) current.get(pathElement.field);
                 if (list == null) {
-                    list = new ArrayList<Object>();
+                    list = new ArrayList<>();
                     current.set(pathElement.field, list);
                 }
                 while (pathElement.index > list.size() - 1) { // Expand list size
@@ -228,37 +229,38 @@ public class DataRecordAccessor implements Accessor {
                         }
                         while (index >= list.size()) {
                             if (field instanceof ContainedTypeFieldMetadata) {
-                                    DataRecord record;
-                                    // If specified type is not null, means the field changed the type
-                                    // need to get the correct type from subTypes and instantiate a new DataRecord object
-                                    if (specifiedType != null) {
-                                        ComplexTypeMetadata complexTypeMetadata = null;
-                                        if (((ContainedTypeFieldMetadata) field).getContainedType().getName().equals(specifiedType)) {
-                                            complexTypeMetadata = ((ContainedTypeFieldMetadata) field).getContainedType();
-                                        } else {
-                                            ComplexTypeMetadata curContainedType = ((ContainedTypeFieldMetadata) field).getContainedType();
-                                            Collection<ComplexTypeMetadata> complexTypeList = curContainedType.getSubTypes();
-                                            for (ComplexTypeMetadata curItem : complexTypeList) {
-                                                if (curItem.getName().equals(specifiedType)) {
-                                                    complexTypeMetadata = curItem;
-                                                    break;
-                                                }
+                                DataRecord record;
+                                // If specified type is not null, means the field changed the type
+                                // need to get the correct type from subTypes and instantiate a new DataRecord object
+                                if (specifiedType != null) {
+                                    ComplexTypeMetadata complexTypeMetadata = null;
+                                    if (((ContainedTypeFieldMetadata) field).getContainedType().getName().equals(specifiedType)) {
+                                        complexTypeMetadata = ((ContainedTypeFieldMetadata) field).getContainedType();
+                                    } else {
+                                        ComplexTypeMetadata curContainedType = ((ContainedTypeFieldMetadata) field).getContainedType();
+                                        Collection<ComplexTypeMetadata> complexTypeList = curContainedType.getSubTypes();
+                                        for (ComplexTypeMetadata curItem : complexTypeList) {
+                                            if (curItem.getName().equals(specifiedType)) {
+                                                complexTypeMetadata = curItem;
+                                                break;
                                             }
                                         }
-                                        if (complexTypeMetadata == null) {
-                                            complexTypeMetadata = (ComplexTypeMetadata) field.getType();
-                                        }
-                                        record = new DataRecord(complexTypeMetadata, UnsupportedDataRecordMetadata.INSTANCE);
-                                    } else {
-                                        record = new DataRecord((ComplexTypeMetadata) field.getType(), UnsupportedDataRecordMetadata.INSTANCE);
                                     }
-                                    try {
-                                        list.add(record);
-                                    } catch (UnsupportedOperationException e) {
-                                        list = addFieldValueToNewList(current, field, list, record);
+                                    if (complexTypeMetadata == null) {
+                                        complexTypeMetadata = (ComplexTypeMetadata) field.getType();
                                     }
+                                    record = new DataRecord(complexTypeMetadata, UnsupportedDataRecordMetadata.INSTANCE);
+                                } else {
+                                    record = new DataRecord((ComplexTypeMetadata) field.getType(), UnsupportedDataRecordMetadata.INSTANCE);
+                                }
+                                try {
+                                    list.add(record);
+                                } catch (UnsupportedOperationException e) {
+                                    list = addFieldValueToNewList(current, field, list, record);
+                                }
                             } else if (field instanceof ReferenceFieldMetadata) {
-                                DataRecord record = new DataRecord(((ReferenceFieldMetadata) field).getReferencedType(), UnsupportedDataRecordMetadata.INSTANCE);
+                                DataRecord record = new DataRecord(((ReferenceFieldMetadata) field).getReferencedType(),
+                                        UnsupportedDataRecordMetadata.INSTANCE);
                                 try {
                                     if (!record.isEmpty()) {
                                         list.add(record);
@@ -284,9 +286,13 @@ public class DataRecordAccessor implements Accessor {
                             current = (DataRecord) value;
                         }
                     } else {
-                        FieldMetadata field = current.getType().getField(element);
+                        FieldMetadata field = getFieldMetadata(current.getType(), element);
                         if (field instanceof ContainedTypeFieldMetadata) {
-                            Object value = current.get(field);
+                            Object value = null;
+                            // If the field does't exist in the DataRecord, throw Exception while getting its value.
+                            if (current.getSetFields().contains(field)) {
+                                value = current.get(field);
+                            }
                             if (value == null) {
                                 DataRecord record = new DataRecord(((ContainedTypeFieldMetadata) field).getContainedType(),
                                         UnsupportedDataRecordMetadata.INSTANCE);
@@ -393,7 +399,7 @@ public class DataRecordAccessor implements Accessor {
                     } else {
                         List<Object> list = (List) dataRecord.get(pathElement.field);
                         if (list == null) {
-                            list = new ArrayList<Object>();
+                            list = new ArrayList<>();
                             dataRecord.set(pathElement.field, list);
                         }
                     }
@@ -588,5 +594,27 @@ public class DataRecordAccessor implements Accessor {
             return get().equals(accessor.get()) ? 0 : -1;
         }
         return -1;
+    }
+
+    /**
+     * Return the field if contained in the type's or subtype's fields
+     * @param complexTypeMetadata
+     * @param fieldName
+     * @return
+     */
+    private static FieldMetadata getFieldMetadata(ComplexTypeMetadata complexTypeMetadata, String fieldName) {
+        if (complexTypeMetadata.hasField(fieldName)) {
+            return complexTypeMetadata.getField(fieldName);
+        } else if (complexTypeMetadata instanceof ContainedComplexTypeMetadata) {
+            ComplexTypeMetadata contain = ((ContainedComplexTypeMetadata) complexTypeMetadata).getContainedType();
+            for (ComplexTypeMetadata complexType : contain.getSubTypes()) {
+                for (FieldMetadata subField : complexType.getFields()) {
+                    if (subField.getName().equals(fieldName)) {
+                        return subField;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
