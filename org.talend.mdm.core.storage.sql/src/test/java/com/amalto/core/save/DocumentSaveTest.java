@@ -743,12 +743,7 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("Information/MoreInfo[1]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.fr", newValue);
+        assertUpdateReportAction(doc, 1, "Information/MoreInfo[1]", "", "http://www.mynewsite.fr");
     }
 
     public void testPartialUpdateWithOverwriteEqFalseOneToThree() throws Exception {
@@ -782,26 +777,9 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("Information/MoreInfo[4]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.cn", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
-        assertEquals("Information/MoreInfo[3]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.com", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[3]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/newValue");
-        assertEquals("Information/MoreInfo[2]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.fr", newValue);
+        assertUpdateReportAction(doc, 1, "Information/MoreInfo[4]", "", "http://www.mynewsite.cn");
+        assertUpdateReportAction(doc, 2, "Information/MoreInfo[3]", "", "http://www.mynewsite.com");
+        assertUpdateReportAction(doc, 3, "Information/MoreInfo[2]", "", "http://www.mynewsite.fr");
     }
 
     public void testPartialUpdateSameCountWithOverwriteFalse() throws Exception {
@@ -835,19 +813,8 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("Information/MoreInfo[4]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.com", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
-        assertEquals("Information/MoreInfo[3]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.fr", newValue);
+        assertUpdateReportAction(doc, 1, "Information/MoreInfo[4]", "", "http://www.mynewsite.com");
+        assertUpdateReportAction(doc, 2, "Information/MoreInfo[3]", "", "http://www.mynewsite.fr");
     }
 
     public void testPartialUpdateLessCountWithOverwriteFalse() throws Exception {
@@ -882,19 +849,8 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("Information/MoreInfo[5]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.com", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
-        assertEquals("Information/MoreInfo[4]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.mynewsite.fr", newValue);
+        assertUpdateReportAction(doc, 1, "Information/MoreInfo[5]", "", "http://www.mynewsite.com");
+        assertUpdateReportAction(doc, 2, "Information/MoreInfo[4]", "", "http://www.mynewsite.fr");
     }
 
     public void testPartialUpdateWithOverwriteEqualsTrue() throws Exception {
@@ -1305,7 +1261,23 @@ public class DocumentSaveTest extends TestCase {
         assertEquals("ContractDetailSubType", evaluate(committedElement, "/Contract/detail[2]/@xsi:type"));
         assertEquals("sdfsdf", evaluate(committedElement, "/Contract/detail[2]/code"));
         assertEquals("sdfsdf", evaluate(committedElement, "/Contract/detail[2]/features/actor"));
+
+        // this is the add one ContractDetailSubType, need to add the update report test
+        MutableDocument updateReportDocument = context.getUpdateReportDocument();
+        assertNotNull(updateReportDocument);
+        Document doc = updateReportDocument.asDOM();
+        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
+        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
+        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
+        assertEquals("detail[2]/@xsi:type", path);
+        assertEquals("", oldValue);
+        assertEquals("ContractDetailSubType", newValue);
+        assertUpdateReportAction(doc, 1, "detail[2]/@xsi:type", "", "ContractDetailSubType");
+        assertUpdateReportAction(doc, 2, "detail[2]/code", "", "sdfsdf");
+        assertUpdateReportAction(doc, 3, "detail[2]/features/actor", "", "sdfsdf");
     }
+
+
 
     public void testWithCloneSuperType() throws Exception {
         MetadataRepository repository = new MetadataRepository();
@@ -1334,12 +1306,41 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("detail[2]/code", path);
-        assertEquals("", oldValue);
-        assertEquals("code-1", newValue);
+        assertUpdateReportAction(doc, 1, "detail[2]/code", "", "code-1");
+    }
+
+    public void testWithChangeSubTypeToSuperType() throws Exception {
+        MetadataRepository repository = new MetadataRepository();
+        repository.load(DocumentSaveTest.class.getResourceAsStream("metadata3.xsd"));
+        MockMetadataRepositoryAdmin.INSTANCE.register("Contract", repository);
+
+        SaverSource source = new TestSaverSource(repository, true, "test78_original.xml", "metadata3.xsd");
+
+        SaverSession session = SaverSession.newSession(source);
+        InputStream recordXml = DocumentSaveTest.class.getResourceAsStream("test78.xml");
+        DocumentSaverContext context = session.getContextFactory().create("MDM", "Contract", "Source", recordXml, false, true,
+                true, false, false);
+        DocumentSaver saver = context.createSaver();
+        saver.save(session, context);
+        MockCommitter committer = new MockCommitter();
+        session.end(committer);
+
+        assertTrue(committer.hasSaved());
+        Element committedElement = committer.getCommittedElement();
+        assertEquals("ContractDetailType", evaluate(committedElement, "/Contract/detail[1]/@xsi:type"));
+        assertEquals("sdfsdf", evaluate(committedElement, "/Contract/detail[1]/code"));
+
+        // test update report
+        MutableDocument updateReportDocument = context.getUpdateReportDocument();
+        assertNotNull(updateReportDocument);
+        Document doc = updateReportDocument.asDOM();
+        assertUpdateReportAction(doc, 1, "detail[1]/features/vendor", "[vendor-1-1]", "");
+        assertUpdateReportAction(doc, 2, "detail[1]/features/boolValue", "true", "");
+        assertUpdateReportAction(doc, 3, "detail[1]/features/actor", "actor-1", "");
+        assertUpdateReportAction(doc, 4, "detail[1]/features", "", "");
+        assertUpdateReportAction(doc, 5, "detail[1]/ReadOnlyEle", "[1]", "");
+        assertUpdateReportAction(doc, 6, "detail[1]/@xsi:type", "ContractDetailSubType", "ContractDetailType");
+        assertUpdateReportAction(doc, 7, "detail[1]/code", "code-1", "sdfsdf");
     }
 
     public void testSubclassTypeChange() throws Exception {
@@ -1386,6 +1387,18 @@ public class DocumentSaveTest extends TestCase {
         assertEquals("ContractDetailSubType", evaluate(committedElement, "/Contract/detail[1]/@xsi:type"));
         assertEquals("cccccc", evaluate(committedElement, "/Contract/detail[1]/code"));
         assertEquals("sdfsdf", evaluate(committedElement, "/Contract/detail[1]/features/actor"));
+
+        // this is change detail from ContractDetailType to ContractDetailSubType
+        MutableDocument updateReportDocument = context.getUpdateReportDocument();
+        assertNotNull(updateReportDocument);
+        Document doc = updateReportDocument.asDOM();
+        assertUpdateReportAction(doc, 1, "detail[1]/@xsi:type", "ContractDetailType", "ContractDetailSubType");
+        assertUpdateReportAction(doc, 2, "detail[1]/code", "sdfsdf", "cccccc");
+        assertUpdateReportAction(doc, 3, "detail[1]/features/actor", "", "sdfsdf");
+        assertUpdateReportAction(doc, 4, "detail[1]/features/vendor[1]", "", "sdf");
+        assertUpdateReportAction(doc, 5, "detail[1]/features/boolValue", "", "true");
+        assertUpdateReportAction(doc, 6, "detail[1]/ReadOnlyEle[1]", "", "sdf");
+        assertUpdateReportAction(doc, 7, "detail[1]/boolTest", "", "true");
     }
 
     public void testUpdateSequence() throws Exception {
@@ -1699,33 +1712,10 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("comment[1]", path);
-        assertEquals("comment-original", oldValue);
-        assertEquals("comment-new", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
-        assertEquals("detail[1]/@xsi:type", path);
-        assertEquals("ContractDetailType", oldValue);
-        assertEquals("ContractDetailSubType", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[3]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/newValue");
-        assertEquals("detail[1]/code", path);
-        assertEquals("code-original", oldValue);
-        assertEquals("code-new", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[4]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/newValue");
-        assertEquals("detail[1]/features/actor", path);
-        assertEquals("", oldValue);
-        assertEquals("actor-new", newValue);
+        assertUpdateReportAction(doc, 1, "comment[1]", "comment-original", "comment-new");
+        assertUpdateReportAction(doc, 2, "detail[1]/@xsi:type", "ContractDetailType", "ContractDetailSubType");
+        assertUpdateReportAction(doc, 3, "detail[1]/code", "code-original", "code-new");
+        assertUpdateReportAction(doc, 4, "detail[1]/features/actor", "", "actor-new");
     }
 
     public void testUpdateReportForContractRemoveOneDetail() throws Exception {
@@ -1754,68 +1744,15 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("comment[1]", path);
-        assertEquals("comment-original", oldValue);
-        assertEquals("comment-new", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
-        assertEquals("detail[2]/code", path);
-        assertEquals("bb-1", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[3]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/newValue");
-        assertEquals("detail[2]/features/actor", path);
-        assertEquals("bb-2", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[4]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/newValue");
-        assertEquals("detail[2]/features/vendor[1]", path);
-        assertEquals("bb-3", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[5]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[5]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[5]/newValue");
-        assertEquals("detail[2]/features/boolValue", path);
-        assertEquals("true", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[6]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[6]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[6]/newValue");
-        assertEquals("detail[2]/features", path);
-        assertEquals("", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[7]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[7]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[7]/newValue");
-        assertEquals("detail[2]/ReadOnlyEle[1]", path);
-        assertEquals("readOnlyEle-two", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[8]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[8]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[8]/newValue");
-        assertEquals("detail[2]/boolTest", path);
-        assertEquals("true", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[9]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[9]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[9]/newValue");
-        assertEquals("detail[2]/@xsi:type", path);
-        assertEquals("ContractDetailSubType", oldValue);
-        assertEquals("", newValue);
+        assertUpdateReportAction(doc, 1, "comment[1]", "comment-original", "comment-new");
+        assertUpdateReportAction(doc, 2, "detail[2]/code", "bb-1", "");
+        assertUpdateReportAction(doc, 3, "detail[2]/features/actor", "bb-2", "");
+        assertUpdateReportAction(doc, 4, "detail[2]/features/vendor[1]", "bb-3", "");
+        assertUpdateReportAction(doc, 5, "detail[2]/features/boolValue", "true", "");
+        assertUpdateReportAction(doc, 6, "detail[2]/features", "", "");
+        assertUpdateReportAction(doc, 7, "detail[2]/ReadOnlyEle[1]", "readOnlyEle-two", "");
+        assertUpdateReportAction(doc, 8, "detail[2]/boolTest", "true", "");
+        assertUpdateReportAction(doc, 9, "detail[2]/@xsi:type", "ContractDetailSubType", "");
     }
 
     public void testUpdateReportChangeToSuperTypeAction() throws Exception {
@@ -1844,69 +1781,15 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument2 = context2.getUpdateReportDocument();
         assertNotNull(updateReportDocument2);
         Document doc = updateReportDocument2.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("comment[1]", path);
-        assertEquals("comment-original", oldValue);
-        assertEquals("comment-new", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
-        assertEquals("detail[1]/features/vendor", path);
-        assertEquals("[vendor-original]", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[3]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/newValue");
-        assertEquals("detail[1]/features/boolValue", path);
-        assertEquals("true", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[4]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/newValue");
-        assertEquals("detail[1]/features/actor", path);
-        assertEquals("actor-original", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[5]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[5]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[5]/newValue");
-        assertEquals("detail[1]/features", path);
-        assertEquals("", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[6]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[6]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[6]/newValue");
-        assertEquals("detail[1]/boolTest", path);
-        assertEquals("true", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[7]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[7]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[7]/newValue");
-        assertEquals("detail[1]/ReadOnlyEle", path);
-        assertEquals("[readOnlyEle-original]", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[8]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[8]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[8]/newValue");
-        assertEquals("detail[1]/@xsi:type", path);
-        assertEquals("ContractDetailSubType", oldValue);
-        assertEquals("ContractDetailType", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[9]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[9]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[9]/newValue");
-        assertEquals("detail[1]/code", path);
-        assertEquals("code-original", oldValue);
-        assertEquals("code-new", newValue);
-
+        assertUpdateReportAction(doc, 1, "comment[1]", "comment-original", "comment-new");
+        assertUpdateReportAction(doc, 2, "detail[1]/features/vendor", "[vendor-original]", "");
+        assertUpdateReportAction(doc, 3, "detail[1]/features/boolValue", "true", "");
+        assertUpdateReportAction(doc, 4, "detail[1]/features/actor", "actor-original", "");
+        assertUpdateReportAction(doc, 5, "detail[1]/features", "", "");
+        assertUpdateReportAction(doc, 6, "detail[1]/boolTest", "true", "");
+        assertUpdateReportAction(doc, 7, "detail[1]/ReadOnlyEle", "[readOnlyEle-original]", "");
+        assertUpdateReportAction(doc, 8, "detail[1]/@xsi:type", "ContractDetailSubType", "ContractDetailType");
+        assertUpdateReportAction(doc, 9, "detail[1]/code", "code-original", "code-new");
     }
 
     public void testUpdateFKToSuperType() throws Exception {
@@ -2323,35 +2206,13 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
-        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
-        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
-        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
-        assertEquals("Name", path);
-        assertEquals("Portland", oldValue);
-        assertEquals("beforeSaving_Agency", newValue);
 
-        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
-        assertEquals("City", path);
-        assertEquals("Portland", oldValue);
-        assertEquals("Chicago", newValue);
+        assertUpdateReportAction(doc, 1, "Name", "name1", "beforeSaving_Agency");
+        assertUpdateReportAction(doc, 2, "City", "city1", "Chicago");
+        assertUpdateReportAction(doc, 3, "State", "ME", "");
+        assertUpdateReportAction(doc, 4, "Information/MoreInfo[2]", "", "http://www.newSite2.org");
 
-        path = (String) evaluate(doc.getDocumentElement(), "Item[3]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/newValue");
-        assertEquals("State", path);
-        assertEquals("ME", oldValue);
-        assertEquals("", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "Item[4]/path");
-        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/oldValue");
-        newValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/newValue");
-        assertEquals("Information/MoreInfo[2]", path);
-        assertEquals("", oldValue);
-        assertEquals("http://www.newSite2.org", newValue);
-
-        path = (String) evaluate(doc.getDocumentElement(), "OperationType");
+        String path = (String) evaluate(doc.getDocumentElement(), "OperationType");
         assertEquals("UPDATE", path);
 
         MockCommitter committer = new MockCommitter();
@@ -4320,6 +4181,116 @@ public class DocumentSaveTest extends TestCase {
         Element committedElement = committer.getCommittedElement();
         assertEquals("2", evaluate(committedElement, "/organisation/organisationId"));
         assertEquals("[2]", evaluate(committedElement, "/organisation/fkServices[1]"));
+    }
+
+    public void test13587_SaveForeignKeyForReusableType() throws Exception {
+        MetadataRepository repository = new MetadataRepository();
+        repository.load(DocumentSaveTest.class.getResourceAsStream("metadata23.xsd"));
+        MockMetadataRepositoryAdmin.INSTANCE.register("testab", repository);
+        SaverSource source = new TestSaverSource(repository, false, "", "metadata23.xsd");
+
+        //Case 1 add record for entity TestA as fk using in below entity TestB and TestC.
+        SaverSession session = SaverSession.newSession(source);
+        InputStream recordXml = new ByteArrayInputStream(("<TestA><Id>11</Id></TestA>").getBytes("UTF-8"));
+        DocumentSaverContext context = session.getContextFactory().create("testab", "testab", "Source", recordXml, true, true, true, false, false);
+        DocumentSaver saver = context.createSaver();
+        saver.save(session, context);
+        MockCommitter committer = new MockCommitter();
+        session.end(committer);
+
+        //case 2, add record for entity TestB with reusable type BaseType
+        session = SaverSession.newSession(source);
+        recordXml = new ByteArrayInputStream(("<TestB><Id>1</Id><DocterField><BaseField xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"BaseType\"><TestA_FK>[11]</TestA_FK></BaseField><Basename>b1</Basename></DocterField></TestB>").getBytes("UTF-8"));
+        context = session.getContextFactory().create("testab", "testab", "Source", recordXml, true, true, true, false, false);
+        saver = context.createSaver();
+        saver.save(session, context);
+        committer = new MockCommitter();
+        session.end(committer);
+
+        assertTrue(committer.hasSaved());
+        Element committedElement = committer.getCommittedElement();
+        assertEquals("1", evaluate(committedElement, "/TestB/Id"));
+        assertEquals("[11]", evaluate(committedElement, "/TestB/DocterField/BaseField/TestA_FK"));
+
+        //case 3, add record for entity TestB with reusable type FirstType
+        session = SaverSession.newSession(source);
+        recordXml = new ByteArrayInputStream(("<TestB><Id>2</Id><DocterField><BaseField xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"FirstType\"><TestA_FK>[11]</TestA_FK></BaseField><Basename>b2</Basename></DocterField></TestB>").getBytes("UTF-8"));
+        context = session.getContextFactory().create("testab", "testab", "Source", recordXml, true, true, true, false, false);
+        saver = context.createSaver();
+        saver.save(session, context);
+        committer = new MockCommitter();
+        session.end(committer);
+
+        assertTrue(committer.hasSaved());
+        committedElement = committer.getCommittedElement();
+        assertEquals("2", evaluate(committedElement, "/TestB/Id"));
+        assertEquals("[11]", evaluate(committedElement, "/TestB/DocterField/BaseField/TestA_FK"));
+
+        //case 4, add record for entity TestB with reusable type SecondType
+        session = SaverSession.newSession(source);
+        recordXml = new ByteArrayInputStream(("<TestB><Id>3</Id><DocterField><BaseField xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"SecondType\"><TestA_FK>[11]</TestA_FK></BaseField><Basename>b3</Basename></DocterField></TestB>").getBytes("UTF-8"));
+        context = session.getContextFactory().create("testab", "testab", "Source", recordXml, true, true, true, false, false);
+        saver = context.createSaver();
+        saver.save(session, context);
+        committer = new MockCommitter();
+        session.end(committer);
+
+        assertTrue(committer.hasSaved());
+        committedElement = committer.getCommittedElement();
+        assertEquals("3", evaluate(committedElement, "/TestB/Id"));
+        assertEquals("[11]", evaluate(committedElement, "/TestB/DocterField/BaseField/TestA_FK"));
+
+        //case 5, add record for entity TestC with reusable type BaseType
+        session = SaverSession.newSession(source);
+        recordXml = new ByteArrayInputStream(("<TestC><Id>1</Id><DocterField><BaseField xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"BaseType\"><TestA_FK>[11]</TestA_FK></BaseField><Basename>b1</Basename></DocterField></TestC>").getBytes("UTF-8"));
+        context = session.getContextFactory().create("testab", "testab", "Source", recordXml, true, true, true, false, false);
+        saver = context.createSaver();
+        saver.save(session, context);
+        committer = new MockCommitter();
+        session.end(committer);
+
+        assertTrue(committer.hasSaved());
+        committedElement = committer.getCommittedElement();
+        assertEquals("1", evaluate(committedElement, "/TestC/Id"));
+        assertEquals("[11]", evaluate(committedElement, "/TestC/DocterField/BaseField/TestA_FK"));
+
+        //case 6, add record for entity TestC with reusable type FirstType
+        session = SaverSession.newSession(source);
+        recordXml = new ByteArrayInputStream(("<TestC><Id>2</Id><DocterField><BaseField xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"FirstType\"><TestA_FK>[11]</TestA_FK></BaseField><Basename>b2</Basename></DocterField></TestC>").getBytes("UTF-8"));
+        context = session.getContextFactory().create("testab", "testab", "Source", recordXml, true, true, true, false, false);
+        saver = context.createSaver();
+        saver.save(session, context);
+        committer = new MockCommitter();
+        session.end(committer);
+
+        assertTrue(committer.hasSaved());
+        committedElement = committer.getCommittedElement();
+        assertEquals("2", evaluate(committedElement, "/TestC/Id"));
+        assertEquals("[11]", evaluate(committedElement, "/TestC/DocterField/BaseField/TestA_FK"));
+
+        //case 7, add record for entity TestC with reusable type SecondType
+        session = SaverSession.newSession(source);
+        recordXml = new ByteArrayInputStream(("<TestC><Id>3</Id><DocterField><BaseField xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"SecondType\"><TestA_FK>[11]</TestA_FK></BaseField><Basename>b3</Basename></DocterField></TestC>").getBytes("UTF-8"));
+        context = session.getContextFactory().create("testab", "testab", "Source", recordXml, true, true, true, false, false);
+        saver = context.createSaver();
+        saver.save(session, context);
+        committer = new MockCommitter();
+        session.end(committer);
+
+        assertTrue(committer.hasSaved());
+        committedElement = committer.getCommittedElement();
+        assertEquals("3", evaluate(committedElement, "/TestC/Id"));
+        assertEquals("[11]", evaluate(committedElement, "/TestC/DocterField/BaseField/TestA_FK"));
+    }
+
+    private void assertUpdateReportAction(Document doc, int index, String expectedPath, String expectedOldValue,
+            String expectedNewValue) throws Exception {
+        String path = (String) evaluate(doc.getDocumentElement(), "Item[" + index + "]/path");
+        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[" + index + "]/oldValue");
+        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[" + index + "]/newValue");
+        assertEquals(expectedPath, path);
+        assertEquals(expectedOldValue, oldValue);
+        assertEquals(expectedNewValue, newValue);
     }
 
     private static class MockCommitter implements SaverSession.Committer {
