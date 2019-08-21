@@ -11,6 +11,7 @@ package com.amalto.core.storage;
 
 import static com.amalto.core.query.user.UserQueryBuilder.eq;
 import static com.amalto.core.query.user.UserQueryBuilder.from;
+import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -20,6 +21,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
@@ -29,6 +32,7 @@ import org.talend.mdm.commmon.metadata.MetadataRepository;
 import com.amalto.core.query.StorageTestCase;
 import com.amalto.core.query.user.Expression;
 import com.amalto.core.query.user.UserQueryBuilder;
+import com.amalto.core.save.context.StorageDocument;
 import com.amalto.core.server.MockMetadataRepositoryAdmin;
 import com.amalto.core.server.MockServerLifecycle;
 import com.amalto.core.server.MockStorageAdmin;
@@ -41,6 +45,7 @@ import com.amalto.core.storage.hibernate.HibernateStorage;
 import com.amalto.core.storage.record.DataRecord;
 import com.amalto.core.storage.record.DataRecordReader;
 import com.amalto.core.storage.record.XmlStringDataRecordReader;
+import com.amalto.core.storage.record.metadata.DataRecordMetadataImpl;
 
 import junit.framework.TestCase;
 
@@ -734,73 +739,40 @@ public class StoragePrepareTest extends TestCase {
         }
     }
 
-    //TMDM-14012 XPath functions cannot be used on default values
-    public void testParseXPathWithDefaultValueInDataModel() {
-        Storage storage = new SecuredStorage(new HibernateStorage("EEC_Default_Value", StorageType.MASTER), userSecurity);//$NON-NLS-1$
+    //TMDM-13811
+    public void testDeleteMultiLevelRef() {
+        Storage storage = new SecuredStorage(new HibernateStorage("MultiLevelRefRTE", StorageType.MASTER), userSecurity);//$NON-NLS-1$
         MetadataRepository repository = new MetadataRepository();
-        repository.load(StoragePrepareTest.class.getResourceAsStream("EEC_Default_Value.xsd"));//$NON-NLS-1$
-        MockMetadataRepositoryAdmin.INSTANCE.register("EEC_Default_Value", repository);//$NON-NLS-1$
+        repository.load(StoragePrepareTest.class.getResourceAsStream("MultiLevelRefRTE.xsd"));//$NON-NLS-1$
+        MockMetadataRepositoryAdmin.INSTANCE.register("MultiLevelRefRTE", repository);//$NON-NLS-1$
 
         storage.init(getDatasource("H2-DS3"));// //$NON-NLS-1$
         storage.prepare(repository, Collections.<Expression> emptySet(), true, true);
         ((MockStorageAdmin) ServerContext.INSTANCE.get().getStorageAdmin()).register(storage);
 
-        storage.begin();
-        ComplexTypeMetadata country = repository.getComplexType("Country");//$NON-NLS-1$
-        UserQueryBuilder qb = from(country);
-        StorageResults results = storage.fetch(qb.getSelect());
-        try {
-            assertEquals(0, results.getCount());
-        } finally {
-            results.close();
-        }
-        storage.end();
-
-        List<DataRecord> records = new ArrayList<DataRecord>();
+        DataRecordMetadataImpl drm = new DataRecordMetadataImpl(new Date().getTime(), "123456");
+        ComplexTypeMetadata entityD = repository.getComplexType("EntityD");//$NON-NLS-1$
+        DataRecord dr = new DataRecord(entityD, drm);
+        StorageDocument storageDoc = new StorageDocument("MultiLevelRefRTE", repository, dr);
         DataRecordReader<String> factory = new XmlStringDataRecordReader();
-        records.add(factory.read(repository, country, "<Country><Code>1</Code><ImportToBelarus></ImportToBelarus><ImportToString></ImportToString></Country>")); //$NON-NLS-1$
-        records.add(factory.read(repository, country, "<Country><Code>2</Code><ImportToBelarus>false</ImportToBelarus><ImportToString>hello world</ImportToString></Country>")); //$NON-NLS-1$
-        records.add(factory.read(repository, country, "<Country><Code>3</Code><ImportToBelarus>true</ImportToBelarus><ImportToString>very good</ImportToString></Country>")); //$NON-NLS-1$
-        records.add(factory.read(repository, country, "<Country><Code>4</Code><ImportToBelarus>false</ImportToBelarus><ImportToString>This is a test</ImportToString></Country>")); //$NON-NLS-1$
-        try {
-            storage.begin();
-            storage.update(records);
-            storage.commit();
-        } finally {
-            storage.end();
-        }
-        storage.begin();
-        results = storage.fetch(qb.getSelect());
-        try {
-            assertEquals(4, results.getCount());
-            for (DataRecord result : results) {
-                String id = result.get("Code").toString();
-                switch (id) {
-                case "1"://$NON-NLS-1$
-                    assertEquals(false, result.get("Country/ImportToBelarus"));//$NON-NLS-1$
-                    assertEquals(null, result.get("Country/ImportToString"));//$NON-NLS-1$
-                    break;
-                case "2"://$NON-NLS-1$
-                    assertEquals(false, result.get("Country/ImportToBelarus"));//$NON-NLS-1$
-                    assertEquals("hello world", result.get("Country/ImportToString"));//$NON-NLS-1$ $NON-NLS-2$
-                    break;
-                case "3"://$NON-NLS-1$
-                    assertEquals(true, result.get("Country/ImportToBelarus"));//$NON-NLS-1$
-                    assertEquals("very good", result.get("Country/ImportToString"));//$NON-NLS-1$ $NON-NLS-2$
-                    break;
-                case "4"://$NON-NLS-1$
-                    assertEquals(false, result.get("Country/ImportToBelarus"));//$NON-NLS-1$
-                    assertEquals("This is a test", result.get("Country/ImportToString"));//$NON-NLS-1$ $NON-NLS-2$
-                    break;
-                default:
-                    assertNull(id);
-                }
-            }
-        } finally {
-            results.close();
-        }
-        storage.end();
-        storage.close();
+        DataRecord dataRecord = factory.read(repository, entityD,
+                "<EntityD><Id>22</Id><NameEda>22</NameEda><RefEntityC>[33]</RefEntityC><EntityB>[11]</EntityB></EntityD>"); //$NON-NLS-1$
+        dataRecord = storageDoc.cleanMultiLevelRef(dataRecord);
+        assertEquals("33", ((LinkedList<DataRecord>) dataRecord.get("RefEntityC")).get(0).get("Id"));
+        assertEquals("11", ((DataRecord) dataRecord.get("EntityB")).get("Id"));
+
+        drm = new DataRecordMetadataImpl(new Date().getTime(), "123456");
+        ComplexTypeMetadata entityC = repository.getComplexType("EntityC");//$NON-NLS-1$
+        dr = new DataRecord(entityC, drm);
+        storageDoc = new StorageDocument("MultiLevelRefRTE", repository, dr);
+        dataRecord = factory.read(repository, entityC,
+                "<EntityC><Id>33</Id><BaseType xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"TeacherType\"><TeacherCircleType><entitesPassees><EDAs><EDA><eda>[22]</eda><dateDebutApplication>2019-08-21</dateDebutApplication></EDA></EDAs></entitesPassees></TeacherCircleType></BaseType></EntityC>"); //$NON-NLS-1$
+        dataRecord = storageDoc.cleanMultiLevelRef(dataRecord);
+        assertNotNull(dataRecord);
+        assertEquals("22",
+                ((DataRecord) ((LinkedList<DataRecord>) ((DataRecord) ((DataRecord) ((DataRecord) ((DataRecord) dataRecord
+                        .get("BaseType")).get("TeacherCircleType")).get("entitesPassees")).get("EDAs")).get("EDA")).get(0)
+                                .get("eda")).get("Id"));
     }
 
     protected static DataSourceDefinition getDatasource(String dataSourceName) {
