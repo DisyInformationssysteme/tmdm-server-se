@@ -161,11 +161,12 @@ public class StorageDocument implements MutableDocument {
     }
 
     private DataRecord clean(DataRecord dataRecord) {
-        for (FieldMetadata entityField : new HashSet<FieldMetadata>(dataRecord.getSetFields())) {
+        ComplexTypeMetadata type = dataRecord.getType();
+        for (FieldMetadata entityField : type.getFields()) {
             Object fieldData = dataRecord.get(entityField);
             if (fieldData == null) {
                 dataRecord.remove(entityField);
-            } else if(entityField.isMany()) {
+            } else if (entityField.isMany()) {
                 List list = (List) fieldData;
                 Iterator iterator = list.iterator();
                 while (iterator.hasNext()) {
@@ -188,7 +189,6 @@ public class StorageDocument implements MutableDocument {
                 }
             }
         }
-
         if (dataRecord.getSetFields().isEmpty()) {
             return null;
         } else {
