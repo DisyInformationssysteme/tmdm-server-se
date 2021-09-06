@@ -14,8 +14,8 @@
 
     <properties>
         <activemq.version>5.15.9</activemq.version>
-        <woodstox.core.version>5.3.0</woodstox.core.version>
-        <joda.time.version>2.10</joda.time.version>
+        <woodstox.core.version>6.2.6</woodstox.core.version>
+        <joda.time.version>2.10.8</joda.time.version>
     </properties>
 
     <build>
