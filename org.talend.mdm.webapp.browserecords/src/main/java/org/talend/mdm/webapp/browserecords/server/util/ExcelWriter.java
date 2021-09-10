@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -74,7 +75,9 @@ public class ExcelWriter extends DownloadWriter {
 
     @Override
     public void writeValue(String value) {
-        row.createCell((short) columnIndex).setCellValue(value);
+        if (StringUtils.isNotBlank(value)) {
+            row.createCell((short) columnIndex).setCellValue(value.trim());
+        }
     }
 
     @Override

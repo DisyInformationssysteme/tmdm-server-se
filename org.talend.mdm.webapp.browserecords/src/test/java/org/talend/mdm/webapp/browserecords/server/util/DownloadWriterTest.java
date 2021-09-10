@@ -11,23 +11,15 @@ package org.talend.mdm.webapp.browserecords.server.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -140,34 +132,6 @@ public class DownloadWriterTest extends TestCase {
         writer = new ExcelWriter(concept, viewPk, idsList, headerArray, xpathArray, criteria, multipleValueSeparator, fkDisplay,
                 fkResovled, colFkMap, fkMap, false, language);
         writer.writeFile();
-        File file = new File(this.getClass().getResource("TestDownload.xlsx").getFile());
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        writer.write(fileOutputStream);
-        fileOutputStream.close();
-        FileInputStream fileInputStream = new FileInputStream(file);
-        Workbook workBook = new XSSFWorkbook(fileInputStream);
-        Sheet sheet = workBook.getSheetAt(0);
-        Iterator<Row> rowIterator = sheet.rowIterator();
-        int rowNumber = 0;
-        while (rowIterator.hasNext()) {
-            rowNumber++;
-            Row row = rowIterator.next();
-            if (rowNumber == 1) {
-                continue;
-            } else if (rowNumber == 2) {
-                assertEquals("1", row.getCell(0).getRichStringCellValue().getString());
-                assertEquals("  2,2\"  ", row.getCell(1).getRichStringCellValue().getString());
-                assertEquals("[7]|F33", row.getCell(2).getRichStringCellValue().getString());
-                assertEquals("1.00", row.getCell(3).getRichStringCellValue().getString());
-                assertEquals("true", row.getCell(4).getRichStringCellValue().getString());
-                assertEquals("1", row.getCell(5).getRichStringCellValue().getString());
-                assertEquals("", row.getCell(6).getRichStringCellValue().getString());
-                assertEquals("", row.getCell(7).getRichStringCellValue().getString());
-                assertEquals("", row.getCell(8).getRichStringCellValue().getString());
-                assertEquals("Small|Medium|Large", row.getCell(9).getRichStringCellValue().getString());
-                assertEquals("White|Light Blue|Light Pink", row.getCell(10).getRichStringCellValue().getString());
-            }
-        }
 
         assertEquals("Product.xlsx", writer.generateFileName("Product"));
         writer = new ExcelWriter(concept, viewPk, idsList, headerArray, xpathArray, criteria, multipleValueSeparator, fkDisplay,
