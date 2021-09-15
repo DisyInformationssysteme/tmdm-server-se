@@ -31,6 +31,7 @@ import org.talend.mdm.webapp.base.shared.EntityModel;
 import org.talend.mdm.webapp.browserecords.server.actions.BrowseRecordsActionTest;
 import org.talend.mdm.webapp.browserecords.server.bizhelpers.DataModelHelper;
 import org.talend.mdm.webapp.browserecords.server.bizhelpers.SchemaMockAgent;
+import org.talend.mdm.webapp.browserecords.server.util.ExcelWriter.CheckExcelWriteExistence;
 
 import com.amalto.core.webservice.WSGetItem;
 import com.amalto.core.webservice.WSGetView;
@@ -56,6 +57,7 @@ public class DownloadWriterTest extends TestCase {
     }
 
     public void testCSVWriter() throws Exception {
+        CheckExcelWriteExistence.set(false);
         MDMConfiguration.createConfiguration("", true);
         EntityModel entity = new EntityModel();
         String[] roles = { "Demo_Manager", "System_Admin", "authenticated", "administration" };
@@ -171,6 +173,7 @@ public class DownloadWriterTest extends TestCase {
         out = new ByteArrayOutputStream();
         writer.write(out);
         assertEquals(expectedResult, out.toString());
+        CheckExcelWriteExistence.remove();
     }
 
     private String inputStream2String(InputStream is) throws IOException {
