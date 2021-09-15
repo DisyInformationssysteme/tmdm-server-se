@@ -76,7 +76,11 @@ public class ExcelWriter extends DownloadWriter {
     @Override
     public void writeValue(String value) {
         if (StringUtils.isNotBlank(value)) {
-            row.createCell((short) columnIndex).setCellValue(value.trim());
+            if (CheckExcelWriteExistence.get()) {
+                row.createCell((short) columnIndex).setCellValue(value);
+            } else {
+                row.createCell((short) columnIndex).setCellValue(value.trim());
+            }
         }
     }
 
@@ -88,5 +92,31 @@ public class ExcelWriter extends DownloadWriter {
     @Override
     public String generateFileName(String name) {
         return super.generateFileName(name) + "." + Constants.FILE_TYPE_EXCEL;
+    }
+
+    public static class CheckExcelWriteExistence {
+
+        private static ThreadLocal<Boolean> threadLocal = new ThreadLocal<Boolean>() {
+
+            @Override
+            public Boolean initialValue() {
+                return Boolean.TRUE;
+            }
+        };
+
+        private CheckExcelWriteExistence() {
+        }
+
+        public static void set(boolean value) {
+            threadLocal.set(value);
+        }
+
+        public static boolean get() {
+            return threadLocal.get();
+        }
+
+        public static void remove() {
+            threadLocal.remove();
+        }
     }
 }
