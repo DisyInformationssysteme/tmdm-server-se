@@ -54,11 +54,6 @@
         </dependency>
         <!-- 3rd party dependencies -->
         <dependency>
-            <!-- for login.jsp -->
-            <groupId>jstl</groupId>
-            <artifactId>jstl</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
