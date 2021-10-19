@@ -34,6 +34,7 @@ import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Table;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
+import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.MetadataUtils;
@@ -154,10 +155,16 @@ public class LiquibaseSchemaAdapter  {
         List<AbstractChange> changeActionList = new ArrayList<AbstractChange>();
         for (ModifyChange modifyAction : diffResults.getModifyChanges()) {
             MetadataVisitable element = modifyAction.getElement();
-            if (!isContainedComplexFieldTypeMetadata((FieldMetadata) element)
-                    || isSimpleTypeFieldMetadata((FieldMetadata) element) || isContainedComplexType((FieldMetadata) element)) {
+            if ((!isContainedComplexFieldTypeMetadata((FieldMetadata) element)
+                    || isSimpleTypeFieldMetadata((FieldMetadata) element)
+                    || isContainedComplexType((FieldMetadata) element))
+                    && !isContainedTypeFieldMetadata((FieldMetadata) element)) {
                 FieldMetadata previous = (FieldMetadata) modifyAction.getPrevious();
                 FieldMetadata current = (FieldMetadata) modifyAction.getCurrent();
+
+                if (MetadataUtils.isAnonymousType(current.getContainingType())) {
+                    continue;
+                }
 
                 String defaultValueRule = current.getData(MetadataRepository.DEFAULT_VALUE_RULE);
                 defaultValueRule = HibernateStorageUtils.convertedDefaultValue(current.getType().getName(),
@@ -478,6 +485,10 @@ public class LiquibaseSchemaAdapter  {
     protected boolean isContainedComplexType(FieldMetadata fieldMetadata) {
         return (fieldMetadata.getContainingType() instanceof ComplexTypeMetadata)
                 && (fieldMetadata.getType() instanceof ContainedComplexTypeMetadata);
+    }
+
+    protected  boolean isContainedTypeFieldMetadata(FieldMetadata fieldMetadata){
+        return fieldMetadata instanceof ContainedTypeFieldMetadata;
     }
 
     protected boolean isBooleanType(String columnDataType) {
