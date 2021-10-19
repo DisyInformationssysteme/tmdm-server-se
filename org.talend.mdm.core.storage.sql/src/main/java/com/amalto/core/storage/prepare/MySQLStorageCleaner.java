@@ -11,11 +11,11 @@
 package com.amalto.core.storage.prepare;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.datasource.DataSource;
@@ -45,16 +45,15 @@ class MySQLStorageCleaner implements StorageCleaner {
                         + "' does not define initialization information.");
             }
             Connection connection = RDBMSDataSource.getConnectionToInit(dataSource);
-
             try {
-                Statement statement = connection.createStatement();
+                PreparedStatement ps = connection.prepareStatement(String.format("DROP DATABASE `%s`", dataSource.getDatabaseName()));
                 try {
-                    statement.execute("drop database `" + dataSource.getDatabaseName() + "`;"); //$NON-NLS-1$ //$NON-NLS-2$
+                    ps.executeUpdate();
                 } catch (SQLException e) {
                     // Assumes database is already dropped.
                     LOGGER.warn("Exception occurred during DROP DATABASE statement.", e);
                 } finally {
-                    statement.close();
+                    ps.close();
                 }
             } finally {
                 connection.close();
