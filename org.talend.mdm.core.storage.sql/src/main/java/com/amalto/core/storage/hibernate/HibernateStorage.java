@@ -148,6 +148,7 @@ import com.amalto.core.storage.StorageType;
 import com.amalto.core.storage.datasource.DataSource;
 import com.amalto.core.storage.datasource.DataSourceDefinition;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
+import com.amalto.core.storage.hibernate.mapping.ForeignKeyUpdateStrategy;
 import com.amalto.core.storage.hibernate.mapping.MDMDenormalizedTable;
 import com.amalto.core.storage.hibernate.mapping.MDMTable;
 import com.amalto.core.storage.prepare.FullTextIndexCleaner;
@@ -1267,6 +1268,8 @@ public class HibernateStorage implements Storage {
         try {
             connection = DriverManager.getConnection(dataSource.getConnectionURL(), dataSource.getUserName(),
                     dataSource.getPassword());
+            // clean all constraint foreign key being drop tables
+            ForeignKeyUpdateStrategy.cleanOverdueForeignKeys(dataSource.getDialectName(), tablesToDrop, connection);
             int successCount = 0;
             while (successCount < totalCount && totalRound++ < totalCount) {
                 Set<String> dropedTables = new HashSet<>();
