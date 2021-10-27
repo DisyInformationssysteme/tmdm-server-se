@@ -11,6 +11,7 @@
 
 package com.amalto.core.storage.prepare;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -51,7 +52,7 @@ class PostgresStorageInitializer implements StorageInitializer {
             try {
                 Statement statement = connection.createStatement();
                 try {
-                    statement.execute("CREATE DATABASE " + dataSource.getDatabaseName() + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+                    statement.execute("CREATE DATABASE " + ValidateUtil.matchCommonRegex(dataSource.getDatabaseName()) + ";"); //$NON-NLS-1$ //$NON-NLS-2$
                 } catch (SQLException e) {
                     // Assumes database is already created.
                     LOGGER.warn("Exception occurred during CREATE DATABASE statement.", e);

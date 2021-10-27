@@ -11,6 +11,7 @@
 
 package com.amalto.core.storage.prepare;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.datasource.DataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
@@ -49,7 +50,7 @@ class SQLServerStorageCleaner implements StorageCleaner {
                 Statement statement = connection.createStatement();
                 try {
                     statement.execute("USE master;");
-                    statement.execute("DROP DATABASE " + dataSource.getDatabaseName() + ";");
+                    statement.execute("DROP DATABASE " + ValidateUtil.matchCommonRegex(dataSource.getDatabaseName()) + ";");
                 } catch (SQLException e) {
                     // Assumes database is already dropped.
                     LOGGER.warn("Exception occurred during DROP DATABASE statement.", e);

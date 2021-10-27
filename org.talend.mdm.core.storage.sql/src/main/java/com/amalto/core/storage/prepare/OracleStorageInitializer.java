@@ -10,6 +10,7 @@
 
 package com.amalto.core.storage.prepare;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,6 +22,8 @@ import org.apache.logging.log4j.LogManager;
 import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.datasource.DataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
+
+import src.com.amalto.commons.core.utils.IllegalArgumentException;
 
 class OracleStorageInitializer implements StorageInitializer {
 
@@ -53,8 +56,12 @@ class OracleStorageInitializer implements StorageInitializer {
             try {
                 Statement statement = connection.createStatement();
                 try {
-                    statement.execute("grant connect, dba to " + dataSource.getUserName()); //$NON-NLS-1$
-                    statement.execute("alter user " + dataSource.getUserName() + " account unlock"); //$NON-NLS-1$ //$NON-NLS-2$
+                    String username = dataSource.getUserName();
+                    if (username.contains(" ")) {
+                        throw new IllegalArgumentException("The database username contains invalid character!");
+                    }
+                    statement.execute("grant connect, dba to " + username); //$NON-NLS-1$
+                    statement.execute("alter user " + username + " account unlock"); //$NON-NLS-1$ //$NON-NLS-2$
                 } catch (SQLException e) {
                     // Assumes database is already created.
                     LOGGER.warn("Exception occurred during CREATE USER statement.", e);

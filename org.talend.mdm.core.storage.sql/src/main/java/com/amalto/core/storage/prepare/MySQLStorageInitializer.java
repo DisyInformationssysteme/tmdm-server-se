@@ -11,12 +11,13 @@
 package com.amalto.core.storage.prepare;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.datasource.DataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
@@ -50,16 +51,16 @@ class MySQLStorageInitializer implements StorageInitializer {
             RDBMSDataSource dataSource = getDataSource(storage);
             Connection connection = RDBMSDataSource.getConnectionToInit(dataSource);
             try {
-                PreparedStatement ps = connection.prepareStatement(String.format(
-                        "CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;",
-                        dataSource.getDatabaseName()));
+                Statement statement = connection.createStatement();
                 try {
-                    ps.executeUpdate();
+                    statement.execute(
+                            "CREATE DATABASE IF NOT EXISTS " + ValidateUtil.matchCommonRegex(dataSource.getDatabaseName()) //$NON-NLS-1$
+                            + " DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"); //$NON-NLS-1$
                 } catch (SQLException e) {
                     // Assumes database is already created.
                     LOGGER.warn("Exception occurred during CREATE DATABASE statement.", e);
                 } finally {
-                    ps.close();
+                    statement.close();
                 }
             } finally {
                 connection.close();
