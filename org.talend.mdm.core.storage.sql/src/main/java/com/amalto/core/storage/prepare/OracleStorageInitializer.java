@@ -23,8 +23,6 @@ import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.datasource.DataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
 
-import src.com.amalto.commons.core.utils.IllegalArgumentException;
-
 class OracleStorageInitializer implements StorageInitializer {
 
     private static final Logger LOGGER = LogManager.getLogger(OracleStorageInitializer.class);
