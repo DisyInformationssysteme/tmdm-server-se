@@ -125,6 +125,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.query.optimization.ConfigurableContainsOptimizer;
 import com.amalto.core.query.optimization.ContainsOptimizer;
 import com.amalto.core.query.optimization.ImplicitOrderBy;
@@ -1624,7 +1625,7 @@ public class HibernateStorage implements Storage {
             Session session = this.getCurrentSession();
             for (FieldMetadata field : typeToDelete.getFields()) {
                 if (field.isMany()) {
-                    String formattedTableName = tableResolver.getCollectionTable(field);
+                    String formattedTableName = ValidateUtil.matchCommonRegex(tableResolver.getCollectionTable(field));
                     String deleteFormattedTableSQL = DELETE_FROM_STR + formattedTableName;
                     deleteDataWithConditionForRepeatedField(session, condition, deleteFormattedTableSQL);
                 }
@@ -1675,13 +1676,17 @@ public class HibernateStorage implements Storage {
                 }
                 List tmp = list.subList(i, toIndex);
                 for (int j = 0; j < tmp.size(); j++) {
+                    if (tmp.get(j) != null) {
+                        ValidateUtil.matchCommonRegex(tmp.get(j).toString());
+                    }
                     buffer.append("'").append(tmp.get(j)).append("'"); //$NON-NLS-1$//$NON-NLS-2$
                     if (j != tmp.size() - 1) {
                         buffer.append(','); //$NON-NLS-1$
                     }
                 }
                 if (buffer.length() > 0) {
-                    conditionString = conditionString + fieldEntry.getKey() + " in (" + buffer.toString() + ')'; //$NON-NLS-1$//$NON-NLS-2$
+                    conditionString = conditionString + ValidateUtil.matchCommonRegex(fieldEntry.getKey()) + " in (" //$NON-NLS-1$
+                            + buffer.toString() + ')'; //$NON-NLS-2$
                 }
                 session.createSQLQuery(sql + conditionString).executeUpdate();
             }

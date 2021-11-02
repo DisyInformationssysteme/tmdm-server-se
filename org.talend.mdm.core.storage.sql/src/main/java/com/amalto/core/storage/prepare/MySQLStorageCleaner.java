@@ -17,6 +17,7 @@ import java.sql.Statement;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.datasource.DataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
@@ -38,7 +39,6 @@ class MySQLStorageCleaner implements StorageCleaner {
             if (!(storageDataSource instanceof RDBMSDataSource)) {
                 throw new IllegalArgumentException("Storage to clean does not seem to be a RDBMS storage.");
             }
-
             RDBMSDataSource dataSource = (RDBMSDataSource) storageDataSource;
             if (!dataSource.hasInit()) {
                 throw new IllegalArgumentException("Data source '" + dataSource.getName()
@@ -49,7 +49,7 @@ class MySQLStorageCleaner implements StorageCleaner {
             try {
                 Statement statement = connection.createStatement();
                 try {
-                    statement.execute("drop database `" + dataSource.getDatabaseName() + "`;"); //$NON-NLS-1$ //$NON-NLS-2$
+                    statement.execute("drop database `" + ValidateUtil.matchCommonRegex(dataSource.getDatabaseName()) + "`;"); //$NON-NLS-1$ //$NON-NLS-2$
                 } catch (SQLException e) {
                     // Assumes database is already dropped.
                     LOGGER.warn("Exception occurred during DROP DATABASE statement.", e);

@@ -11,6 +11,7 @@
 
 package com.amalto.core.storage.prepare;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -48,7 +49,7 @@ class PostgresStorageCleaner implements StorageCleaner {
             try {
                 Statement statement = connection.createStatement();
                 try {
-                    statement.execute("DROP DATABASE " + dataSource.getDatabaseName() + ";");  //$NON-NLS-1$ //$NON-NLS-2$
+                    statement.execute("DROP DATABASE " + ValidateUtil.matchCommonRegex(dataSource.getDatabaseName()) + ";"); //$NON-NLS-1$ //$NON-NLS-2$
                 } catch (SQLException e) {
                     // Assumes database is already dropped.
                     LOGGER.warn("Exception occurred during DROP DATABASE statement.", e);

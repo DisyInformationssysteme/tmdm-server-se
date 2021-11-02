@@ -11,6 +11,7 @@
 
 package com.amalto.core.storage.prepare;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.datasource.DataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
@@ -45,7 +46,7 @@ class OracleStorageCleaner implements StorageCleaner {
             try {
                 Statement statement = connection.createStatement();
                 try {
-                    statement.execute("drop user " + dataSource.getUserName() + " cascade");  //$NON-NLS-1$ //$NON-NLS-2$
+                    statement.execute("drop user " + ValidateUtil.matchCommonRegex(dataSource.getUserName()) + " cascade"); //$NON-NLS-1$ //$NON-NLS-2$
                 } catch (SQLException e) {
                     // Assumes database is already dropped.
                     LOGGER.warn("Exception occurred during DROP USER statement.", e);
