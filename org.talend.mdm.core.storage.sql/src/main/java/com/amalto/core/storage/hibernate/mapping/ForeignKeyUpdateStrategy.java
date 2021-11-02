@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSource.DataSourceDialect;
 
@@ -149,7 +150,8 @@ public final class ForeignKeyUpdateStrategy {
             }
             if (isInclude) {
                 try (Statement statement = connection.createStatement()) {
-                    statement.executeUpdate("ALTER TABLE " + entry.getValue() + " DROP CONSTRAINT " + entry.getKey()); //$NON-NLS-1$
+                    statement.executeUpdate("ALTER TABLE " + ValidateUtil.matchCommonRegex(entry.getValue()) + " DROP CONSTRAINT " //$NON-NLS-1$
+                            + ValidateUtil.matchCommonRegex(entry.getKey()));
                     if (LOGGER.isInfoEnabled()) {
                         LOGGER.info("Execute Drop Constraint Statement: ALTER TABLE " + entry.getValue() + " DROP CONSTRAINT "
                                 + entry.getKey());

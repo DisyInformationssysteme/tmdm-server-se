@@ -11,6 +11,7 @@
 
 package com.amalto.core.storage.prepare;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -56,7 +57,7 @@ class DB2StorageInitializer implements StorageInitializer {
                 if (connection != null) {
                     Statement statement = connection.createStatement();
                     try {
-                        statement.execute("CREATE DATABASE " + dataSource.getDatabaseName() + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+                        statement.execute("CREATE DATABASE " + ValidateUtil.matchCommonRegex(dataSource.getDatabaseName()) + ";"); //$NON-NLS-1$ //$NON-NLS-2$
                     } catch (SQLException e) {
                         // Assumes database is already created.
                         LOGGER.warn("Exception occurred during CREATE DATABASE statement.", e);
