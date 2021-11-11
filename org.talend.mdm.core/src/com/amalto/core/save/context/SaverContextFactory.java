@@ -83,8 +83,12 @@ public class SaverContextFactory {
         factory.setIgnoringComments(true);
         factory.setValidating(false);
         factory.setExpandEntityReferences(false);
+        factory.setXIncludeAware(false);
         try {
             factory.setFeature(MDMXMLUtils.FEATURE_DISALLOW_DOCTYPE, true);
+            factory.setFeature(MDMXMLUtils.FEATURE_EXTERNAL_GENERAL_ENTITIES, false);
+            factory.setFeature(MDMXMLUtils.FEATURE_EXTERNAL_PARAM_ENTITIES, false);
+            factory.setFeature(MDMXMLUtils.FEATURE_LOAD_EXTERNAL, false);
             factory.setFeature(MDMXMLUtils.FEATURE_DEFER_NODE_EXPANSION, false);
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
             DOCUMENT_BUILDER = factory.newDocumentBuilder();

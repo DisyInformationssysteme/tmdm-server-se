@@ -442,6 +442,7 @@ public abstract class Util {
         try {
             // initialize the sax parser which uses Xerces
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature(MDMXMLUtils.FEATURE_DISALLOW_DOCTYPE, true);
             // Schema validation based on schemaURL
             factory.setNamespaceAware(true);
             factory.setExpandEntityReferences(false);

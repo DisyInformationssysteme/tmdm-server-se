@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -79,6 +80,11 @@ public final class XMLUtils {
 
         //initialize the sax parser which uses Xerces
     	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setExpandEntityReferences(false);
+        factory.setXIncludeAware(false);
     	//Schema validation based on schemaURL
     	factory.setNamespaceAware(true);
     	factory.setValidating((schema!=null));
@@ -373,6 +379,12 @@ public final class XMLUtils {
     }
 
     public static Transformer generateTransformer() throws TransformerConfigurationException {
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return transformerFactory.newTransformer();
     }
 
