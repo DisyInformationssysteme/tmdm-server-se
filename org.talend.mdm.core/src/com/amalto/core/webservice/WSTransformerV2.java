@@ -15,14 +15,26 @@ import javax.xml.bind.annotation.XmlType;
 public class WSTransformerV2 {
     protected java.lang.String name;
     protected java.lang.String description;
+
+    protected java.lang.Boolean withAdminPermissions;
     protected com.amalto.core.webservice.WSTransformerProcessStep[] processSteps;
 
     public WSTransformerV2() {
     }
 
-    public WSTransformerV2(java.lang.String name, java.lang.String description, com.amalto.core.webservice.WSTransformerProcessStep[] processSteps) {
+    public WSTransformerV2(java.lang.String name, java.lang.String description,
+            com.amalto.core.webservice.WSTransformerProcessStep[] processSteps) {
         this.name = name;
         this.description = description;
+        this.withAdminPermissions = false;
+        this.processSteps = processSteps;
+    }
+
+    public WSTransformerV2(java.lang.String name, java.lang.String description, java.lang.Boolean withAdminPermissions,
+            com.amalto.core.webservice.WSTransformerProcessStep[] processSteps) {
+        this.name = name;
+        this.description = description;
+        this.withAdminPermissions = withAdminPermissions;
         this.processSteps = processSteps;
     }
 
@@ -48,5 +60,13 @@ public class WSTransformerV2 {
 
     public void setProcessSteps(com.amalto.core.webservice.WSTransformerProcessStep[] processSteps) {
         this.processSteps = processSteps;
+    }
+
+    public java.lang.Boolean isWithAdminPermissions() {
+        return withAdminPermissions;
+    }
+
+    public void setWithAdminPermissions(java.lang.Boolean withAdminPermissions) {
+        this.withAdminPermissions = withAdminPermissions;
     }
 }
