@@ -61,7 +61,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>commons-codec,commons-lang,commons-httpclient,commons-logging</includeArtifactIds>
+                            <includeArtifactIds>commons-codec,commons-lang,httpclient,httpcore,commons-logging</includeArtifactIds>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
@@ -132,10 +132,6 @@
             <version>1.13</version>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
@@ -143,7 +139,10 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
         <!-- TEST DEPENDENCIES -->
         <dependency>
             <groupId>junit</groupId>
