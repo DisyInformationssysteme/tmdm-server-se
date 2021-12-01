@@ -53,7 +53,7 @@ class SQLServerStorageInitializer implements StorageInitializer {
             RDBMSDataSource dataSource = getDataSource(storage);
             Class.forName(dataSource.getDriverClassName());
             Connection connection = DriverManager.getConnection(dataSource.getInitConnectionURL(), dataSource.getInitUserName(), dataSource.getInitPassword());
-            String dataSourceName = ValidateUtil.matchCommonRegex(dataSource.getName());
+            String dataSourceName = ValidateUtil.matchCommonRegex(dataSource.getDatabaseName());
             try {
                 Statement statement = connection.createStatement();
                 try {
