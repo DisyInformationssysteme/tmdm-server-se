@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.spi.Mapping;
@@ -103,7 +104,9 @@ public class MDMDenormalizedTable extends DenormalizedTable {
             } else if (MDMTableUtils.isAlterColumnField(column, columnInfo, dialect)) {
                 StringBuilder alter = new StringBuilder(root.toString());
 
-                if (dialect instanceof SQLServerDialect || dialect instanceof PostgreSQLDialect) {
+                if (dialect instanceof H2Dialect
+                        || dialect instanceof SQLServerDialect
+                        || dialect instanceof PostgreSQLDialect) {
                     alter.append(" ").append("alter COLUMN").append(" ");
                 } else {
                     alter.append(" ").append("modify").append(" ");
