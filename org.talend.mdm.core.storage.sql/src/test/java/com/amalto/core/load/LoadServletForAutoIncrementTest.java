@@ -19,13 +19,16 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -523,9 +526,9 @@ public class LoadServletForAutoIncrementTest {
 
     @Test
     public void test_08_BulkLoadForMultipleLayer() throws Exception {
-        String dataClusterName = "Person";
-        String typeName = "Person";
-        String dataModelName = "Person";
+        String dataClusterName = "MyPerson";
+        String typeName = "MyPerson";
+        String dataModelName = "MyPerson";
         boolean needAutoGenPK = false;
         boolean insertOnly = false;
 
@@ -538,7 +541,7 @@ public class LoadServletForAutoIncrementTest {
 
         DataRecord.CheckExistence.set(!insertOnly);
         InputStream recordXml = new ByteArrayInputStream(
-                ("<Person><Id>1</Id><Name>John</Name><Habit><Content>Study</Content><Detail><Name>Play game</Name><Description>I want to play basketball</Description></Detail></Habit></Person>")
+                ("<MyPerson><Id>1</Id><Name>John</Name><Habit><Content>Study</Content><Detail><Name>Play game</Name><Description>I want to play basketball</Description></Detail></Habit></MyPerson>")
                         .getBytes(StandardCharsets.UTF_8));
 
         Method getTypeKeyMethod = LOAD_SERVLET.getClass().getDeclaredMethod("getTypeKey", Collection.class);
@@ -581,7 +584,7 @@ public class LoadServletForAutoIncrementTest {
         String confResult = server.getDocumentAsString("CONF", "CONF.AutoIncrement.AutoIncrement");
         assertNotNull(confResult);
         Document xml = DocumentHelper.parseText(confResult);
-        assertKeyValue("Person.Person.Habit.Detail.Count", "1", xml);
+        assertKeyValue("MyPerson.MyPerson.Habit.Detail.Count", "1", xml);
     }
 
     @Test
@@ -723,7 +726,13 @@ public class LoadServletForAutoIncrementTest {
 
     private void assertKeyValue(String key, String value, Document document) {
         Element autoIncrementElement = document.getRootElement().element("p").element("AutoIncrement");
-        List<DefaultElement> list = autoIncrementElement.elements();
+        List<DefaultElement> list = new ArrayList<>();
+        for (Iterator<Element>  it = autoIncrementElement.elements().iterator(); it.hasNext();) {
+            Element e = it.next();
+            if (e instanceof DefaultElement) {
+                list.add((DefaultElement)e);
+            }
+        }
         for (DefaultElement element : list) {
             if (element.element("key") != null && element.element("key").getText().equals(key)) {
                 assertEquals(value, element.element("value").getText());
@@ -734,7 +743,13 @@ public class LoadServletForAutoIncrementTest {
 
     private void assertNotKeyValue(String key, Document document) {
         Element autoIncrementElement = document.getRootElement().element("p").element("AutoIncrement");
-        List<DefaultElement> list = autoIncrementElement.elements();
+        List<DefaultElement> list = new ArrayList<>();
+        for (Iterator<Element>  it = autoIncrementElement.elements().iterator(); it.hasNext();) {
+            Element e = it.next();
+            if (e instanceof DefaultElement) {
+                list.add((DefaultElement)e);
+            }
+        }
         for (DefaultElement element : list) {
             if (element.element("key") != null && element.element("key").getText().equals(key)) {
                 fail("System AutoIncrement value should not contains path: '" + key + " value");

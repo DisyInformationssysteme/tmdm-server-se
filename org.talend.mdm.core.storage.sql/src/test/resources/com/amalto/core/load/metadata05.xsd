@@ -1,5 +1,5 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <xsd:element name="Person">
+    <xsd:element name="MyPerson">
         <xsd:complexType>
             <xsd:all>
                 <xsd:element maxOccurs="1" minOccurs="1" name="Id" type="xsd:string"/>
@@ -7,7 +7,7 @@
                 <xsd:element maxOccurs="1" minOccurs="0" name="Habit" type="Habit"/>
             </xsd:all>
         </xsd:complexType>
-        <xsd:unique name="Person">
+        <xsd:unique name="MyPerson">
             <xsd:selector xpath="."/>
             <xsd:field xpath="Id"/>
         </xsd:unique>
