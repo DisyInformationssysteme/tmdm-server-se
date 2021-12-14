@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.amalto.core.util.XmlUtil;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -96,12 +96,12 @@ public class WhereCondition implements IWhereItem, Serializable {
 
     public static WhereCondition deserialize(String xml) throws XmlServerException {
         try {
-            Document d = XmlUtil.parse(xml);
-            return new WhereCondition(XmlUtil.getFirstTextNode(d.getDocumentElement(), "./leftpath"),
-                    XmlUtil.getFirstTextNode(d.getDocumentElement(), "./operator"),
-                    XmlUtil.getFirstTextNode(d.getDocumentElement(), "./rightvalueorpath"),
-                    XmlUtil.getFirstTextNode(d.getDocumentElement(), "./stringpredicate"),
-                    "yes".equals(XmlUtil.getFirstTextNode(d.getDocumentElement(), "./spellcheck")));
+            Document d = MDMXMLUtils.parse(xml);
+            return new WhereCondition(MDMXMLUtils.getFirstTextNode(d.getDocumentElement(), "./leftpath"),
+                    MDMXMLUtils.getFirstTextNode(d.getDocumentElement(), "./operator"),
+                    MDMXMLUtils.getFirstTextNode(d.getDocumentElement(), "./rightvalueorpath"),
+                    MDMXMLUtils.getFirstTextNode(d.getDocumentElement(), "./stringpredicate"),
+                    "yes".equals(MDMXMLUtils.getFirstTextNode(d.getDocumentElement(), "./spellcheck")));
         } catch (Exception e) {
             throw new XmlServerException(e);
         }

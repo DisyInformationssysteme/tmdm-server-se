@@ -11,6 +11,7 @@
 package com.amalto.webapp.core.util;
 
 import org.junit.Test;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 
 import static org.junit.Assert.*;
 
@@ -19,17 +20,17 @@ public class XmlUtilTest {
 
     @Test
     public void escapeXml() {
-        assertEquals(null, XmlUtil.escapeXml(null));
-        assertEquals("fn:concat(&quot;a&b&quot;, &quot;s&quot;)", XmlUtil.escapeXml("fn:concat(&quot;a&b&quot;, &quot;s&quot;)"));
+        assertEquals(null, MDMXMLUtils.escapeXml(null));
+        assertEquals("fn:concat(&quot;a&b&quot;, &quot;s&quot;)", MDMXMLUtils.escapeXml("fn:concat(&quot;a&b&quot;, &quot;s&quot;)"));
         assertEquals("fn:concat(&quot;a&amp;b&quot;, &quot;s&quot;)",
-                XmlUtil.escapeXml("fn:concat(&quot;a&amp;b&quot;, &quot;s&quot;)"));
-        assertEquals("fn:concat(&quot;a&amp;b&quot;, &quot;s&quot;)", XmlUtil.escapeXml("fn:concat(\"a&b\", \"s\")"));
+                MDMXMLUtils.escapeXml("fn:concat(&quot;a&amp;b&quot;, &quot;s&quot;)"));
+        assertEquals("fn:concat(&quot;a&amp;b&quot;, &quot;s&quot;)", MDMXMLUtils.escapeXml("fn:concat(\"a&b\", \"s\")"));
     }
 
     @Test
     public void unescapeXML() {
-        assertEquals(null, XmlUtil.unescapeXml(null));
-        assertEquals("fn:concat(\"a&b\", \"s\")", XmlUtil.unescapeXml("fn:concat(&quot;a&b&quot;, &quot;s&quot;)"));
-        assertEquals("fn:concat(\"a&b\", \"s\")", XmlUtil.unescapeXml("fn:concat(&quot;a&amp;b&quot;, &quot;s&quot;)"));
+        assertEquals(null, MDMXMLUtils.unescapeXml(null));
+        assertEquals("fn:concat(\"a&b\", \"s\")", MDMXMLUtils.unescapeXml("fn:concat(&quot;a&b&quot;, &quot;s&quot;)"));
+        assertEquals("fn:concat(\"a&b\", \"s\")", MDMXMLUtils.unescapeXml("fn:concat(&quot;a&amp;b&quot;, &quot;s&quot;)"));
     }
 }

@@ -104,7 +104,6 @@ import com.amalto.core.webservice.WSViewSearch;
 import com.amalto.core.webservice.WSWhereCondition;
 import com.amalto.core.webservice.XtentisPort;
 import com.amalto.webapp.core.bean.Configuration;
-import com.amalto.webapp.core.util.XmlUtil;
 import com.extjs.gxt.ui.client.data.ModelData;
 
 import junit.framework.TestCase;
@@ -1034,8 +1033,7 @@ public class BrowseRecordsActionTest extends TestCase {
             Document doc = org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getSubXML(typeModel, null, initDataMap,
                     language);
 
-            org.dom4j.Document doc4j = XmlUtil.parseDocument(doc);
-
+            org.dom4j.Document doc4j = (doc != null) ? new org.dom4j.io.DOMReader().read(doc) : null;
             ruleEngine.execDefaultValueRule(doc4j);
 
             if (initDataMap != null) {

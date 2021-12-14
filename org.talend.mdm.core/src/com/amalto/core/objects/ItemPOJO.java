@@ -20,8 +20,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.talend.mdm.commmon.util.core.ICoreConstants;
 import org.talend.mdm.commmon.util.core.MDMConfiguration;
 import org.talend.mdm.commmon.util.webapp.XObjectType;
@@ -438,7 +438,7 @@ public class ItemPOJO implements Serializable {
                         }
 
                         if (projection != null)
-                            Util.validate(itemPOJO.getProjection(), dataModelPOJO.getSchema());
+                            Util.validateSchema(itemPOJO.getProjection(), dataModelPOJO.getSchema());
                     }
                 }
             }

@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
@@ -65,7 +65,6 @@ import com.amalto.core.webservice.WSXPathsSearch;
 import com.amalto.webapp.core.dmagent.SchemaAbstractWebAgent;
 import com.amalto.webapp.core.dmagent.SchemaWebAgent;
 import com.amalto.webapp.core.util.Util;
-import com.amalto.webapp.core.util.XmlUtil;
 import com.amalto.xmlserver.interfaces.WhereCondition;
 import com.extjs.gxt.ui.client.Style.SortDir;
 
@@ -704,7 +703,12 @@ public class ForeignKeyHelper {
         } else {
             if (xml != null) {
                 // get context for expression
-                org.dom4j.Document doc = XmlUtil.parseDocument(Util.parse(xml));
+                org.dom4j.Document doc = null;
+                org.w3c.dom.Document rawDoc = Util.parse(xml);
+                if (rawDoc != null) {
+                    org.dom4j.io.DOMReader xmlReader = new org.dom4j.io.DOMReader();
+                    doc = xmlReader.read(rawDoc);
+                }
                 org.dom4j.Node currentNode = doc.selectSingleNode(currentXpath);
                 org.dom4j.Node targetNode = null;
                 if (org.talend.mdm.webapp.base.shared.util.CommonUtil.isRelativePath(rightValueOrPath)) {

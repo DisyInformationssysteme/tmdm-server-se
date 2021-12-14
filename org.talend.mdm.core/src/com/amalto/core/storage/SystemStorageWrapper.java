@@ -35,6 +35,7 @@ import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.MetadataVisitor;
 import org.talend.mdm.commmon.metadata.TypeMetadata;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.commmon.util.webapp.XSystemObjects;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -339,7 +340,7 @@ public class SystemStorageWrapper extends StorageWrapper {
             throws XmlServerException {
         try {
             InputSource source = new InputSource(new StringReader(xmlString));
-            Document document = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse(source);
+            Document document = MDMXMLUtils.getDocumentBuilderWithNamespace().get().parse(source);
             return putDocumentFromDOM(document.getDocumentElement(), uniqueID, clusterName);
         } catch (Exception e) {
             throw new XmlServerException(e);

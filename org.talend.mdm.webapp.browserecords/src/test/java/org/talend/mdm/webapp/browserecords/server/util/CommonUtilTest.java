@@ -16,16 +16,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Node;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -50,10 +46,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import com.amalto.core.util.LocalUser;
 import com.amalto.core.util.Util;
-import com.amalto.webapp.core.util.XmlUtil;
-import com.google.gwt.user.client.rpc.core.java.util.Collections;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 @PrepareForTest({ Util.class })
 @SuppressWarnings("nls")
@@ -118,7 +114,7 @@ public class CommonUtilTest extends TestCase {
         DisplayRuleEngine ruleEngine = new DisplayRuleEngine(metaDataTypes, "Eda"); //$NON-NLS-1
         org.dom4j.Document doc4j = null;
         try {
-            doc4j = XmlUtil.parseDocument(doc);
+            doc4j = (doc != null) ? new org.dom4j.io.DOMReader().read(doc) : null;
         } catch (Exception e) {
             LOG.debug("assert no exception, please check XmlUtil.parseDocument(Document)", e); //$NON-NLS-1
         }
@@ -314,8 +310,7 @@ public class CommonUtilTest extends TestCase {
         assertNotNull(rootModel);
         Document doc = CommonUtil.getSubXML(rootModel, null, null, language);
         assertNotNull(doc);
-
-        org.dom4j.Document doc4j = XmlUtil.parseDocument(doc);
+        org.dom4j.Document doc4j = (doc != null) ? new org.dom4j.io.DOMReader().read(doc) : null;
         assertNotNull(doc4j);
         String expectedXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 + "<e xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><id/><b xsi:type=\"a2\"><subelement/></b></e>";

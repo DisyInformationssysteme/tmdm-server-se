@@ -19,8 +19,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.webapp.base.client.exception.ServiceException;
 import org.talend.mdm.webapp.base.shared.Constants;
@@ -33,7 +33,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.delegator.ILocalUser;
 import com.amalto.core.util.LocalUser;
 import com.amalto.core.util.Menu;
@@ -322,16 +321,16 @@ public class Utils {
     }
 
     public static String setLanguage(String xml, String language) throws Exception {
-        Document doc = XMLUtils.parse(xml);
+        Document doc = MDMXMLUtils.parseXml(xml);
         if (doc.hasChildNodes()) {
             if (doc.getElementsByTagName("language").item(0) != null) { //$NON-NLS-1$
                 doc.getElementsByTagName("language").item(0).setTextContent(language); //$NON-NLS-1$
-                return XMLUtils.nodeToString(doc);
+                return MDMXMLUtils.nodeToString(doc);
             } else {
                 Element node = doc.createElement("language"); //$NON-NLS-1$
                 node.setTextContent(language);
                 doc.getDocumentElement().appendChild(node);
-                return XMLUtils.nodeToString(doc);
+                return MDMXMLUtils.nodeToString(doc);
             }
         }
         return xml;
