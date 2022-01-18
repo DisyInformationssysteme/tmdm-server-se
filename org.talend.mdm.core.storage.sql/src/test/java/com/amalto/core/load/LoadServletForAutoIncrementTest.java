@@ -726,14 +726,14 @@ public class LoadServletForAutoIncrementTest {
 
     private void assertKeyValue(String key, String value, Document document) {
         Element autoIncrementElement = document.getRootElement().element("p").element("AutoIncrement");
-        List<DefaultElement> list = new ArrayList<>();
+        List<Element> list = new ArrayList<>();
         for (Iterator<Element>  it = autoIncrementElement.elements().iterator(); it.hasNext();) {
             Element e = it.next();
-            if (e instanceof DefaultElement) {
-                list.add((DefaultElement)e);
+            if (e instanceof Element) {
+                list.add((Element) e);
             }
         }
-        for (DefaultElement element : list) {
+        for (Element element : list) {
             if (element.element("key") != null && element.element("key").getText().equals(key)) {
                 assertEquals(value, element.element("value").getText());
                 return;
@@ -743,14 +743,14 @@ public class LoadServletForAutoIncrementTest {
 
     private void assertNotKeyValue(String key, Document document) {
         Element autoIncrementElement = document.getRootElement().element("p").element("AutoIncrement");
-        List<DefaultElement> list = new ArrayList<>();
+        List<Element> list = new ArrayList<>();
         for (Iterator<Element>  it = autoIncrementElement.elements().iterator(); it.hasNext();) {
             Element e = it.next();
-            if (e instanceof DefaultElement) {
-                list.add((DefaultElement)e);
+            if (e instanceof Element) {
+                list.add((Element) e);
             }
         }
-        for (DefaultElement element : list) {
+        for (Element element : list) {
             if (element.element("key") != null && element.element("key").getText().equals(key)) {
                 fail("System AutoIncrement value should not contains path: '" + key + " value");
             }
