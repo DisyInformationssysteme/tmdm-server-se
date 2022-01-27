@@ -36,6 +36,7 @@ import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Constraint;
+import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
 import org.hibernate.tool.hbm2ddl.ColumnMetadata;
@@ -296,6 +297,18 @@ public class MDMTable extends Table {
             }
         }
         return results.iterator();
+    }
+
+    @Override
+    public Index getOrCreateIndex(String indexName) {
+        Index index = getIndex(indexName);
+        if (index == null) {
+            index = new MDMIndex();
+            index.setName(indexName);
+            index.setTable(this);
+            addIndex(index);
+        }
+        return index;
     }
 
     private String generateUK(Dialect dialect, Column col) {

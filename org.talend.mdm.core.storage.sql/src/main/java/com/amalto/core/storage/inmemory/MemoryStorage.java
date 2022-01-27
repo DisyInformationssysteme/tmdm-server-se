@@ -13,12 +13,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.h2.engine.Database;
 import org.h2.engine.Session;
+import org.h2.engine.SessionLocal;
 import org.h2.jdbc.JdbcConnection;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 
 import com.amalto.core.query.user.Expression;
@@ -57,10 +57,14 @@ public class MemoryStorage extends HibernateStorage {
                     dataSource.getPassword());
             JdbcConnection h2Connection = (JdbcConnection) connection;
             Session h2Session = (Session) h2Connection.getSession();
-            Database h2Database = h2Session.getDatabase();
-            h2Database.shutdownImmediately();
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("In-memory h2 db '" + h2Database.getName() + "' has been shutted down.");
+            if (h2Session instanceof SessionLocal) {
+                SessionLocal sessionLocal = (SessionLocal)h2Session;
+                Database h2Database = sessionLocal.getDatabase();
+                LOGGER.info("In-memory h2 db '" + h2Database.getName() + "' will be closed.");
+                h2Database.shutdownImmediately();
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("In-memory h2 db '" + h2Database.getName() + "' has been shutted down.");
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

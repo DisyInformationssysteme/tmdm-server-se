@@ -836,7 +836,7 @@ public class StorageAdaptTest extends TestCase {
         }
 
         try {
-            assertColumnLengthChange(dataSource, "MyStr", "X_MYSTR", 2147483647);
+            assertColumnLengthChange(dataSource, "MyStr", "X_MYSTR", 1048576);
         } catch (SQLException e) {
             assertNull(e);
         }
