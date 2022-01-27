@@ -101,6 +101,27 @@ class ManyFieldProjection extends SimpleProjection {
                 break;
             // Following databases support group_concat function
             case H2:
+                sqlFragment.append("(select group_concat(") //$NON-NLS-1$
+                .append(collectionTable)
+                .append(".\"value\" separator ',') FROM ").append(containerTable).toString(); //$NON-NLS-1$
+                for (FieldMetadata currentKey : containingType.getKeyFields()) {
+                    String keyName = resolver.get(currentKey);
+                    sqlFragment.append(" INNER JOIN ") //$NON-NLS-1$
+                            .append(collectionTable)
+                            .append(" on ") //$NON-NLS-1$
+                            .append(containerTable).append('.').append(keyName)
+                            .append(" = ") //$NON-NLS-1$
+                            .append(collectionTable).append('.').append(keyName);
+                }
+                sqlFragment.append(" WHERE ") //$NON-NLS-1$
+                        .append(containerTable)
+                        .append('.')
+                        .append(containerIdColumn)
+                        .append(" = ") //$NON-NLS-1$
+                        .append(criteriaQuery.getSQLAlias(subCriteria))
+                        .append('.')
+                        .append(containerIdColumn).append(")"); //$NON-NLS-1$
+                break;
             case MYSQL:
                 sqlFragment.append("(select group_concat(") //$NON-NLS-1$
                         .append(collectionTable)

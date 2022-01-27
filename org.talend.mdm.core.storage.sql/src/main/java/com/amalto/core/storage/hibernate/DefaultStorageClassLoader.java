@@ -189,6 +189,11 @@ public class DefaultStorageClassLoader extends StorageClassLoader {
             connectionPoolMaxSize = RDBMSDataSourceBuilder.CONNECTION_POOL_MAX_SIZE_DEFAULT;
         }
 
+        if (dataSource.getDialectName() == RDBMSDataSource.DataSourceDialect.H2) {
+            // H2 2.0 change Table Type from "TABLE" TO "BASE TABLE", but in hibernate the default type still is
+            // "TABLE" as filter tables, so need to add below property to map it.
+            setPropertyValue(document, "hibernate.hbm2ddl.extra_physical_table_types", "BASE TABLE"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         setPropertyValue(document, "hibernate.connection.url", connectionUrl); //$NON-NLS-1$
         setPropertyValue(document, "hibernate.connection.username", userName); //$NON-NLS-1$
         setPropertyValue(document, "hibernate.connection.driver_class", driverClass); //$NON-NLS-1$
