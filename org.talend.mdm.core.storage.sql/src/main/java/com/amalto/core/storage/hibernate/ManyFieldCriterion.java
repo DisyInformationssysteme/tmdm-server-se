@@ -103,7 +103,11 @@ class ManyFieldCriterion extends SQLCriterion {
                 // (referenced field name).
                 columnName = field.getName() + '_' + ((ReferenceFieldMetadata) field).getReferencedField().getName();
             } else {
-                columnName = "value"; //$NON-NLS-1$
+                if (dataSource.getDialectName() == RDBMSDataSource.DataSourceDialect.H2) {
+                    columnName = "\"value\""; //$NON-NLS-1$
+                } else {
+                    columnName = "value"; //$NON-NLS-1$
+                }
             }
             builder.append("(SELECT COUNT(1) FROM ") //$NON-NLS-1$
                     .append(containingType).append(" INNER JOIN ") //$NON-NLS-1$
