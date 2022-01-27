@@ -107,7 +107,9 @@ class ManyFieldProjection extends SimpleProjection {
 
               @Override
               protected String getSelectFragment(String containerTable, String collectionTable) {
-                  return INNER_MYSQL.getSelectFragment(containerTable, collectionTable);
+                  return new StringBuilder().append("(SELECT group_concat(") //$NON-NLS-1$
+                          .append(collectionTable)
+                          .append(".\"value\" separator ',') FROM ").append(containerTable).toString(); //$NON-NLS-1$
               }
           },
 

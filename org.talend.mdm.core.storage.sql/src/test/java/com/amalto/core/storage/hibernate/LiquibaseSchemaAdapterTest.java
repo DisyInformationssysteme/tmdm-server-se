@@ -122,13 +122,16 @@ public class LiquibaseSchemaAdapterTest {
         assertEquals("integer", adapter.getColumnTypeName(allType.getField("integerField")));
         assertEquals("float", adapter.getColumnTypeName(allType.getField("floatField")));
         assertEquals("double", adapter.getColumnTypeName(allType.getField("doubleField")));
-        assertEquals("decimal(19,2)", adapter.getColumnTypeName(allType.getField("decimalField")));
+        //Decimal floating point number. This data type is not recommended to
+        //represent currency values, because of variable scale.
+        //Numeric is recommended for decimal digits of precision and scale
+        assertEquals("numeric(19,2)", adapter.getColumnTypeName(allType.getField("decimalField")));
         assertEquals("timestamp", adapter.getColumnTypeName(allType.getField("dateField")));
         assertEquals("timestamp", adapter.getColumnTypeName(allType.getField("datetimeField")));
         assertEquals("timestamp", adapter.getColumnTypeName(allType.getField("timeField")));
         assertEquals("varchar(50)", adapter.getColumnTypeName(allType.getField("my_def_str")));
         assertEquals("varchar(50)", adapter.getColumnTypeName(allType.getField("my_def_str_son")));
-        assertEquals("decimal(5,2)", adapter.getColumnTypeName(allType.getField("my_def_decimal")));
+        assertEquals("numeric(5,2)", adapter.getColumnTypeName(allType.getField("my_def_decimal")));
         assertEquals("varchar(255)", adapter.getColumnTypeName(person.getField("status")));
         assertEquals("varchar(255)", adapter.getColumnTypeName(person.getField("boy")));
     }

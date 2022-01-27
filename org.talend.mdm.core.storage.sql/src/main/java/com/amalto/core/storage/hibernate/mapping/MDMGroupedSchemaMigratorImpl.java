@@ -21,17 +21,22 @@ import org.hibernate.boot.model.relational.Namespace;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.internal.Formatter;
 import org.hibernate.internal.CoreMessageLogger;
+import org.hibernate.internal.util.StringHelper;
 import org.hibernate.mapping.Column;
+import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.schema.extract.spi.DatabaseInformation;
+import org.hibernate.tool.schema.extract.spi.IndexInformation;
 import org.hibernate.tool.schema.extract.spi.NameSpaceTablesInformation;
 import org.hibernate.tool.schema.extract.spi.TableInformation;
 import org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl;
 import org.hibernate.tool.schema.internal.exec.GenerationTarget;
 import org.hibernate.tool.schema.spi.ExecutionOptions;
+import org.hibernate.tool.schema.spi.Exporter;
 import org.hibernate.tool.schema.spi.SchemaFilter;
 import org.jboss.logging.Logger;
 
+import com.amalto.core.storage.hibernate.H2CustomDialect;
 import com.amalto.core.storage.hibernate.MDMHibernateSchemaManagementTool;
 
 /**
@@ -111,6 +116,68 @@ public class MDMGroupedSchemaMigratorImpl extends GroupedSchemaMigratorImpl {
         }
         LOGGER.schemaUpdateComplete();
         return tablesInformation;
+    }
+
+    @Override
+    protected void applyIndexes(
+            Table table,
+            TableInformation tableInformation,
+            Dialect dialect,
+            Metadata metadata,
+            Formatter formatter,
+            ExecutionOptions options,
+            GenerationTarget... targets) {
+        final Exporter<Index> exporter = dialect.getIndexExporter();
+
+        final Iterator<Index> indexItr = table.getIndexIterator();
+        while (indexItr.hasNext()) {
+            final Index index = indexItr.next();
+            if (!StringHelper.isEmpty(index.getName())) {
+                IndexInformation existingIndex = null;
+                if (tableInformation != null) {
+                    existingIndex = findMatchingIndex(index, tableInformation);
+                }
+                if (existingIndex == null) {
+                    applySqlStrings(
+                            false,
+                            evaluateIndexSql(dialect, exporter.getSqlCreateStrings(index, metadata)),
+                            formatter,
+                            options,
+                            targets
+                    );
+                }
+            }
+        }
+    }
+
+    private IndexInformation findMatchingIndex(Index index, TableInformation tableInformation) {
+        return tableInformation.getIndex(Identifier.toIdentifier(index.getName()));
+    }
+
+    /**
+     * CREATE is a generic SQL command used to create INDEX, and Users in H2 Database server. statement
+     * <b>sqlStrings</b> include all create indexes command used to create a user-defined index in the current table of
+     * database. below method will iterate over array sqlStrings, and replace each of create index statement into
+     * <code>"CREATE INDEX IF NOT EXISTS ..."</code> to avoid execution error.
+     * <p>
+     * Implementation just affect H2 v2.0 or above, method {@link #findMatchingIndex(Index, TableInformation)} to check
+     * if match index, unexpected results in class
+     * {@link InformationExtractorJdbcDatabaseMetaDataImpl#getIndexes(TableInformation)} due to the change of H2 v2
+     * System table, that don't adapt to hibernate criteria. so as a workaround, I add <code>IF NOT EXISTS </code> to
+     * avoid the execution interruption.
+     * 
+     * @param dialect: current db dialect
+     * @param sqlStrings: array: all create index statement
+     * @return create index statement
+     */
+    private String[] evaluateIndexSql(Dialect dialect, String[] sqlStrings) {
+        if (!H2CustomDialect.class.getName().equals(dialect.getClass().getName())) {
+            return sqlStrings;
+        }
+        for (int i = 0; i < sqlStrings.length; i++) {
+            sqlStrings[i] = sqlStrings[i].replace("create index", "CREATE INDEX IF NOT EXISTS ");
+        }
+        return sqlStrings;
     }
 
     @Override

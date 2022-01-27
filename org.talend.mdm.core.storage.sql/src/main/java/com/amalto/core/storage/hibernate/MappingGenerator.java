@@ -658,7 +658,11 @@ public class MappingGenerator extends DefaultMetadataVisitor<Element> {
                 Element element = document.createElement("element"); //$NON-NLS-1$
                 Element columnElement = document.createElement("column"); //$NON-NLS-1$
                 Attr columnNameAttr = document.createAttribute("name"); //$NON-NLS-1$
-                columnNameAttr.setValue("value"); //$NON-NLS-1$
+                if (dataSource.getDialectName() == RDBMSDataSource.DataSourceDialect.H2) {
+                    columnNameAttr.setValue("`value`"); //$NON-NLS-1$
+                } else {
+                    columnNameAttr.setValue("value"); //$NON-NLS-1$
+                }
 
                 // default value
                 addDefaultValueAttribute(field, columnElement);
