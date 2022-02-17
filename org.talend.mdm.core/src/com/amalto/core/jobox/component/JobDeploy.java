@@ -99,7 +99,7 @@ public class JobDeploy {
      */
     public void undeploy(String jobEntityName) {
         try {
-            JoboxUtil.deleteFolder(workDir + File.separator + jobEntityName);
+            JoboxUtil.deleteFolder(workDir + File.separator + JoboxUtil.trimExtension(jobEntityName));
             LOGGER.info("Job " + jobEntityName + " has been undeployed successfully! ");//$NON-NLS-1$//$NON-NLS-2$
         } catch (Exception e) {
             throw new JoboxException(e);

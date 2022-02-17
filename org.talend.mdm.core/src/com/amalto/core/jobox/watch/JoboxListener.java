@@ -22,7 +22,9 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.jar.*;
 import java.util.zip.ZipException;
 
@@ -115,6 +117,7 @@ public class JoboxListener implements DirListener {
         int separateMark = jobFile.lastIndexOf(File.separatorChar);
         if (dotMark != -1) {
             sourcePath = System.getProperty("java.io.tmpdir") + File.separatorChar + jobFile.substring(separateMark, dotMark); //$NON-NLS-1$
+            recursiveDeleteFile(sourcePath);
         }
         try {
             JoboxUtil.extract(jobFile, System.getProperty("java.io.tmpdir") + File.separatorChar); //$NON-NLS-1$
@@ -168,4 +171,25 @@ public class JoboxListener implements DirListener {
             }
         }
     }
+
+    private static boolean recursiveDeleteFile(String fileName) {
+        try {
+            File file = new File(fileName);
+            if (file.exists()) {
+                // check if the file is a directory
+                if (file.isDirectory()) {
+                    // call deletion of file individually
+                    Arrays.stream(Objects.requireNonNull(file.list()))
+                            .map(s -> fileName + System.getProperty("file.separator") + s) //$NON-NLS-1$
+                            .forEachOrdered(JoboxListener::recursiveDeleteFile);
+                }
+                file.setWritable(true);
+                return file.delete();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Delete file failed for " + fileName, e); //$NON-NLS-1$
+        }
+        return false;
+    }
+
 }
