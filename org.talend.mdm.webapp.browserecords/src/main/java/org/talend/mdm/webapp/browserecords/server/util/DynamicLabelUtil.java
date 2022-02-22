@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.webapp.base.shared.TypeModel;
 import org.talend.mdm.webapp.browserecords.client.model.ItemNodeModel;
 import org.talend.mdm.webapp.browserecords.client.util.CommonUtil;
@@ -36,7 +37,6 @@ import com.amalto.core.webservice.WSItem;
 import com.amalto.core.webservice.WSItemPK;
 import com.amalto.webapp.core.bean.Configuration;
 import com.amalto.webapp.core.util.Util;
-import com.amalto.webapp.core.util.XmlUtil;
 import com.sun.xml.xsom.XSAnnotation;
 import com.sun.xml.xsom.XSComplexType;
 import com.sun.xml.xsom.XSElementDecl;
@@ -69,7 +69,7 @@ public class DynamicLabelUtil {
             if (org.talend.mdm.webapp.base.server.util.DynamicLabelUtil.isDynamicLabel(label)) {
                 label = replaceForeignPath(fullxpath, label, parsedDocument);
                 String stylesheet = org.talend.mdm.webapp.base.server.util.DynamicLabelUtil.genStyle(fullxpath,
-                        XmlUtil.escapeXml(label));
+                        MDMXMLUtils.escapeXml(label));
                 String dynamicLB = org.talend.mdm.webapp.base.server.util.DynamicLabelUtil.getParsedLabel(XMLUtils.styleDocument(
                         parsedDocument, stylesheet));
                 // @temp yguo, set the properties to itemmodel

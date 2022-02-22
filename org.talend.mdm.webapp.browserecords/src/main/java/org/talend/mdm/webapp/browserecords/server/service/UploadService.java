@@ -57,7 +57,6 @@ import com.amalto.core.webservice.WSItemPK;
 import com.amalto.core.webservice.WSPutItem;
 import com.amalto.core.webservice.WSPutItemWithReport;
 import com.amalto.webapp.core.util.Util;
-import com.amalto.webapp.core.util.XmlUtil;
 import com.amalto.webapp.core.util.XtentisWebappException;
 
 public class UploadService {
@@ -224,7 +223,7 @@ public class UploadService {
                         rowNumber--;
                         continue;
                     }
-                    document = XmlUtil.parseDocument(org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getSubXML(
+                    document = parseDocument(org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getSubXML(
                             typeModel, null, null, language));
                 }
                 Element currentElement = document.getRootElement();
@@ -311,7 +310,7 @@ public class UploadService {
                         rowNumber--;
                         continue;
                     }
-                    document = XmlUtil.parseDocument(org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getSubXML(
+                    document = parseDocument(org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getSubXML(
                             typeModel, null, null, language));
                 }
                 Element currentElement = document.getRootElement();
@@ -741,7 +740,7 @@ public class UploadService {
 
     private void setFieldValue(Element currentElement, String value) throws Exception {
         if (currentElement.elements() != null && currentElement.elements().size() > 0) {
-            Element complexeElement = XmlUtil.parseDocument(Util.parse(StringEscapeUtils.unescapeXml(value))).getRootElement();
+            Element complexeElement = parseDocument(Util.parse(StringEscapeUtils.unescapeXml(value))).getRootElement();
             List<Element> contentList = currentElement.getParent().elements();
             int index = contentList.indexOf(currentElement);
             contentList.remove(currentElement);
@@ -767,5 +766,13 @@ public class UploadService {
 
     protected String getCurrentDataModel() throws Exception {
         return org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getCurrentDataModel();
+    }
+
+    private static Document parseDocument(org.w3c.dom.Document doc) {
+        if (doc == null) {
+            return (null);
+        }
+        org.dom4j.io.DOMReader xmlReader = new org.dom4j.io.DOMReader();
+        return (xmlReader.read(doc));
     }
 }

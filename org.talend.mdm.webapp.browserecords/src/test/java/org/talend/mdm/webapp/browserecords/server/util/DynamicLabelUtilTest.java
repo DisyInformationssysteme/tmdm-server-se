@@ -28,6 +28,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit3.PowerMockSuite;
 import org.talend.mdm.commmon.util.core.MDMConfiguration;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.commmon.util.datamodel.management.DataModelID;
 import org.talend.mdm.webapp.base.client.model.ForeignKeyBean;
 import org.talend.mdm.webapp.base.server.util.XmlUtil;
@@ -136,7 +137,7 @@ public class DynamicLabelUtilTest extends TestCase {
             // Mock replaceForeignPath
             label = mock_replaceForeignPath(fullxpath, label, parsedDocument);
             String stylesheet = org.talend.mdm.webapp.base.server.util.DynamicLabelUtil.genStyle(fullxpath,
-                    com.amalto.webapp.core.util.XmlUtil.escapeXml(label));
+                    MDMXMLUtils.escapeXml(label));
             String dynamicLB = org.talend.mdm.webapp.base.server.util.DynamicLabelUtil.getParsedLabel(XMLUtils.styleDocument(
                     parsedDocument, stylesheet));
             itemModel.setDynamicLabel(dynamicLB);
