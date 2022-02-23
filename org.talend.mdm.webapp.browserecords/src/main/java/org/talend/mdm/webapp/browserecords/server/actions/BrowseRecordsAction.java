@@ -29,10 +29,9 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import com.amalto.core.util.XtentisException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.DocumentHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -96,7 +95,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.integrity.FKIntegrityCheckResult;
 import com.amalto.core.objects.ItemPOJOPK;
 import com.amalto.core.objects.UpdateReportPOJO;
@@ -118,6 +116,7 @@ import com.amalto.core.util.LocalUser;
 import com.amalto.core.util.LocaleUtil;
 import com.amalto.core.util.Messages;
 import com.amalto.core.util.MessagesFactory;
+import com.amalto.core.util.XtentisException;
 import com.amalto.core.webservice.WSBoolean;
 import com.amalto.core.webservice.WSByteArray;
 import com.amalto.core.webservice.WSConceptKey;
@@ -166,7 +165,6 @@ import com.amalto.webapp.core.dmagent.SchemaWebAgent;
 import com.amalto.webapp.core.util.DataModelAccessor;
 import com.amalto.webapp.core.util.Util;
 import com.amalto.webapp.core.util.Webapp;
-import com.amalto.webapp.core.util.XmlUtil;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.sun.xml.xsom.XSAnnotation;
 import com.sun.xml.xsom.XSComplexType;
@@ -656,7 +654,7 @@ public class BrowseRecordsAction implements BrowseRecordsService {
         DisplayRuleEngine ruleEngine = new DisplayRuleEngine(entityModel.getMetaDataTypes(), concept);
         TypeModel typeModel = entityModel.getMetaDataTypes().get(concept);
         Document doc = org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getSubXML(typeModel, null, null, language);
-        org.dom4j.Document doc4j = XmlUtil.parseDocument(doc);
+        org.dom4j.Document doc4j = parseDocument(doc);
         List<RuleValueItem> list = ruleEngine.execDefaultValueRule(doc4j);
         for (RuleValueItem item : list) {
             String xPath = item.getXpath().replaceAll("\\[\\d+\\]", ""); //$NON-NLS-1$//$NON-NLS-2$
@@ -1324,7 +1322,7 @@ public class BrowseRecordsAction implements BrowseRecordsService {
             isModelUpdated = false;
             ItemNodeModel itemModel = builderNode(multiNodeIndex, root, entity,
                     "", "", true, foreignKeyDeleteMessage, false, isStaging, language); //$NON-NLS-1$ //$NON-NLS-2$
-            DynamicLabelUtil.getDynamicLabel(XmlUtil.parseDocument(doc), "", itemModel, metaDataTypes, language); //$NON-NLS-1$
+            DynamicLabelUtil.getDynamicLabel(parseDocument(doc), "", itemModel, metaDataTypes, language); //$NON-NLS-1$
             itemModel.set("time", item.get("time")); //$NON-NLS-1$ //$NON-NLS-2$
             itemModel.set("foreignKeyDeleteMessage", foreignKeyDeleteMessage.toString()); //$NON-NLS-1$
             if (isModelUpdated) {
@@ -1356,7 +1354,7 @@ public class BrowseRecordsAction implements BrowseRecordsService {
             Document doc = org.talend.mdm.webapp.browserecords.server.util.CommonUtil.getSubXML(typeModel, null, initDataMap,
                     language);
 
-            org.dom4j.Document doc4j = XmlUtil.parseDocument(doc);
+            org.dom4j.Document doc4j = parseDocument(doc);
 
             ruleEngine.execDefaultValueRule(doc4j);
 
@@ -1405,7 +1403,7 @@ public class BrowseRecordsAction implements BrowseRecordsService {
             TypeModel typeModel = metaDataTypes.get(typePath);
             org.dom4j.Document mainDoc = DocumentHelper.parseText(xml);
 
-            org.dom4j.Document subDoc = XmlUtil.parseDocument(org.talend.mdm.webapp.browserecords.server.util.CommonUtil
+            org.dom4j.Document subDoc = parseDocument(org.talend.mdm.webapp.browserecords.server.util.CommonUtil
                     .getSubXML(typeModel, realType, null, language));
 
             org.dom4j.Document doc4j = org.talend.mdm.webapp.base.server.util.XmlUtil.mergeDoc(mainDoc, subDoc, contextPath);
@@ -2201,7 +2199,7 @@ public class BrowseRecordsAction implements BrowseRecordsService {
                         }
                     }
                 }
-                itemBean.setItemXml(XMLUtils.nodeToString(wsItemDoc, true, true));
+                itemBean.setItemXml(MDMXMLUtils.nodeToString(wsItemDoc, true, true));
             }
         }
     }
@@ -2500,16 +2498,16 @@ public class BrowseRecordsAction implements BrowseRecordsService {
     public List<String> transformFunctionValue(List<String> functionList) throws ServiceException {
         try {
             List<String> escapedFunctionList = functionList.stream().map((String functionName) -> {
-                return XmlUtil.escapeXml(XmlUtil.unescapeXml(functionName));
+                return MDMXMLUtils.escapeXml(MDMXMLUtils.unescapeXml(functionName));
             }).collect(Collectors.toList());
 
-            Document doc = XMLUtils.parse("<result></result>"); //$NON-NLS-1$;
+            Document doc = MDMXMLUtils.parseXml("<result></result>"); //$NON-NLS-1$;
             Element element = doc.getDocumentElement();
             for (String function : escapedFunctionList) {
                 element.appendChild(doc.createElement("functionName")); //$NON-NLS-1$;
             }
 
-            org.dom4j.Document doc4j = XmlUtil.parseDocument(doc);
+            org.dom4j.Document doc4j = parseDocument(doc);
 
             DisplayRuleEngine ruleEngine = new DisplayRuleEngine(null, null);
             ruleEngine.setFuncitonList(escapedFunctionList);
@@ -2518,5 +2516,13 @@ public class BrowseRecordsAction implements BrowseRecordsService {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(e.getLocalizedMessage());
         }
+    }
+
+    private static org.dom4j.Document parseDocument(org.w3c.dom.Document doc) {
+        if (doc == null) {
+            return (null);
+        }
+        org.dom4j.io.DOMReader xmlReader = new org.dom4j.io.DOMReader();
+        return (xmlReader.read(doc));
     }
 }

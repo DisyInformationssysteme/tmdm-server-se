@@ -12,14 +12,14 @@ package com.amalto.webapp.core.bean;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.delegator.ILocalUser;
 import com.amalto.core.util.LocalUser;
 import com.amalto.core.util.SessionContextHolder;
@@ -124,11 +124,11 @@ public class Configuration {
             Util.getPort()
                     .putItem(
                             new WSPutItem(
-                                    new WSDataClusterPK("PROVISIONING"), XMLUtils.nodeToString(d.getDocumentElement(), true, true).replaceAll( //$NON-NLS-1$
+                                    new WSDataClusterPK("PROVISIONING"), MDMXMLUtils.nodeToString(d.getDocumentElement(), true, true).replaceAll( //$NON-NLS-1$
                                                     "<\\?xml.*?\\?>", ""), new WSDataModelPK("PROVISIONING"), false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else {
             Util.storeProvisioning(LocalUser.getLocalUser().getIdentity(),
-                    XMLUtils.nodeToString(d.getDocumentElement(), true, true).replaceAll("<\\?xml.*?\\?>", "")); //$NON-NLS-1$ //$NON-NLS-2$
+                    MDMXMLUtils.nodeToString(d.getDocumentElement(), true, true).replaceAll("<\\?xml.*?\\?>", "")); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

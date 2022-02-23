@@ -25,7 +25,7 @@ import org.apache.commons.collections.map.MultiKeyMap;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import com.amalto.core.util.SAXErrorHandler;
+import com.amalto.commons.core.utils.SAXErrorHandler;
 import com.amalto.core.util.ValidateException;
 
 public class XmlSchemaValidator implements Validator {

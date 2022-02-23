@@ -24,8 +24,8 @@ import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.amalto.commons.core.utils.SAXErrorHandler;
 import com.amalto.core.util.CVCException;
-import com.amalto.core.util.SAXErrorHandler;
 import com.amalto.core.util.Util;
 
 public class IValidation {

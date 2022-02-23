@@ -12,9 +12,6 @@ package com.amalto.webapp.core.util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -30,8 +27,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.commmon.util.datamodel.management.BusinessConcept;
 import org.w3c.dom.DOMImplementation;
@@ -41,7 +38,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.delegator.BeanDelegatorContainer;
 import com.amalto.core.delegator.ILocalUser;
 import com.amalto.core.objects.transformers.TransformerV2POJOPK;
@@ -442,6 +438,7 @@ public abstract class Util {
         try {
             // initialize the sax parser which uses Xerces
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature(MDMXMLUtils.FEATURE_DISALLOW_DOCTYPE, true);
             // Schema validation based on schemaURL
             factory.setNamespaceAware(true);
             factory.setExpandEntityReferences(false);
@@ -807,7 +804,7 @@ public abstract class Util {
 
         WSItemPK itemPK = new WSItemPK(new WSDataClusterPK(DATACLUSTER_PK), PROVISIONING_CONCEPT, new String[] { identity });
         if (identity != null && identity.length() > 0) {
-            Document doc = XMLUtils.parse(Util.getPort().getItem(new WSGetItem(itemPK)).getContent());
+            Document doc = MDMXMLUtils.parseXml(Util.getPort().getItem(new WSGetItem(itemPK)).getContent());
             if (doc.getElementsByTagName("language") != null) { //$NON-NLS-1$
                 Node language = doc.getElementsByTagName("language").item(0); //$NON-NLS-1$
                 if (language != null) {

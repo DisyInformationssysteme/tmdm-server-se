@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -50,13 +50,14 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.util.core.ITransformerConstants;
 import org.talend.mdm.commmon.util.core.MDMConfiguration;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,7 +65,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-import com.amalto.commons.core.utils.XMLUtils;
+import com.amalto.commons.core.utils.SAXErrorHandler;
 import com.amalto.core.delegator.BeanDelegatorContainer;
 import com.amalto.core.history.MutableDocument;
 import com.amalto.core.history.accessor.Accessor;
@@ -131,7 +132,7 @@ import com.sun.xml.xsom.parser.XSOMParser;
 import com.sun.xml.xsom.util.DomAnnotationParserFactory;
 
 @SuppressWarnings({ "deprecation", "nls" })
-public class Util extends XmlUtil {
+public class Util extends MDMXMLUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(Util.class);
 
@@ -201,7 +202,7 @@ public class Util extends XmlUtil {
         }
     }
 
-    public static Document validate(Element element, String schema) throws Exception {
+    public static Document validateSchema(Element element, String schema) throws Exception {
         return BeanDelegatorContainer.getInstance().getValidationDelegator().validation(element, schema);
     }
 
@@ -294,7 +295,7 @@ public class Util extends XmlUtil {
      */
     public static String nodeToString(Node n) throws TransformerException {
         // role-pOJO(PROVISIONING.Role) on Linux will have invalid attribute (xmlns:admin="") need to remove
-        return XMLUtils.nodeToString(n, true, LOGGER.isDebugEnabled()).replaceAll("\r\n", "\n").replaceAll(" xmlns:admin=\"\"", "");
+        return MDMXMLUtils.nodeToString(n, true, LOGGER.isDebugEnabled()).replaceAll("\r\n", "\n").replaceAll(" xmlns:admin=\"\"", "");
     }
 
     /**
