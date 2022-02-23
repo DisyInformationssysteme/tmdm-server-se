@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit3.PowerMockSuite;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.webapp.general.model.GroupItem;
 import org.talend.mdm.webapp.general.model.LanguageBean;
 import org.talend.mdm.webapp.general.server.actions.GeneralAction;
@@ -52,13 +53,13 @@ public class UtilsTest extends TestCase {
     public void testAddLanguages() throws DOMException, TransformerException, ParserConfigurationException, IOException,
             SAXException {
         String xml = "<User></User>";
-        Document doc = XMLUtils.parse(xml);
+        Document doc = MDMXMLUtils.parseXml(xml);
         assertNull(doc.getElementsByTagName("language").item(0));
         Element node = doc.createElement("language");
         node.setTextContent("en");
         doc.getDocumentElement().appendChild(node);
-        String newXml = XMLUtils.nodeToString(doc);
-        assertEquals("en", XMLUtils.parse(newXml).getElementsByTagName("language").item(0).getTextContent());
+        String newXml = MDMXMLUtils.nodeToString(doc);
+        assertEquals("en", MDMXMLUtils.parseXml(newXml).getElementsByTagName("language").item(0).getTextContent());
     }
 
     public void testGetLanguages() throws Exception {

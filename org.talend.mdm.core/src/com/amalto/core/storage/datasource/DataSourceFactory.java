@@ -10,12 +10,32 @@
 
 package com.amalto.core.storage.datasource;
 
-import com.amalto.core.server.api.DataSourceExtension;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ServiceLoader;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -26,15 +46,8 @@ import org.talend.mdm.commmon.util.core.MDMConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.*;
+
+import com.amalto.core.server.api.DataSourceExtension;
 
 @Component
 public class DataSourceFactory implements ApplicationContextAware {
@@ -107,6 +120,11 @@ public class DataSourceFactory implements ApplicationContextAware {
     private static Map<String, DataSourceDefinition> readDocument(InputStream configurationAsStream) {
         Document document;
         try {
+            factory.setExpandEntityReferences(false);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             document = documentBuilder.parse(configurationAsStream);
         } catch (Exception e) {

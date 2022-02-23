@@ -19,18 +19,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import junit.framework.TestCase;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.talend.mdm.commmon.util.core.MDMConfiguration;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.delegator.IValidation;
 import com.amalto.core.objects.DroppedItemPOJO;
 import com.amalto.core.objects.ItemPOJO;
@@ -43,6 +40,8 @@ import com.amalto.xmlserver.interfaces.IWhereItem;
 import com.amalto.xmlserver.interfaces.WhereAnd;
 import com.amalto.xmlserver.interfaces.WhereCondition;
 import com.amalto.xmlserver.interfaces.WhereLogicOperator;
+
+import junit.framework.TestCase;
 
 /**
  * DOC achen class global comment. Detailled comment
@@ -377,7 +376,7 @@ public class UtilTestCase extends TestCase {
         Document user = Util.parse(xml);
         Util.setUserProperty(user, "newprop", "newvalue");
 
-        String result = XMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
+        String result = MDMXMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
         assertEquals("<User><username>A</username><id>B</id><properties><property><name>x</name><value>y</value></property><property><name>newprop</name><value>newvalue</value></property></properties></User>", result);
     }
 
@@ -386,7 +385,7 @@ public class UtilTestCase extends TestCase {
         Document user = Util.parse(xml);
         Util.setUserProperty(user, "newprop", "newvalue");
 
-        String result = XMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
+        String result = MDMXMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
         assertEquals("<User><username>A</username><id>B</id><properties><property><name>newprop</name><value>newvalue</value></property></properties></User>", result);
     }
 
@@ -395,7 +394,7 @@ public class UtilTestCase extends TestCase {
         Document user = Util.parse(xml);
         Util.setUserProperty(user, "x", "z");
 
-        String result = XMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
+        String result = MDMXMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
         assertEquals("<User><username>A</username><id>B</id><properties><property><name>x</name><value>z</value></property></properties></User>", result);
     }
 
@@ -404,7 +403,7 @@ public class UtilTestCase extends TestCase {
         Document user = Util.parse(xml);
         Util.setUserProperty(user, null, "z");
 
-        String result = XMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
+        String result = MDMXMLUtils.nodeToString(user, true, false).replaceAll("\r\n", "\n");
         assertEquals("<User><username>A</username><id>B</id><properties><property><name>x</name><value>y</value></property></properties></User>", result);
     }
 

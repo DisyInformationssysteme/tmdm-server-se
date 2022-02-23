@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,7 +48,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.storage.StorageType;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
 import com.amalto.core.storage.datasource.RDBMSDataSourceBuilder;
@@ -91,6 +91,9 @@ public class DefaultStorageClassLoader extends StorageClassLoader {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             factory.setExpandEntityReferences(false);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             documentBuilder.setEntityResolver(HibernateStorage.ENTITY_RESOLVER);
             Document document = documentBuilder.parse(this.getClass().getResourceAsStream(HIBERNATE_MAPPING_TEMPLATE));
@@ -171,7 +174,9 @@ public class DefaultStorageClassLoader extends StorageClassLoader {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setExpandEntityReferences(false);
-
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         DocumentBuilder documentBuilder = factory.newDocumentBuilder();
         documentBuilder.setEntityResolver(HibernateStorage.ENTITY_RESOLVER);
         Document document = documentBuilder.parse(DefaultStorageClassLoader.class.getResourceAsStream(HIBERNATE_CONFIG_TEMPLATE));
@@ -319,7 +324,7 @@ public class DefaultStorageClassLoader extends StorageClassLoader {
 
     protected InputStream toInputStream(Document document) throws Exception {
         StringWriter buffer = new StringWriter();
-        Transformer transformer = XMLUtils.generateTransformer();
+        Transformer transformer = MDMXMLUtils.generateTransformer();
         DocumentType doctype = document.getDoctype();
         if (doctype != null) {
             if (doctype.getPublicId() != null) {

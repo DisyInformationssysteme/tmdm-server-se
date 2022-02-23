@@ -32,10 +32,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import com.amalto.core.delegator.MockILocalUser;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -49,9 +48,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.delegator.BaseSecurityCheck;
 import com.amalto.core.delegator.BeanDelegatorContainer;
+import com.amalto.core.delegator.MockILocalUser;
 import com.amalto.core.history.DeleteType;
 import com.amalto.core.history.MutableDocument;
 import com.amalto.core.objects.UpdateReportPOJO;
@@ -1718,7 +1717,7 @@ public class DocumentSaveTest extends TestCase {
                 + "<key>[HEAD].CoreTestsContainer.auto_increment.auto_increment</key>" + "<value>1</value>" + "</entry>"
                 + "<entry>" + "<key>[HEAD].Product.ProductFamily.Id</key>" + "<value>30</value>" + "</entry>" + "<entry>"
                 + "<key>[HEAD].CoreTestsContainer.auto_increment1.auto_increment1</key>" + "<value>1</value>" + "</entry>"
-                + "</AutoIncrement>", XMLUtils.nodeToString(committedElement, true, false).replaceAll("\r\n", "\n"));
+                + "</AutoIncrement>", MDMXMLUtils.nodeToString(committedElement, true, false).replaceAll("\r\n", "\n"));
         assertTrue(source.hasCalledInitAutoIncrement);
 
     }

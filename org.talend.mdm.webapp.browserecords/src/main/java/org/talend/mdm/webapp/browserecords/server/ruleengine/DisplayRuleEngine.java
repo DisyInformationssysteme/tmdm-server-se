@@ -23,13 +23,13 @@ import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.QName;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.webapp.base.shared.ExpressionUtil;
 import org.talend.mdm.webapp.base.shared.TypeModel;
 import org.talend.mdm.webapp.browserecords.client.util.CommonUtil;
 import org.talend.mdm.webapp.browserecords.shared.VisibleRuleResult;
 
 import com.amalto.commons.core.utils.XMLUtils;
-import com.amalto.webapp.core.util.XmlUtil;
 
 public class DisplayRuleEngine {
 
@@ -231,7 +231,7 @@ public class DisplayRuleEngine {
             style.append("<xsl:when test=\"not(text())\">"); //$NON-NLS-1$
         }
 
-        style.append("<xsl:value-of select=\"").append(XmlUtil.escapeXml(defaultValueRule)).append("\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+        style.append("<xsl:value-of select=\"").append(MDMXMLUtils.escapeXml(defaultValueRule)).append("\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
         style.append("</xsl:when> "); //$NON-NLS-1$
         style.append("<xsl:otherwise>"); //$NON-NLS-1$
         style.append("<xsl:value-of select=\".\"/>"); //$NON-NLS-1$
@@ -265,7 +265,7 @@ public class DisplayRuleEngine {
             style.append("<xsl:if test=\"position()=").append(pathIndex).append("\">");
         }
         style.append("<xsl:choose>"); //$NON-NLS-1$
-        style.append("<xsl:when test=\"not(").append(getPureValue(XmlUtil.escapeXml(visibleExpression))).append(")\">"); //$NON-NLS-1$ //$NON-NLS-2$
+        style.append("<xsl:when test=\"not(").append(getPureValue(MDMXMLUtils.escapeXml(visibleExpression))).append(")\">"); //$NON-NLS-1$ //$NON-NLS-2$
         style.append("<xsl:attribute name=\"t:visible\">false</xsl:attribute>"); //$NON-NLS-1$
         style.append("</xsl:when>"); //$NON-NLS-1$
         style.append("<xsl:otherwise>"); //$NON-NLS-1$
@@ -350,7 +350,7 @@ public class DisplayRuleEngine {
             style.append("<xsl:copy>"); //$NON-NLS-1$
             style.append("<xsl:choose>"); //$NON-NLS-1$
             style.append("<xsl:when test=\"not(text())\">"); //$NON-NLS-1$
-            style.append("<xsl:value-of select=\"").append(XmlUtil.escapeXml(iterator.next()))
+            style.append("<xsl:value-of select=\"").append(MDMXMLUtils.escapeXml(iterator.next()))
                     .append("\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
             style.append("</xsl:when> "); //$NON-NLS-1$
             style.append("<xsl:otherwise>"); //$NON-NLS-1$

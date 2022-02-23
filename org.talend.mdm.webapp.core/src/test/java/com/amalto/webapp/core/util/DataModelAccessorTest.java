@@ -18,8 +18,6 @@ import javax.xml.parsers.DocumentBuilder;
 import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.w3c.dom.Document;
 
-import com.amalto.commons.core.utils.XMLUtils;
-
 import junit.framework.TestCase;
 
 /**
@@ -52,7 +50,7 @@ public class DataModelAccessorTest extends TestCase {
         assertNotNull(is);
         DocumentBuilder builder = MDMXMLUtils.getDocumentBuilder().get();
         Document doc = builder.parse(is);
-        return XMLUtils.nodeToString(doc, true, true);
+        return MDMXMLUtils.nodeToString(doc, true, true);
     }
 
 }

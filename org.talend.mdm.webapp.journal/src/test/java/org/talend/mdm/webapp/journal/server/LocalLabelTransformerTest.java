@@ -17,8 +17,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit3.PowerMockSuite;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
+import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 
-import com.amalto.commons.core.utils.XMLUtils;
 import com.amalto.core.save.DOMDocument;
 
 import junit.framework.TestCase;
@@ -62,7 +62,7 @@ public class LocalLabelTransformerTest extends TestCase{
         String content = "<Product><Id>2</Id><Name>2-name</Name><Description>2</Description><Features><Sizes><Size>Medium</Size></Sizes><Colors><Color>Light Blue</Color></Colors></Features><Price>2.00</Price><Family>[1]</Family><Stores/></Product>";
 
         try {
-            document = new DOMDocument(XMLUtils.parse(content), typeMetadata, clusterName, modelName);
+            document = new DOMDocument(MDMXMLUtils.parseXml(content), typeMetadata, clusterName, modelName);
         } catch (Exception e) {
             fail("failed to create document");
         }
@@ -116,7 +116,7 @@ public class LocalLabelTransformerTest extends TestCase{
         String content = "<Citizen><CitizenId>1</CitizenId><name>1</name><identity><type>1</type><nationality>[n1]</nationality></identity><identity><type>2</type><nationality>[n1]</nationality></identity><identity><type>3</type><nationality>[n1]</nationality></identity><aa><subelement>23</subelement><n3><subelement>23</subelement><name>23</name><n2>[n1]</n2></n3><n3><subelement>24</subelement><name>23</name><n2>[n1]</n2></n3></aa><aa><subelement>23</subelement><n3><subelement>23</subelement><name>25</name><n2>[n1]</n2></n3><n3><subelement>23</subelement><name>26</name><n2>[n1]</n2></n3></aa></Citizen>";
 
         try {
-            document = new DOMDocument(XMLUtils.parse(content), typeMetadata, clusterName, modelName);
+            document = new DOMDocument(MDMXMLUtils.parseXml(content), typeMetadata, clusterName, modelName);
         } catch (Exception e) {
             fail("failed to create document");
         }
@@ -185,7 +185,7 @@ public class LocalLabelTransformerTest extends TestCase{
         String content = "<Contract><id>3</id><comment>3</comment><detail xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"ContractDetailType\"><code>3</code></detail><detail xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"ContractDetailSubType\"><code>3</code><features><actor>3</actor><vendor>3</vendor><boolValue>true</boolValue></features><ReadOnlyEle>3</ReadOnlyEle></detail></Contract>";
 
         try {
-            document = new DOMDocument(XMLUtils.parse(content), typeMetadata, clusterName, modelName);
+            document = new DOMDocument(MDMXMLUtils.parseXml(content), typeMetadata, clusterName, modelName);
         } catch (Exception e) {
             fail("failed to create document");
         }
