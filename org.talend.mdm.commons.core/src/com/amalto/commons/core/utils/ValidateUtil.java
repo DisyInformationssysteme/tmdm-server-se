@@ -20,7 +20,7 @@ public class ValidateUtil {
         if (matches(headRegex, tailRegex, newText)) {
             return newText;
         } else {
-            throw new IllegalArgumentException("The database/table/constraint name contains invalid character!");
+            throw new IllegalArgumentException("The database/table/constraint '" + newText + "' contains invalid character!");
         }      
     }
 

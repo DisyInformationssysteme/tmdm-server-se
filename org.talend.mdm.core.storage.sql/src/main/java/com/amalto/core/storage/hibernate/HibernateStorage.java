@@ -129,7 +129,6 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.query.optimization.ConfigurableContainsOptimizer;
 import com.amalto.core.query.optimization.ContainsOptimizer;
 import com.amalto.core.query.optimization.ImplicitOrderBy;
@@ -167,6 +166,7 @@ import com.amalto.core.storage.record.StorageConstants;
 import com.amalto.core.storage.record.metadata.DataRecordMetadata;
 import com.amalto.core.storage.transaction.StorageTransaction;
 import com.amalto.core.storage.transaction.TransactionManager;
+import static com.amalto.commons.core.utils.ValidateUtil.matchCommonRegex;
 
 import net.sf.ehcache.CacheManager;
 
@@ -1224,7 +1224,7 @@ public class HibernateStorage implements Storage {
                 Set<String> dropedTables = new HashSet<>();
                 for (String table : tablesToDrop) {
                     try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate("DROP TABLE " + table); //$NON-NLS-1$
+                        statement.executeUpdate("DROP TABLE " + matchCommonRegex(table)); //$NON-NLS-1$
                         dropedTables.add(table);
                         successCount++;
                     } catch (SQLException e) {
@@ -1425,7 +1425,7 @@ public class HibernateStorage implements Storage {
                         for (ComplexTypeMetadata typeToDelete : typesToDelete) {
                             typeToDelete.getFields().stream()
                                     .filter(item -> item.isMany() && item instanceof ReferenceFieldMetadata).forEach(type -> {
-                                String formattedTableName = tableResolver.getCollectionTable(type);
+                                String formattedTableName = matchCommonRegex(tableResolver.getCollectionTable(type));
                                 session.createSQLQuery(DELETE_FROM_STR + formattedTableName).executeUpdate();
                             });
                             InboundReferences inboundReferences = new InboundReferences(typeToDelete);
@@ -1437,10 +1437,10 @@ public class HibernateStorage implements Storage {
                                     if (reference.isMany()) {
                                         // No need to check for mandatory collections of references since constraint
                                         // cannot be expressed in db schema
-                                        String formattedTableName = tableResolver.getCollectionTable(reference);
+                                        String formattedTableName = matchCommonRegex(tableResolver.getCollectionTable(reference));
                                         session.createSQLQuery(DELETE_FROM_STR + formattedTableName).executeUpdate();
                                     } else {
-                                        String referenceTableName = tableResolver.get(reference.getContainingType());
+                                        String referenceTableName = matchCommonRegex(tableResolver.get(reference.getContainingType()));
                                         if (referenceTableName.startsWith("X_ANONYMOUS")) { //$NON-NLS-1$
                                             session.createSQLQuery(DELETE_FROM_STR + referenceTableName).executeUpdate();
                                         } else if(referenceTableName.startsWith("X_")){ //$NON-NLS-1$
@@ -1451,8 +1451,10 @@ public class HibernateStorage implements Storage {
                                                         .get((ComplexTypeMetadata) superTypes.iterator().next());
                                             }
                                             //update the reference field to null
-                                            String setToNullHql = "UPDATE " + referenceTableName + " SET " + tableResolver //$NON-NLS-1$ //$NON-NLS-2$
-                                                    .get(reference.getReferencedField(), reference.getName()) + " = NULL"; //$NON-NLS-1$
+                                            String setToNullHql = "UPDATE " + referenceTableName //$NON-NLS-1$
+                                                    + " SET " + matchCommonRegex(tableResolver //$NON-NLS-1$
+                                                            .get(reference.getReferencedField(), reference.getName()))
+                                                    + " = NULL"; //$NON-NLS-1$
                                             session.createSQLQuery(setToNullHql).executeUpdate();
                                         }
                                     }
@@ -1468,7 +1470,9 @@ public class HibernateStorage implements Storage {
                                             // cannot
                                             // be expressed in db schema
                                             String formattedTableName = tableResolver.getCollectionTable(reference);
-                                            session.createSQLQuery(DELETE_FROM_STR + formattedTableName).executeUpdate();
+                                            session.createSQLQuery(
+                                                    DELETE_FROM_STR + matchCommonRegex(formattedTableName))
+                                                    .executeUpdate();
                                         } else {
                                             String columnName = tableResolver.get(reference.getReferencedField());
                                             String referenceTableName;
@@ -1482,9 +1486,13 @@ public class HibernateStorage implements Storage {
                                                 FieldMetadata[] fields = ((CompoundFieldMetadata) reference.getReferencedField())
                                                         .getFields();
                                                 for (FieldMetadata field : fields) {
-                                                    List list = session.createSQLQuery(
-                                                            "select " + tableResolver.get(field, reference.getName()) + " from " //$NON-NLS-1$ //$NON-NLS-2$
-                                                                    + referenceTableName).list();
+                                                    List list = session
+                                                            .createSQLQuery("select " //$NON-NLS-1$
+                                                                    + matchCommonRegex(
+                                                                            tableResolver.get(field, reference.getName()))
+                                                                    + " from " //$NON-NLS-1$
+                                                                    + matchCommonRegex(referenceTableName))
+                                                            .list();
                                                     if (list != null && !list.isEmpty()) {
                                                         fieldsCondition.put(columnName, list);
                                                     } else {
@@ -1493,8 +1501,9 @@ public class HibernateStorage implements Storage {
                                                 }
                                             } else {
                                                 List list = session.createSQLQuery("select " //$NON-NLS-1$
-                                                        + tableResolver.get(reference.getReferencedField(), reference.getName())
-                                                        + " from " + referenceTableName).list(); //$NON-NLS-1$
+                                                        + matchCommonRegex(tableResolver
+                                                                .get(reference.getReferencedField(), reference.getName()))
+                                                        + " from " + matchCommonRegex(referenceTableName)).list(); //$NON-NLS-1$
                                                 if (list != null && !list.isEmpty()) {
                                                     if (fieldsCondition.containsKey(columnName)) {
                                                         List originList = fieldsCondition.get(columnName);
@@ -1565,8 +1574,8 @@ public class HibernateStorage implements Storage {
         try {
             for (FieldMetadata field : typeToDelete.getFields()) {
                 if (field.isMany()) {
-                    String formattedTableName = ValidateUtil.matchCommonRegex(tableResolver.getCollectionTable(field));
-                    String deleteFormattedTableSQL = DELETE_FROM_STR + formattedTableName;
+                    String formattedTableName = tableResolver.getCollectionTable(field);
+                    String deleteFormattedTableSQL = DELETE_FROM_STR + matchCommonRegex(formattedTableName);
                     deleteDataWithConditionForRepeatedField(session, condition, deleteFormattedTableSQL);
                 }
             }
@@ -1615,7 +1624,7 @@ public class HibernateStorage implements Storage {
                 List tmp = list.subList(i, toIndex);
                 for (int j = 0; j < tmp.size(); j++) {
                     if (tmp.get(j) != null) {
-                        ValidateUtil.matchCommonRegex(tmp.get(j).toString());
+                        matchCommonRegex(tmp.get(j).toString());
                     }
                     buffer.append("'").append(tmp.get(j)).append("'"); //$NON-NLS-1$//$NON-NLS-2$
                     if (j != tmp.size() - 1) {
@@ -1623,7 +1632,7 @@ public class HibernateStorage implements Storage {
                     }
                 }
                 if (buffer.length() > 0) {
-                    conditionString = conditionString + ValidateUtil.matchCommonRegex(fieldEntry.getKey()) + " in (" //$NON-NLS-1$
+                    conditionString = conditionString + matchCommonRegex(fieldEntry.getKey()) + " in (" //$NON-NLS-1$
                             + buffer.toString() + ')'; //$NON-NLS-2$
                 }
                 session.createSQLQuery(sql + conditionString).executeUpdate();

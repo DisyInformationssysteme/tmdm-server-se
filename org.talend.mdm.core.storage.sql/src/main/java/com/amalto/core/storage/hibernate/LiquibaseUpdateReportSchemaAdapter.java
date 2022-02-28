@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.talend.mdm.commmon.metadata.compare.Compare;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.storage.HibernateStorageUtils;
 import com.amalto.core.storage.StorageType;
 import com.amalto.core.storage.datasource.RDBMSDataSource;
@@ -138,7 +139,8 @@ public class LiquibaseUpdateReportSchemaAdapter extends AbstractLiquibaseSchemaA
             Statement statement = connection.createStatement();
             try {
                 ResultSet resultSet = statement.executeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '"  //$NON-NLS-1
-                        + dataSource.getDatabaseName() + "' and TABLE_NAME = '" + TABLE_NAME.toUpperCase() + "';"); //$NON-NLS-1$ //$NON-NLS-2$
+                        + ValidateUtil.matchCommonRegex(dataSource.getDatabaseName()) + "' and TABLE_NAME = '" //$NON-NLS-1$
+                        + TABLE_NAME.toUpperCase() + "';"); //$NON-NLS-1$
                 if (resultSet.next()) {
                     return resultSet.getString(1);
                 } else {
