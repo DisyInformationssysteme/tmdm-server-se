@@ -133,7 +133,8 @@ public class FieldUpdateAction extends AbstractFieldAction {
                 break;
             }
         }
-        if (!isAllowed && userAction == UserAction.CREATE && updatedField.getData("default.value.rule") != null) {
+        if (!isAllowed && (userAction == UserAction.CREATE || userAction == UserAction.UPDATE)
+                && updatedField.getData("default.value.rule") != null) {
             isAllowed = true;
         }
         return isAllowed;
