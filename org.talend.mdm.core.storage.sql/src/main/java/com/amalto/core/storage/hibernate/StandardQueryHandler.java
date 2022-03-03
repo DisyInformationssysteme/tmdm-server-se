@@ -131,6 +131,7 @@ import com.amalto.core.storage.exception.UnsupportedQueryException;
 import com.amalto.core.storage.record.DataRecord;
 import com.amalto.core.storage.record.StorageConstants;
 import com.amalto.core.storage.task.StagingConstants;
+import com.amalto.commons.core.utils.ValidateUtil;
 
 
 class StandardQueryHandler extends AbstractQueryHandler {
@@ -1394,9 +1395,10 @@ class StandardQueryHandler extends AbstractQueryHandler {
                     StringBuilder sb = new StringBuilder();
                     sb.append('(');//$NON-NLS-1$
                     sb.append("SELECT count(1) FROM");//$NON-NLS-1$
-                    sb.append(' ').append(mainTableName).append(' ');//$NON-NLS-1$ //$NON-NLS-2$
+                    sb.append(' ').append(ValidateUtil.matchCommonRegex(mainTableName)).append(' ');// $NON-NLS-1$ //$NON-NLS-2$
                     sb.append("WHERE ").append(StorageConstants.METADATA_TASK_ID).append('=');//$NON-NLS-1$ //$NON-NLS-2$
-                    sb.append(mainTableAlias).append('.').append(StorageConstants.METADATA_TASK_ID);//$NON-NLS-1$
+                    sb.append(ValidateUtil.matchCommonRegex(mainTableAlias)).append('.')
+                            .append(StorageConstants.METADATA_TASK_ID);// $NON-NLS-1$
                     if (!MatchingIdentifier.get()) {
                         sb.append(" AND ").append(StorageConstants.METADATA_STAGING_STATUS);//$NON-NLS-1$
                         sb.append(" NOT IN (").append(StagingConstants.SUCCESS_VALIDATE).append(',');//$NON-NLS-1$ //$NON-NLS-2$
