@@ -95,6 +95,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.integrity.FKIntegrityCheckResult;
 import com.amalto.core.objects.ItemPOJOPK;
 import com.amalto.core.objects.UpdateReportPOJO;
@@ -2482,8 +2483,10 @@ public class BrowseRecordsAction implements BrowseRecordsService {
     }
 
     private boolean isValidGoldenStatus(WSDataClusterPK wsDataClusterPK, String conceptName, String taskId) {
-        StringBuilder query = new StringBuilder().append("select count(*) from ").append(conceptName).append(" where ") //$NON-NLS-1$ //$NON-NLS-2$
-                .append(StorageConstants.METADATA_TASK_ID).append("='").append(taskId).append("' and ") //$NON-NLS-1$ //$NON-NLS-2$
+        StringBuilder query = new StringBuilder().append("select count(*) from ") //$NON-NLS-1$
+                .append(ValidateUtil.matchCommonRegex(conceptName)).append(" where ") //$NON-NLS-1$
+                .append(StorageConstants.METADATA_TASK_ID).append("='").append(ValidateUtil.matchCommonRegex(taskId)) //$NON-NLS-1$
+                .append("' and ") //$NON-NLS-1$
                 .append(StorageConstants.METADATA_STAGING_STATUS).append("=").append(StagingConstants.SUCCESS_VALIDATE); //$NON-NLS-1$
         WSRunQuery wsRunQuery = new WSRunQuery(wsDataClusterPK, query.toString(), null);
         try {
