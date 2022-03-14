@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadataImpl;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
+import org.talend.mdm.commmon.metadata.MetadataUtils;
 import org.talend.mdm.commmon.metadata.SimpleTypeFieldMetadata;
 import org.talend.mdm.commmon.metadata.SimpleTypeMetadata;
 import org.talend.mdm.commmon.metadata.Types;
@@ -93,7 +94,8 @@ class IdQueryHandler extends AbstractQueryHandler {
             return noResult(select);
         }
         ComplexTypeMetadata mainType = select.getTypes().get(0);
-        String className = ClassCreator.getClassName(mainType.getName());
+//        String className = ClassCreator.getClassName(mainType.getName());
+        String className = ClassCreator.getClassName(MetadataUtils.getSuperConcreteType(mainType).getName());
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Calling get()...");
         }

@@ -25,6 +25,7 @@ import com.amalto.core.history.MutableDocument;
 import com.amalto.core.history.accessor.Accessor;
 import com.amalto.core.save.DOMDocument;
 import com.amalto.core.save.DocumentSaverContext;
+import com.amalto.core.save.SaveException;
 import com.amalto.core.save.SaverSession;
 import com.amalto.core.save.UserAction;
 
@@ -86,7 +87,9 @@ class ID implements DocumentSaver {
         String[] xmlDocumentIds = ids.toArray(new String[ids.size()]);
         boolean isExistRecord = database.exist(dataCluster, dataModelName, typeName, xmlDocumentIds);
         if (xmlDocumentIds.length > 0 && isExistRecord) {
-            if (context.getUserAction() == UserAction.AUTO || context.getUserAction() == UserAction.AUTO_STRICT) {
+            if (context.getUserAction() == UserAction.REPLACE) {
+                throw new SaveException("This record exists, If you want to save it, you need to change the primary key Info.", null); 
+            } else if (context.getUserAction() == UserAction.AUTO || context.getUserAction() == UserAction.AUTO_STRICT) {
                 context.setUserAction(UserAction.UPDATE);
             }
             context.setId(xmlDocumentIds);
