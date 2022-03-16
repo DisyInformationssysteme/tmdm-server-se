@@ -143,6 +143,9 @@ public class UploadFile extends HttpServlet {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Deleting file '" + file.getAbsolutePath() + "'"); //$NON-NLS-1$//$NON-NLS-2$
                 }
+                if (file.exists()) {
+                    file.delete();
+                }
                 item.write(file);
                 JobContainer jobContainer = JobContainer.getUniqueInstance();
                 jobContainer.setContextStrToBeSaved(file.getAbsolutePath(), context);
@@ -153,10 +156,13 @@ public class UploadFile extends HttpServlet {
             }
         } else if (item.getName().endsWith(".war")) { //$NON-NLS-1$
             file = new File(containerWebAppsPath + File.separator + filename);
+            if (file.exists()) {
+                file.delete();
+            }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Writing file '" + file.getAbsolutePath() + "'"); //$NON-NLS-1$//$NON-NLS-2$
             }
-            item.write(file);
+            item.write(file); // File is required absent
         } else {
             throw new IllegalArgumentException("Unknown job deployment for file '" + filename + "'"); //$NON-NLS-1$//$NON-NLS-2$
         }
