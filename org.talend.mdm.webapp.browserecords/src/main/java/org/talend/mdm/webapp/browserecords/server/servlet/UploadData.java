@@ -12,6 +12,7 @@ package org.talend.mdm.webapp.browserecords.server.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.talend.mdm.webapp.base.server.util.CommonUtil;
@@ -152,7 +154,9 @@ public class UploadData extends HttpServlet {
                     }
                 } else {
                     fileType = FileUtil.getFileType(item.getName());
-                    file = File.createTempFile("upload", "tmp");//$NON-NLS-1$ //$NON-NLS-2$
+                    file = Paths
+                            .get(System.getProperty("java.io.tmpdir"), "upload" + RandomStringUtils.randomNumeric(18, 20) + "tmp") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            .toFile();
                     LOG.debug("doPost() data uploaded in " + file.getAbsolutePath()); //$NON-NLS-1$
                     file.deleteOnExit();
                     item.write(file);
