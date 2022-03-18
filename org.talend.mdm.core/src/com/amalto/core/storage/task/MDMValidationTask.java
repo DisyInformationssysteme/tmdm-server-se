@@ -23,8 +23,8 @@ import com.amalto.core.storage.Storage;
 import com.amalto.core.storage.StorageResults;
 import com.amalto.core.storage.record.DataRecord;
 import com.amalto.core.storage.record.StorageConstants;
+import com.amalto.core.util.LocalUser;
 import com.amalto.core.util.User;
-import com.amalto.core.util.UserHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -219,7 +219,7 @@ public class MDMValidationTask extends MetadataRepositoryTask {
             DocumentSaver saver = context.createSaver();
             Map<String, String> recordProperties = stagingRecord.getRecordMetadata().getRecordProperties();
             try {
-                if (!isAllowedAccess(stagingRecord, source.getLegitimateUser())) {
+                if (!isAllowedAccess(stagingRecord)) {
                     throw new Exception("User '" + source.getLegitimateUser() + "' is not allowed to write '" + stagingRecord.getType().getName() + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 saver.save(session, context);
@@ -271,10 +271,8 @@ public class MDMValidationTask extends MetadataRepositoryTask {
             }
         }
 
-        private boolean isAllowedAccess(DataRecord stagingRecord, String userName) {
-            User user = new User();
-            user.setUserName(userName);
-            Collection<String> currentRoles = UserHelper.getInstance().getOriginalRole(user);
+        private boolean isAllowedAccess(DataRecord stagingRecord) throws Exception {
+            Collection<String> currentRoles = LocalUser.getLocalUser().getRoles();
             if (currentRoles != null && currentRoles.contains(ICoreConstants.ADMIN_PERMISSION)) {
                 return true;
             }
