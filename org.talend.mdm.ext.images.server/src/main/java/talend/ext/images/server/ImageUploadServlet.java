@@ -243,6 +243,9 @@ public class ImageUploadServlet extends HttpServlet {
                 imageUploadInfo.targetUri = imageUploadInfo.targetUri + ImagePathUtil.encodeURL(imagePath.toString());
 
                 File uploadedFile = new File(upath.toString());
+                if (uploadedFile.exists()) {
+                    uploadedFile.delete();
+                }
                 item.write(uploadedFile);
 
                 return 1;
