@@ -28,6 +28,7 @@ import liquibase.Liquibase;
 import liquibase.change.AbstractChange;
 import liquibase.change.core.AddPrimaryKeyChange;
 import liquibase.change.core.DropPrimaryKeyChange;
+import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.DatabaseConnection;
 import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.snapshot.SnapshotGeneratorFactory;
@@ -62,8 +63,8 @@ public class LiquibaseUpdateReportSchemaAdapter extends AbstractLiquibaseSchemaA
             liquibaseConnection.setAutoCommit(true);
 
             liquibase.database.Database database = liquibase.database.DatabaseFactory.getInstance().findCorrectDatabaseImplementation(liquibaseConnection);
-            String filePath = getChangeLogFilePath(changeType);
-            Liquibase liquibase = new Liquibase(filePath, new FileSystemResourceAccessor(), database);
+            DatabaseChangeLog changeLog = getChangeLogFilePath(changeType);
+            Liquibase liquibase = new Liquibase(changeLog, new FileSystemResourceAccessor(), database);
 
             if (isPrimaryKeyUUIDExists(database, curTableName)) {
                 return;
