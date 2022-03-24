@@ -157,21 +157,20 @@ public class WhereCondition implements IWhereItem, Serializable {
                 isRightValueXPath = true;
             }
         }
-
-        if (rightValueOrPath != null
-                && !rightValueOrPath.startsWith("^") && (null != this.operator && this.operator.equals(WhereCondition.STARTSWITH))) { //$NON-NLS-1$
-            this.rightValueOrPath = "^" + rightValueOrPath; //$NON-NLS-1$
-        } else {
-            if (operator != null && operator.equals(CONTAINS_SENTENCE)) {
-                if (rightValueOrPath != null && !rightValueOrPath.startsWith("'")) { //$NON-NLS-1$
+        
+        if (rightValueOrPath != null && operator != null && !rightValueOrPath.equals("*") && !rightValueOrPath.equals(".")) {                                 
+            if (WhereCondition.STARTSWITH.equals(operator) && !rightValueOrPath.startsWith("^")) {
+                 rightValueOrPath = "^" + rightValueOrPath; //$NON-NLS-1$
+            } else if (CONTAINS_SENTENCE.equals(operator)) {
+                if (!rightValueOrPath.startsWith("'")) { //$NON-NLS-1$
                     rightValueOrPath = "'" + rightValueOrPath; //$NON-NLS-1$
                 }
-                if (rightValueOrPath != null && !rightValueOrPath.endsWith("'")) { //$NON-NLS-1$
+                if (!rightValueOrPath.endsWith("'")) { //$NON-NLS-1$
                     rightValueOrPath = rightValueOrPath + "'"; //$NON-NLS-1$
                 }
             }
-            this.rightValueOrPath = rightValueOrPath;
         }
+        this.rightValueOrPath = rightValueOrPath;
     }
 
     public boolean isRightValueXPath() {
