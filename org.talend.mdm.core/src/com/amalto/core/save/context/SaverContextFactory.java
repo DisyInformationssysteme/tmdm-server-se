@@ -171,11 +171,16 @@ public class SaverContextFactory {
         Server server = ServerContext.INSTANCE.get();
         // Parsing
         MutableDocument userDocument;
+        Document userDomDocument = null;
         try {
             // Don't ignore talend internal attributes when parsing this document
             DocumentBuilder documentBuilder = new SkipAttributeDocumentBuilder(DOCUMENT_BUILDER, false);
             InputSource source = new InputSource(documentStream);
-            Document userDomDocument = documentBuilder.parse(source);
+            userDomDocument = documentBuilder.parse(source);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+        try {
             final MetadataRepositoryAdmin admin = server.getMetadataRepositoryAdmin();
             String typeName = userDomDocument.getDocumentElement().getNodeName();
             MetadataRepository repository;
