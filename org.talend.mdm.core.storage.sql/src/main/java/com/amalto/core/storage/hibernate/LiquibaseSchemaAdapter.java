@@ -10,6 +10,7 @@
 
 package com.amalto.core.storage.hibernate;
 
+import java.io.File;
 import java.io.Writer;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ import liquibase.change.core.DropForeignKeyConstraintChange;
 import liquibase.change.core.DropIndexChange;
 import liquibase.change.core.DropNotNullConstraintChange;
 import liquibase.change.core.DropTableChange;
+import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.DatabaseConnection;
 import liquibase.resource.FileSystemResourceAccessor;
 
@@ -92,18 +94,20 @@ public class LiquibaseSchemaAdapter extends AbstractLiquibaseSchemaAdapter {
         if (changeType.isEmpty()) {
             return;
         }
+        DatabaseConnection liquibaseConnection = new liquibase.database.jvm.JdbcConnection(connection);
+        liquibaseConnection.setAutoCommit(true);
 
-        try {
-            DatabaseConnection liquibaseConnection = new liquibase.database.jvm.JdbcConnection(connection);
-            liquibaseConnection.setAutoCommit(true);
+        liquibase.database.Database database = liquibase.database.DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(liquibaseConnection);
 
-            liquibase.database.Database database = liquibase.database.DatabaseFactory.getInstance()
-                    .findCorrectDatabaseImplementation(liquibaseConnection);
+        DatabaseChangeLog changeLog = getChangeLogFilePath(changeType);
+        String physicalFilePath = changeLog.getPhysicalFilePath();
+        physicalFilePath = physicalFilePath.replace("\\", "/"); //$NON-NLS-1$
+        String rootPath = StringUtils.substringBeforeLast(physicalFilePath, "/"); //$NON-NLS-1$
+        String fileName = StringUtils.substringAfterLast(physicalFilePath, "/"); //$NON-NLS-1$
 
-            String filePath = getChangeLogFilePath(changeType);
-
-            Liquibase liquibase = new Liquibase(filePath, new FileSystemResourceAccessor(), database);
-            if(LOGGER.isDebugEnabled()) {
+        try (Liquibase liquibase = new Liquibase(fileName, new FileSystemResourceAccessor(new File(rootPath)), database);) {
+            if (LOGGER.isDebugEnabled()) {
                 Writer output = new java.io.StringWriter();
                 liquibase.update("Liquibase update", output);
                 LOGGER.debug("DDL executed by liquibase: " + output.toString());
@@ -263,7 +267,7 @@ public class LiquibaseSchemaAdapter extends AbstractLiquibaseSchemaAdapter {
                 changeActionList.add(dropFKChange);
             }
         }
-        
+
         for (String tableName : dropTableSet) {
             DropTableChange dropTableChange = new DropTableChange();
             dropTableChange.setTableName(tableName);
@@ -403,13 +407,14 @@ public class LiquibaseSchemaAdapter extends AbstractLiquibaseSchemaAdapter {
     protected boolean isBooleanType(String columnDataType) {
         return columnDataType.equals("bit") || columnDataType.equals("boolean"); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
+
     private String upperOrLowerCase(String name) {
-    	if (HibernateStorageUtils.isOracle(dataSource.getDialectName())) {
-    		return name.toUpperCase();
-    	} else if (HibernateStorageUtils.isPostgres(dataSource.getDialectName())) {
-    		return name.toLowerCase();
-    	}
+        if (HibernateStorageUtils.isOracle(dataSource.getDialectName())
+                || HibernateStorageUtils.isH2(dataSource.getDialectName())) {
+            return name.toUpperCase();
+        } else if (HibernateStorageUtils.isPostgres(dataSource.getDialectName())) {
+            return name.toLowerCase();
+        }
     	return name;
     }
 
