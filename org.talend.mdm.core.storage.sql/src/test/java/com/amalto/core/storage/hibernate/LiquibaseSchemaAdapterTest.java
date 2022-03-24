@@ -34,6 +34,7 @@ import com.amalto.core.storage.datasource.RDBMSDataSource;
 import liquibase.change.AbstractChange;
 import liquibase.change.core.DropNotNullConstraintChange;
 import liquibase.change.core.DropTableChange;
+import liquibase.changelog.DatabaseChangeLog;
 
 
 public class LiquibaseSchemaAdapterTest {
@@ -180,7 +181,7 @@ public class LiquibaseSchemaAdapterTest {
 
         assertEquals(1, changeList.size());
         assertEquals("liquibase.change.core.DropNotNullConstraintChange", changeList.get(0).getClass().getName());
-        assertEquals("x_ee", ((DropNotNullConstraintChange) changeList.get(0)).getColumnName());
+        assertEquals("X_EE", ((DropNotNullConstraintChange) changeList.get(0)).getColumnName());
     }
 
     @Test
@@ -214,7 +215,7 @@ public class LiquibaseSchemaAdapterTest {
 
         List<AbstractChange> removeChangeList = adapter.analyzeRemoveChange(diffResults);
         assertEquals(1, removeChangeList.size());
-        assertEquals("TieTousTiers_x_version", ((DropTableChange)removeChangeList.get(0)).getTableName());      
+        assertEquals("TIETOUSTIERS_X_VERSION", ((DropTableChange)removeChangeList.get(0)).getTableName());
     }
 
     @Test
@@ -228,13 +229,13 @@ public class LiquibaseSchemaAdapterTest {
 
         List<AbstractChange> changeList = adapter.analyzeModifyChange(diffResults);
 
-        String changeLogFilePath = adapter.getChangeLogFilePath(changeList);
-        assertNotNull(changeLogFilePath);
+        DatabaseChangeLog changeLog = adapter.getChangeLogFilePath(changeList);
+        assertNotNull(changeLog.getPhysicalFilePath());
 
         File mdmRootFileDir = new File(System.getProperty(LiquibaseSchemaAdapter.MDM_ROOT));
         File changeLogDir = new File(mdmRootFileDir, LiquibaseSchemaAdapter.DATA_LIQUIBASE_CHANGELOG_PATH);
 
-        File changeLogFile = new File(changeLogFilePath);
+        File changeLogFile = new File(changeLog.getPhysicalFilePath());
         assertTrue(changeLogFile.exists());
         assertTrue(changeLogFile.isFile());
         assertTrue(changeLogFile.getName().endsWith(".xml"));
@@ -247,14 +248,14 @@ public class LiquibaseSchemaAdapterTest {
         ComplexTypeMetadata e2 = repository.getComplexType("E2");
         ComplexTypeMetadata allType = repository.getComplexType("allType");
 
-        assertEquals("Person", adapter.getTableName(person.getField("name")));
-        assertEquals("allType", adapter.getTableName(allType.getField("strField")));
+        assertEquals("PERSON", adapter.getTableName(person.getField("name")));
+        assertEquals("ALLTYPE", adapter.getTableName(allType.getField("strField")));
         assertEquals("E2", adapter.getTableName(repository.getComplexType("E2").getField("name")));
 
         MetadataRepository repository2 = new MetadataRepository();
         repository2.load(LiquibaseSchemaAdapterTest.class.getResourceAsStream("schema1.xsd"));
 
-        assertEquals("X_Boy",
+        assertEquals("X_BOY",
                 adapter.getTableName(((ContainedTypeFieldMetadata) repository2.getComplexType("Person").getField("boy"))
                         .getContainedType().getField("detail")));
     }

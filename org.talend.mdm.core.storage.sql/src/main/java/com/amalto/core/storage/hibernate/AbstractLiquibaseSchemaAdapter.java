@@ -11,9 +11,11 @@
 package com.amalto.core.storage.hibernate;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -41,6 +43,7 @@ import com.amalto.core.storage.datasource.RDBMSDataSource.DataSourceDialect;
 
 import liquibase.change.AbstractChange;
 import liquibase.change.core.DropIndexChange;
+import liquibase.changelog.DatabaseChangeLog;
 import liquibase.precondition.core.IndexExistsPrecondition;
 import liquibase.precondition.core.PreconditionContainer;
 import liquibase.serializer.core.xml.XMLChangeLogSerializer;
@@ -49,7 +52,7 @@ public abstract class AbstractLiquibaseSchemaAdapter {
 
     protected static final Logger LOGGER = LogManager.getLogger(AbstractLiquibaseSchemaAdapter.class);
 
-    private static final String SEPARATOR = "-"; //$NON-NLS-1$
+    private static final CharSequence SEPARATOR = "-"; //$NON-NLS-1$
 
     public static final String DATA_LIQUIBASE_CHANGELOG_PATH = "/data/liquibase-changelog/"; //$NON-NLS-1$
 
@@ -73,7 +76,7 @@ public abstract class AbstractLiquibaseSchemaAdapter {
      */
     public abstract void adapt(Connection connection, Compare.DiffResults diffResults) throws Exception;
 
-    protected String getChangeLogFilePath(List<AbstractChange> changeType) {
+    protected DatabaseChangeLog getChangeLogFilePath(List<AbstractChange> changeType) {
         // create a changelog
         liquibase.changelog.DatabaseChangeLog databaseChangeLog = new liquibase.changelog.DatabaseChangeLog();
 
@@ -106,46 +109,30 @@ public abstract class AbstractLiquibaseSchemaAdapter {
         return generateChangeLogFile(databaseChangeLog);
     }
 
-    protected String generateChangeLogFile(liquibase.changelog.DatabaseChangeLog databaseChangeLog) {
+    protected DatabaseChangeLog generateChangeLogFile(liquibase.changelog.DatabaseChangeLog databaseChangeLog) {
         // create a new serializer
         XMLChangeLogSerializer xmlChangeLogSerializer = new XMLChangeLogSerializer();
-
-        FileOutputStream baos = null;
+        DatabaseChangeLog changeLog = new DatabaseChangeLog();
+        String fileName = String.join(SEPARATOR, dateFormat(System.currentTimeMillis(), "yyyyMMddHHmm"), //$NON-NLS-1$
+                Long.toString(System.currentTimeMillis()), storageType.name() + ".xml"); //$NON-NLS-1$
+        Path fileDir = Paths.get(System.getProperty(MDM_ROOT), DATA_LIQUIBASE_CHANGELOG_PATH,
+                dateFormat(System.currentTimeMillis(), "yyyyMMdd")); //$NON-NLS-1$
+        File changeLogFile = null;
         try {
-            File mdmRootFileDir = new File(System.getProperty(MDM_ROOT));
-            File changeLogDir = new File(mdmRootFileDir, DATA_LIQUIBASE_CHANGELOG_PATH);
-
-            if (!changeLogDir.exists()) {
-                changeLogDir.mkdirs();
-            }
-            changeLogDir = new File(changeLogDir, dateFormat(System.currentTimeMillis(), "yyyyMMdd"));//$NON-NLS-1$
-            if (!changeLogDir.exists()) {
-                changeLogDir.mkdir();
-            }
-
-            File changeLogFile = new File(changeLogDir, dateFormat(System.currentTimeMillis(), "yyyyMMddHHmm") + SEPARATOR //$NON-NLS-1$
-                    + System.currentTimeMillis() + SEPARATOR + storageType + ".xml"); //$NON-NLS-1$
-            if (!changeLogFile.exists()) {
-                changeLogFile.createNewFile();
-            }
-            baos = new FileOutputStream(changeLogFile);
-            xmlChangeLogSerializer.write(databaseChangeLog.getChangeSets(), baos);
-            return changeLogFile.getAbsolutePath();
-        } catch (FileNotFoundException e) {
-            LOGGER.error("Liquibase change log file doesn't exist.", e);//$NON-NLS-1$
-            return StringUtils.EMPTY;
-        } catch (IOException e) {
-            LOGGER.error("Writing liquibase change log file failed.", e); //$NON-NLS-1$
-            return StringUtils.EMPTY;
-        } finally {
-            if (baos != null) {
-                try {
-                    baos.close();
-                } catch (IOException e) {
-                    LOGGER.error("Closing liquibase changelog file stream failed.", e); //$NON-NLS-1$
-                }
-            }
+            Path filePath = Paths.get(Files.createDirectories(fileDir).toString(), fileName);
+            changeLogFile = Files.createFile(filePath).toFile();
+            LOGGER.info("File %s created successfully!", fileDir); // $NON-NLS-1$
+        } catch (IOException e1) {
+            throw new RuntimeException("Failed to create Liquibase log file.", e1); // $NON-NLS-1$
         }
+
+        try (FileOutputStream baos = new FileOutputStream(changeLogFile);) {
+            xmlChangeLogSerializer.write(databaseChangeLog.getChangeSets(), baos);
+            changeLog = new DatabaseChangeLog(changeLogFile.getPath());
+        } catch (IOException e) {
+            throw new RuntimeException("Writing liquibase change log file failed.", e); //$NON-NLS-1$
+        }
+        return changeLog;
     }
 
     private static String dateFormat(long date, String pattern) {
@@ -236,7 +223,7 @@ public abstract class AbstractLiquibaseSchemaAdapter {
 
             @Override
             protected String getSqlString() {
-                return "SELECT count(*) FROM INFORMATION_SCHEMA.CONSTRAINTS WHERE TABLE_NAME = ? AND CONSTRAINT_NAME = ?"; //$NON-NLS-1$
+                return "SELECT count(*) FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE TABLE_NAME = ? AND CONSTRAINT_NAME = ?"; //$NON-NLS-1$
             }
 
             @Override
