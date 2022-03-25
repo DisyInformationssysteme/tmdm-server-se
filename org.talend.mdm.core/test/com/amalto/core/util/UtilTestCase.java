@@ -339,6 +339,8 @@ public class UtilTestCase extends TestCase {
         IWhereItem whereItem6 = new WhereCondition("Product/Description", "=", "${user_context.properties[\"error\"]}", "NONE");
         IWhereItem whereItem7 = new WhereCondition("Product/Description", "=", "${user_context.properties[\"\"]}", "NONE");
         IWhereItem whereItem8 = new WhereCondition("Product/Family", "Is Empty Or Null", null, "NONE");
+        IWhereItem whereItem9 = new WhereCondition("Product/Id", "STARTSWITH", "*", "NONE");
+        IWhereItem whereItem10 = new WhereCondition("Product/Id", "CONTAINS_SENTENCE", ".", "NONE");
 
         whereItems.add(whereItem1);
         whereItems.add(whereItem2);
@@ -348,6 +350,8 @@ public class UtilTestCase extends TestCase {
         whereItems.add(whereItem6);
         whereItems.add(whereItem7);
         whereItems.add(whereItem8);
+        whereItems.add(whereItem9);
+        whereItems.add(whereItem10);
         IWhereItem iWhereAnd = new WhereAnd(whereItems);
 
         Util.fixWebConditions(iWhereAnd, userXML);
@@ -355,19 +359,21 @@ public class UtilTestCase extends TestCase {
         if (iWhereAnd instanceof WhereLogicOperator) {
             List<IWhereItem> subItems = ((WhereLogicOperator) iWhereAnd).getItems();
 
-            assertTrue(subItems.size() == 5);
+            assertTrue(subItems.size() == 6);
 
             WhereCondition condition1 = (WhereCondition) subItems.get(0);
             WhereCondition condition2 = (WhereCondition) subItems.get(1);
             WhereCondition condition3 = (WhereCondition) subItems.get(2);
             WhereCondition condition4 = (WhereCondition) subItems.get(3);
             WhereCondition condition8 = (WhereCondition) subItems.get(4);
+            WhereCondition condition10 = (WhereCondition) subItems.get(5);
 
             assertTrue("1001".equals(condition1.getRightValueOrPath()));
             assertTrue("administrator".equals(condition2.getRightValueOrPath()));
             assertTrue("Default".equals(condition3.getRightValueOrPath()));
             assertTrue("bj".equals(condition4.getRightValueOrPath()));
             assertTrue("Is Empty Or Null".equals(condition8.getOperator()));
+            assertTrue(".".equals(condition10.getRightValueOrPath()));
         }
     }
 
