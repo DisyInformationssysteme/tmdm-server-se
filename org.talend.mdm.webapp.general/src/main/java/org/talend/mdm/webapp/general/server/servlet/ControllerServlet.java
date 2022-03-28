@@ -151,7 +151,7 @@ public class ControllerServlet extends HttpServlet {
 
         html.append("<h3>").append(errorTitle).append("</h3>"); //$NON-NLS-1$ //$NON-NLS-2$
         html.append("<p><font size='4' color='red'>").append(message).append("</font></p>"); //$NON-NLS-1$ //$NON-NLS-2$
-        html.append("<a href='").append(contextPath).append("/auth/logout'>").append(backLogin).append("</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        html.append("<a href='").append(contextPath).append("/logout'>").append(backLogin).append("</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         html.append("</body>");
         html.append("</html>");
