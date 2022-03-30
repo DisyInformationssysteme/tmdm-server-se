@@ -142,7 +142,7 @@ public class ControllerServlet extends HttpServlet {
         html.append("</head>");
         html.append("<body style='text-align: center;'>");
         html.append("<table width='100%' class='header1' border='0'>");
-        html.append("<tr><td height='128' width='50%' class='logo'><img src='" + contextPath + "/auth/logo.png'></td></tr>");
+        html.append("<tr><td height='128' width='50%' class='logo'></td></tr>");
         html.append("<tr><td class='suiteName' id='suiteName' colspan='2' height='56'>Talend MDM</td></tr>");
         html.append("</table>");
 
@@ -151,7 +151,7 @@ public class ControllerServlet extends HttpServlet {
 
         html.append("<h3>").append(errorTitle).append("</h3>"); //$NON-NLS-1$ //$NON-NLS-2$
         html.append("<p><font size='4' color='red'>").append(message).append("</font></p>"); //$NON-NLS-1$ //$NON-NLS-2$
-        html.append("<a href='").append(contextPath).append("/auth/logout'>").append(backLogin).append("</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        html.append("<a href='").append(contextPath).append("/logout'>").append(backLogin).append("</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         html.append("</body>");
         html.append("</html>");
