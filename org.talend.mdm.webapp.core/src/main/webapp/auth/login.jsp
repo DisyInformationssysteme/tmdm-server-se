@@ -48,8 +48,7 @@
 <body onload="document.loginform.j_username.focus();">
     <table width="100%" class="header1" border="0">
       <tr height="50%">
-          <td width="50%" class="logo">
-              <img src="<%= contextPath %>/auth/logo.png" height="60px">
+          <td width="50%" class="logo">             
           </td>
           <td class="version" id="loginVersion"><%=version%></td>
       </tr>
