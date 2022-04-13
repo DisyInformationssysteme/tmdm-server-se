@@ -134,10 +134,10 @@ public class DataRecordJSONWriter implements DataRecordWriter {
             JSONWriter jsonWriter = new JSONWriter(writer);
             DataRecord record = iterator.next();
             write(record, jsonWriter);
+            writer.flush();
             if (iterator.hasNext()) {
                 output.write(",".getBytes()); //$NON-NLS-1$
             }
-            writer.flush();
         }
     }
 
