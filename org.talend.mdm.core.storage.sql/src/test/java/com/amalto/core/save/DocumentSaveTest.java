@@ -2536,13 +2536,35 @@ public class DocumentSaveTest extends TestCase {
         MutableDocument updateReportDocument = context.getUpdateReportDocument();
         assertNotNull(updateReportDocument);
         Document doc = updateReportDocument.asDOM();
+        String path = (String) evaluate(doc.getDocumentElement(), "Item[1]/path");
+        String oldValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/oldValue");
+        String newValue = (String) evaluate(doc.getDocumentElement(), "Item[1]/newValue");
+        assertEquals("Name", path);
+        assertEquals("Portland", oldValue);
+        assertEquals("beforeSaving_Agency", newValue);
 
-        assertUpdateReportAction(doc, 1, "Name", "name1", "beforeSaving_Agency");
-        assertUpdateReportAction(doc, 2, "City", "city1", "Chicago");
-        assertUpdateReportAction(doc, 3, "State", "ME", "");
-        assertUpdateReportAction(doc, 4, "Information/MoreInfo[2]", "", "http://www.newSite2.org");
+        path = (String) evaluate(doc.getDocumentElement(), "Item[2]/path");
+        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/oldValue");
+        newValue = (String) evaluate(doc.getDocumentElement(), "Item[2]/newValue");
+        assertEquals("City", path);
+        assertEquals("Portland", oldValue);
+        assertEquals("Chicago", newValue);
 
-        String path = (String) evaluate(doc.getDocumentElement(), "OperationType");
+        path = (String) evaluate(doc.getDocumentElement(), "Item[3]/path");
+        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/oldValue");
+        newValue = (String) evaluate(doc.getDocumentElement(), "Item[3]/newValue");
+        assertEquals("State", path);
+        assertEquals("ME", oldValue);
+        assertEquals("", newValue);
+
+        path = (String) evaluate(doc.getDocumentElement(), "Item[4]/path");
+        oldValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/oldValue");
+        newValue = (String) evaluate(doc.getDocumentElement(), "Item[4]/newValue");
+        assertEquals("Information/MoreInfo[2]", path);
+        assertEquals("", oldValue);
+        assertEquals("http://www.newSite2.org", newValue);
+
+        path = (String) evaluate(doc.getDocumentElement(), "OperationType");
         assertEquals("UPDATE", path);
 
         MockCommitter committer = new MockCommitter();
