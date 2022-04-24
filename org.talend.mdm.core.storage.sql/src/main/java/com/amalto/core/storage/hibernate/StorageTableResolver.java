@@ -12,10 +12,8 @@ package com.amalto.core.storage.hibernate;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +23,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
+import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
+import org.talend.mdm.commmon.metadata.MetadataUtils;
 import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
 import org.talend.mdm.commmon.metadata.TypeMetadata;
 
@@ -88,7 +88,12 @@ class StorageTableResolver implements TableResolver {
 
     @Override
     public String get(ComplexTypeMetadata type) {
-        String tableName = formatSQLName(type.getName().replace('-', '_'));
+        String tableName;
+        if (type instanceof ContainedComplexTypeMetadata) {
+            tableName = formatSQLName(MetadataUtils.getSuperConcreteType(type).getName().replace('-', '_'));
+        } else {
+            tableName = formatSQLName(type.getName().replace('-', '_'));
+        }
         if (!type.isInstantiable() && !tableName.startsWith(STANDARD_PREFIX)) {
             tableName = STANDARD_PREFIX + tableName;
         }

@@ -91,7 +91,8 @@ public class StatefulContext implements MappingCreatorContext {
                 .filter(item -> !item.getName().equals(field.getDeclaringType().getName())).collect(Collectors.toList());
         outloop: for (ComplexTypeMetadata subType : subTypeSet) {
             for (FieldMetadata fieldMetadata : subType.getFields()) {
-                if (fieldMetadata instanceof ReferenceFieldMetadata && ((ReferenceFieldMetadata) fieldMetadata).isFKIntegrity()
+                if (fieldMetadata instanceof ReferenceFieldMetadata && field instanceof ReferenceFieldMetadata
+                        && ((ReferenceFieldMetadata) fieldMetadata).isFKIntegrity()
                         && fieldMetadata.getName().equals(field.getName())) {
                     isDupFKName = true;
                     break outloop;
@@ -101,7 +102,8 @@ public class StatefulContext implements MappingCreatorContext {
 
         if (type instanceof ContainedComplexTypeMetadata && isDupFKName) {
             ComplexTypeMetadata containedType = ((ContainedComplexTypeMetadata) type).getContainedType();
-            key = String.join("/", containedType.getNamespace(), containedType.getName(), topLevelType.getNamespace(), topLevelType.getName());
+            key = String.join("/", containedType.getNamespace(), containedType.getName(), topLevelType.getNamespace(),
+                    topLevelType.getName(), field.getName());
         }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("The current qualified key is " + key);
