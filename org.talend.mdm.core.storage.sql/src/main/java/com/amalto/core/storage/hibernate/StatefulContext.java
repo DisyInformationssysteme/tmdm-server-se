@@ -77,7 +77,6 @@ public class StatefulContext implements MappingCreatorContext {
             if (StringUtils.isEmpty(curName)) {
                 return false;
             }
-            Boolean isSameName = null;
             boolean isExist = topLevelType.getSubTypes().stream()
                     .anyMatch(action -> action.getUsages().stream().anyMatch(item -> {
                         if (item.getContainer() != null && item.getContainer().getContainingType() != null) {
@@ -86,13 +85,7 @@ public class StatefulContext implements MappingCreatorContext {
                             return false;
                         }
                     }));
-            if (isExist) {
-                isSameName = topLevelType.getSubTypes().stream().anyMatch(action -> action.getFields().stream().anyMatch(
-                        item -> !item.equals(field) && !item.getContainingType().equals(field.getContainingType())
-                                && field.getContainingType().getUsages().size() == item.getContainingType().getUsages().size()
-                                && item.getName().equals(field.getName())));
-            }
-            return isExist && !isSameName;
+            return isExist;
         }
         return false;
     }
