@@ -1857,7 +1857,11 @@ class StandardQueryHandler extends AbstractQueryHandler {
         FieldMetadata[] fields = ((CompoundFieldMetadata) referencedField).getFields();
         TypeMetadata superType = MetadataUtils.getSuperConcreteType(fields[0].getContainingType());
         for (FieldMetadata subFieldMetadata : fields) {
-            condition.criterionFieldNames.add(alias + '.' + (superType.getName() + "_ID").toLowerCase() + '.' + subFieldMetadata.getName());
+            if (alias.endsWith((superType.getName() + "_ID").toLowerCase())) {
+                condition.criterionFieldNames.add(alias + '.' + subFieldMetadata.getName());
+            } else {
+                condition.criterionFieldNames.add(alias + '.' + (superType.getName() + "_ID").toLowerCase() + '.' + subFieldMetadata.getName());
+            }
         }
     }
 

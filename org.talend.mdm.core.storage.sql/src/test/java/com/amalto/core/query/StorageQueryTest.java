@@ -968,7 +968,44 @@ public class StorageQueryTest extends StorageTestCase {
             assertEquals(expected[i++], result.get("id"));
         }
     }
-    
+
+    // TMDM-15013 Error happens when sorting by FK column referenced to composite keys
+    public void testOrderByFKReferencedToCompositeKey() throws Exception {
+        MetadataRepository repository = new MetadataRepository();
+        repository.load(DataRecordCreationTest.class.getResourceAsStream("StorageQueryTest_4.xsd"));
+
+        Storage storage = new HibernateStorage("H2-DS1", StorageType.MASTER);
+        storage.init(ServerContext.INSTANCE.get().getDefinition("H2-DS1", "MDM"));
+        storage.prepare(repository, true);
+        DataRecordReader<String> factory = new XmlStringDataRecordReader();
+
+        List<DataRecord> records = new LinkedList<DataRecord>();
+        ComplexTypeMetadata compositeKey = repository.getComplexType("RRExpress");
+        records.add(factory.read(repository, compositeKey, "<RRExpress><Id>11</Id><Name>22</Name></RRExpress>"));
+        records.add(factory.read(repository, compositeKey, "<RRExpress><Id>33</Id><Name>44</Name></RRExpress>"));
+
+        ComplexTypeMetadata singleEntity = repository.getComplexType("TTExpress");
+        records.add(factory.read(repository, singleEntity, "<TTExpress><Id>1</Id><MUl><E1>student</E1><E2>john</E2><E3>[11][22]</E3></MUl></TTExpress>"));
+        records.add(factory.read(repository, singleEntity, "<TTExpress><Id>2</Id><MUl><E1>teacher</E1><E2>alan</E2><E3>[33][44]</E3></MUl></TTExpress>"));
+        storage.begin();
+        storage.update(records);
+        storage.commit();
+
+        storage.begin();
+        final ComplexTypeMetadata ttExpress = repository.getComplexType("TTExpress");
+        UserQueryBuilder qb = from(ttExpress).select(ttExpress.getField("Id")).select(ttExpress.getField("MUl/E3"))
+                .orderBy(ttExpress.getField("MUl/E3"), OrderBy.Direction.DESC);
+        StorageResults results = storage.fetch(qb.getSelect());
+        try {
+            assertEquals(2, results.getCount());
+            results.forEach((DataRecord record) -> {
+                assertNotNull(record.get(compositeKey.getField("Id")));
+            });
+        } finally {
+            results.close();
+        }
+    }
+
     public void testOrderByCompoundField() throws Exception {
         FieldMetadata codeField = compte.getField("Code");
         FieldMetadata childOfField = compte.getField("childOf");
