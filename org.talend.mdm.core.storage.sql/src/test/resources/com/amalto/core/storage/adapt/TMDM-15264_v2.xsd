@@ -1,0 +1,444 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.w3.org/2001/XMLSchema"/>
+    <xsd:simpleType name="AUTO_INCREMENT">
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+    <xsd:simpleType name="OperateurDematerialisationEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="BASWARE"/>
+            <xsd:enumeration value="CEGEDIM"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="TypeIdentifiantDematerialisationEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="TVA_INTRA"/>
+            <xsd:enumeration value="SIREN"/>
+            <xsd:enumeration value="SIRET"/>
+            <xsd:enumeration value="RIDET"/>
+            <xsd:enumeration value="NUM_TAHITI"/>
+            <xsd:enumeration value="BVDID"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="SEP">
+        <xsd:annotation>
+            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" name="CodeSEP" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="InformationsFiscales" type="InformationsFiscalesSEP">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Membres" type="MembresSEP">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        <xsd:appinfo source="X_AutoExpand">true</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="InformationsIdentite" type="InformationsIdentiteSEP">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+        <xsd:unique name="SEP">
+            <xsd:selector xpath="."/>
+            <xsd:field xpath="CodeSEP"/>
+        </xsd:unique>
+    </xsd:element>
+    <xsd:complexType abstract="true" name="TypeArborescence">
+        <xsd:sequence/>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="InformationsIdentite">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="LieuImmatriculation" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="CodeAPE" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="CodeTVA" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="IdentifiantLocal2" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="InformationsFiscales">
+        <xsd:sequence/>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="Membre">
+        <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="1" name="TypeMembre" type="TypeMembre">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="DateEntree" type="xsd:date">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    <xsd:appinfo source="X_Display_Format_EN">MM/dd/yyyyy</xsd:appinfo>
+                    <xsd:appinfo source="X_Display_Format_FR">dd/MM/yyyyy</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="0" name="DateSortie" type="xsd:date">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    <xsd:appinfo source="X_Display_Format_EN">"MM/dd/yyyyy"</xsd:appinfo>
+                    <xsd:appinfo source="X_Display_Format_FR">"dd/MM/yyyyy"</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType abstract="false" name="MembresSEP">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="Membre" type="MembreSEP">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_AutoExpand">true</xsd:appinfo>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="MULTI_LINGUAL">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="(\[\w+\:[^\[\]]*\]){0,}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType abstract="false" name="PersonneMoraleHorsGroupe">
+        <xsd:complexContent>
+            <xsd:extension base="TypeMembre">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="RaisonSociale" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Email" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="SIRET" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="TypeMembre">
+        <xsd:sequence/>
+    </xsd:complexType>
+    <xsd:complexType name="PersonnePhysique">
+        <xsd:complexContent>
+            <xsd:extension base="TypeMembre">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="Nom" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="Prenom" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType abstract="false" name="Actionnaire">
+        <xsd:complexContent>
+            <xsd:extension base="Membre">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="NbTitres" type="xsd:int">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="NbDroitsVote" type="xsd:int">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="PourcentageTitres" type="xsd:float">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="PourcentageDroitsVote" type="xsd:float">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType abstract="false" name="MembreSEP">
+        <xsd:complexContent>
+            <xsd:extension base="Membre">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="PourcentageDroitsVote" type="xsd:float">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="InformationsFiscalesSociete">
+        <xsd:complexContent>
+            <xsd:extension base="InformationsFiscales">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="RegimeImpositionFk" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="RegimeDeclarationFk" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="InformationsFiscalesSEP">
+        <xsd:complexContent>
+            <xsd:extension base="InformationsFiscales">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="RegimeImpositionFk" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                            <xsd:appinfo source="X_Default_Value_Rule">1</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="InformationsFiscalesEtablissement">
+        <xsd:complexContent>
+            <xsd:extension base="InformationsFiscales">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="RegimeImpositionFk" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                            <xsd:appinfo source="X_ForeignKey">RegimeImposition/Code</xsd:appinfo>
+                            <xsd:appinfo source="X_ForeignKey_NotSep">true</xsd:appinfo>
+                            <xsd:appinfo source="X_ForeignKeyInfo">RegimeImposition/Libelle</xsd:appinfo>
+                            <xsd:appinfo source="X_Retrieve_FKinfos">true</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="RegimeDeclarationFk" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                            <xsd:appinfo source="X_ForeignKey">RegimeDeclaration/Code</xsd:appinfo>
+                            <xsd:appinfo source="X_ForeignKey_NotSep">true</xsd:appinfo>
+                            <xsd:appinfo source="X_ForeignKeyInfo">RegimeDeclaration/Libelle</xsd:appinfo>
+                            <xsd:appinfo source="X_Retrieve_FKinfos">true</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="InformationsIdentiteSociete">
+        <xsd:complexContent>
+            <xsd:extension base="InformationsIdentite">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="IdentifiantLocal1" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Admin</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="FormeJuridique" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="CapitalSocial" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="RaisonSociale" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="InformationsIdentiteSEP">
+        <xsd:complexContent>
+            <xsd:extension base="InformationsIdentite">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="IdentifiantLocal1" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="FormeJuridique" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="CapitalSocial" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="RaisonSociale" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="InformationsIdentiteEtablissement">
+        <xsd:complexContent>
+            <xsd:extension base="InformationsIdentite">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="IdentifiantLocal1" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="RaisonSociale" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:simpleType name="PICTURE">
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+    <xsd:simpleType name="URL">
+        <xsd:restriction base="PICTURE"/>
+    </xsd:simpleType>
+    <xsd:element name="Societe">
+        <xsd:annotation>
+            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+            <xsd:appinfo source="X_Write">MDM_Fiscaliste</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" name="CodeOSMOSE" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Retrieve_FKinfos">true</xsd:appinfo>
+                        <xsd:appinfo source="X_FKIntegrity_Override">false</xsd:appinfo>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        <xsd:appinfo source="X_FKIntegrity">true</xsd:appinfo>
+                        <xsd:appinfo source="X_ForeignKey_NotSep">false</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="InformationsIdentite" type="InformationsIdentiteSociete">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        <xsd:appinfo source="X_Write">MDM_Fiscaliste</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="InformationsFiscales" type="InformationsFiscalesSociete">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        <xsd:appinfo source="X_Write">MDM_Fiscaliste</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="NbTotalTitres" type="xsd:integer">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        <xsd:appinfo source="X_Write">MDM_Fiscaliste</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="NbTotalDroitsVote" type="xsd:integer">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                        <xsd:appinfo source="X_Write">MDM_Fiscaliste</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+        <xsd:unique name="Societe">
+            <xsd:selector xpath="."/>
+            <xsd:field xpath="CodeOSMOSE"/>
+        </xsd:unique>
+    </xsd:element>
+    <xsd:simpleType name="UUID">
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+    <xsd:element name="RegimeDeclaration">
+        <xsd:annotation>
+            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" name="Code" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="0" name="Libelle" type="MULTI_LINGUAL">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+        <xsd:unique name="RegimeDeclaration">
+            <xsd:selector xpath="."/>
+            <xsd:field xpath="Code"/>
+        </xsd:unique>
+    </xsd:element>
+    <xsd:element name="RegimeImposition">
+        <xsd:annotation>
+            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="1" name="Code" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element maxOccurs="1" minOccurs="1" name="Libelle" type="MULTI_LINGUAL">
+                    <xsd:annotation>
+                        <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:all>
+        </xsd:complexType>
+        <xsd:unique name="RegimeImposition">
+            <xsd:selector xpath="."/>
+            <xsd:field xpath="Code"/>
+        </xsd:unique>
+    </xsd:element>
+</xsd:schema>
