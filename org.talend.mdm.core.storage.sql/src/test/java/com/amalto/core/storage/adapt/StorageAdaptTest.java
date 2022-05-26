@@ -16,6 +16,8 @@ import static com.amalto.core.query.user.UserQueryBuilder.from;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -27,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.jdbc.JdbcException;
@@ -2516,6 +2519,53 @@ public class StorageAdaptTest extends TestCase {
             storage.adapt(repository2, false);
         } catch (Exception e2) {
             assertNull(e2);
+        }
+    }
+
+    //TMDM-15264 Some data is lost after restart MDM Server
+    public void testTwiceDeployDMAnnuaireGroupe() throws Exception {
+        String str = System.getProperty("java.io.tmpdir");//for linux, locate directory /tmp
+        FileUtils.write(Paths.get(str, "columnNameIndexFile.data").toFile(), "", Charset.defaultCharset());
+        // Test preparation
+        DataSourceDefinition dataSource = ServerContext.INSTANCE.get().getDefinition("H2-DS3", STORAGE_NAME);
+        Storage storage = new HibernateStorage("Test", StorageType.MASTER);
+        storage.init(dataSource);
+        MetadataRepository repository = new MetadataRepository();
+        repository.load(StorageAdaptTest.class.getResourceAsStream("TMDM-15264_v1.xsd"));
+        storage.prepare(repository, true);
+        // Ensure PourcentageDroitsVote column exists
+        performAssert3(dataSource, true);
+        // Actual test
+        MetadataRepository newRepository = new MetadataRepository();
+        newRepository.load(StorageAdaptTest.class.getResourceAsStream("TMDM-15264_v2.xsd"));
+        storage.adapt(newRepository, true);
+        // Test expected schema update
+        performAssert3(dataSource, true);
+        storage.close(true);
+    }
+
+    private void performAssert3(DataSourceDefinition dataSource, boolean exists) throws SQLException {
+        DataSource master = dataSource.getMaster();
+        assertTrue(master instanceof RDBMSDataSource);
+        RDBMSDataSource rdbmsDataSource = (RDBMSDataSource) master;
+        assertEquals(RDBMSDataSource.DataSourceDialect.H2, rdbmsDataSource.getDialectName());
+        Connection connection = DriverManager.getConnection(rdbmsDataSource.getConnectionURL());
+        Statement statement = connection.createStatement();
+        try {
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM X_Membre");
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            assertSame(6, metaData.getColumnCount());
+            boolean isExistTheSameColumnName = false;
+            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                if ("X_POURCENTAGEDROITSVOTE3".equalsIgnoreCase(metaData.getColumnName(i))) {
+                    isExistTheSameColumnName = true;
+                    break;
+                }
+            }
+            assertSame(exists, isExistTheSameColumnName);
+        } finally {
+            statement.close();
+            connection.close();
         }
     }
 
