@@ -10,6 +10,12 @@
 
 package com.amalto.core.storage.hibernate;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
@@ -47,7 +53,6 @@ public class StatefulContext implements MappingCreatorContext {
 
     @Override
     public String getFieldColumn(FieldMetadata field) {
-
         if (!field.getContainingType().getSuperTypes().isEmpty() && !field.getContainingType().isInstantiable()) {
             boolean isUnique = isUniqueWithinTypeHierarchy(field.getContainingType(), field.getName());
             boolean isExistEntity = isExistInSameEntity(field);
@@ -55,9 +60,12 @@ public class StatefulContext implements MappingCreatorContext {
                 // Non instantiable types are mapped using a "table per hierarchy" strategy, if field name isn't unique
                 // make sure name becomes unique to avoid conflict (Hibernate doesn't issue warning/errors in case of overlap).
                 synchronized (enforcedUniqueNames) {
-                    String enforcedUniqueName = enforcedUniqueNames.get(getQualifiedKey(field));
+                    loadValueFromFile();
+                    String fullPathKey = getQualifiedKey(field);
+                    String enforcedUniqueName = enforcedUniqueNames.get(fullPathKey);
                     if (enforcedUniqueName == null) {
                         enforcedUniqueName = getFieldColumn(field.getName()) + uniqueInheritanceCounter.incrementAndGet();
+                        writeValueToFile(fullPathKey, enforcedUniqueName);
                         enforcedUniqueNames.put(getQualifiedKey(field), enforcedUniqueName);
                     }
                     return enforcedUniqueName;
@@ -224,6 +232,46 @@ public class StatefulContext implements MappingCreatorContext {
             }
         });
         return occurrenceCount <= 1;
+    }
+
+    private File loadColumnNameIndexes() {
+        File file = null;
+        String str = System.getProperty("java.io.tmpdir");
+        try {
+            file = Paths.get(str, "columnNameIndexFile.data").toFile();
+            if (file.createNewFile()) {
+                LOGGER.info("New temporary File is created!");
+            } else {
+                LOGGER.info("File already exists.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create file.", e);
+        }
+        return file;
+    }
+
+    private void writeValueToFile(String key, String value) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(loadColumnNameIndexes().getPath(), true))) {
+            if (!enforcedUniqueNames.containsKey(key)) {
+                // write text to file
+                bw.write(key + "$" + value);
+                bw.newLine();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to write content to file.", e);
+        }
+    }
+
+    private void loadValueFromFile() {
+        try (BufferedReader br = new BufferedReader(new FileReader(loadColumnNameIndexes().getPath()))) {
+            // read until end of file
+            String line;
+            while ((line = br.readLine()) != null) {
+                enforcedUniqueNames.put(line.substring(0, line.indexOf("$")), line.substring(line.indexOf("$") + 1));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to load content from file.", e);
+        }
     }
 
     @Override
