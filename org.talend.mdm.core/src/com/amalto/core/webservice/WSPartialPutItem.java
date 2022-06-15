@@ -27,7 +27,9 @@ public class WSPartialPutItem {
     public WSPartialPutItem() {
     }
 
-    public WSPartialPutItem(java.lang.String xml, java.lang.String datacluster, java.lang.String pivot, java.lang.String datamodel, java.lang.String keyXPath, java.lang.Integer startingPosition, java.lang.Boolean overwrite, boolean report, java.lang.String source, java.lang.Boolean delete) {
+    public WSPartialPutItem(java.lang.String xml, java.lang.String datacluster, java.lang.String pivot,
+            java.lang.String datamodel, java.lang.String keyXPath, java.lang.Integer startingPosition,
+            java.lang.Boolean overwrite, boolean report, java.lang.String source, java.lang.Boolean delete) {
         this.xml = xml;
         this.datacluster = datacluster;
         this.pivot = pivot;

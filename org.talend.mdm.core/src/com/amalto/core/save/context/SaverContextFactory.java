@@ -232,6 +232,7 @@ public class SaverContextFactory {
                                                     InputStream documentStream,
                                                     boolean validate,
                                                     boolean updateReport,
+                                                    boolean invokeBeforeSaving,
                                                     String pivot,
                                                     String key,
                                                     int index,
@@ -245,7 +246,7 @@ public class SaverContextFactory {
                 false, // Never do a "replace" when doing a partial update.
                 validate,
                 updateReport,
-                false, XSystemObjects.DC_PROVISIONING.getName().equals(dataCluster)); // Before saving is not supported
+                invokeBeforeSaving, XSystemObjects.DC_PROVISIONING.getName().equals(dataCluster)); // Before saving is not supported
         return PartialUpdateSaverContext.decorate(context, pivot, key, index, overwrite, delete);
     }
 
@@ -255,11 +256,12 @@ public class SaverContextFactory {
                                                     InputStream documentStream,
                                                     boolean validate,
                                                     boolean updateReport,
+                                                    boolean invokeBeforeSaving,
                                                     String pivot,
                                                     String key,
                                                     int index,
                                                     boolean overwrite) {
-        return createPartialUpdate(dataCluster, dataModelName, changeSource, documentStream, validate, updateReport, pivot, key,
+        return createPartialUpdate(dataCluster, dataModelName, changeSource, documentStream, validate, updateReport, invokeBeforeSaving, pivot, key,
                 index, overwrite, false);
     }
 

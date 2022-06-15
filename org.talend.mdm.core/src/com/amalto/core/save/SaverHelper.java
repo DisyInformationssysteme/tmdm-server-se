@@ -83,6 +83,7 @@ public class SaverHelper {
                 new ByteArrayInputStream(partialPutItem.getXml().getBytes("UTF-8")), //$NON-NLS-1$
                 true, // Always validate
                 partialPutItem.isReport(),
+                false,
                 partialPutItem.getPivot(),
                 partialPutItem.getKeyXPath(),
                 partialPutItem.getStartingPosition() != null ? partialPutItem.getStartingPosition() : -1,
