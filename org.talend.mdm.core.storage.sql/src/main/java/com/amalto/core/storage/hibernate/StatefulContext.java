@@ -240,9 +240,9 @@ public class StatefulContext implements MappingCreatorContext {
         try {
             file = Paths.get(str, "columnNameIndexFile.data").toFile();
             if (file.createNewFile()) {
-                LOGGER.info("New temporary File is created!");
-            } else {
-                LOGGER.info("File already exists.");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("New temporary File is created!");
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to create file.", e);
