@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2022 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -72,11 +72,7 @@ public class InputStreamMergerTest extends TestCase {
             throw new RuntimeException(e);
         }
 
-        try {
-            assertTrue(bis.isConsumed());
-        } catch (InterruptedException e) {
-            // never goes here
-        }
+        assertEquals(testString, reader.getRebuiltString());
     }
 
     public void testSimpleReadPusherFirst() {
@@ -107,7 +103,7 @@ public class InputStreamMergerTest extends TestCase {
             throw new RuntimeException(e);
         }
 
-        assertEquals("", reader.getRebuiltString());//only keep stop
+        assertEquals(testString, reader.getRebuiltString());
     }
 
     public void testSimpleReadPusherFirstWithInvalidCapacity() {
@@ -127,6 +123,10 @@ public class InputStreamMergerTest extends TestCase {
 
     public void testSimpleReadPusherFirstWithLimitedCapacity() {
         _testSimpleReadPusherFirstWithLimitedCapacity(1, 50);
+        _testSimpleReadPusherFirstWithLimitedCapacity(20, 50);
+        _testSimpleReadPusherFirstWithLimitedCapacity(50, 50);
+        _testSimpleReadPusherFirstWithLimitedCapacity(100, 50);
+        _testSimpleReadPusherFirstWithLimitedCapacity(50, 100);
     }
 
     private void _testSimpleReadPusherFirstWithLimitedCapacity(int capacity, int count) {
@@ -166,6 +166,8 @@ public class InputStreamMergerTest extends TestCase {
 
     public void testSimpleReadPusherFirstWithLimitedCapacityAndWarmUp() {
         _testSimpleReadPusherFirstWithLimitedCapacityAndWarmUp(1, 50, 1);
+        _testSimpleReadPusherFirstWithLimitedCapacityAndWarmUp(20, 50, 0);
+        _testSimpleReadPusherFirstWithLimitedCapacityAndWarmUp(100, 50, 100);
     }
 
     private void _testSimpleReadPusherFirstWithLimitedCapacityAndWarmUp(int capacity, int count, final int warmUp) {
@@ -230,7 +232,7 @@ public class InputStreamMergerTest extends TestCase {
         } catch (IOException e) {
             assertEquals("Expected exception text", e.getCause().getCause().getMessage()); //$NON-NLS-1$
         }
-        assertEquals("", reader.getRebuiltString()); //$NON-NLS-1$
+        assertEquals("testtesttesttest", reader.getRebuiltString()); //$NON-NLS-1$
     }
 
     /**
@@ -259,7 +261,7 @@ public class InputStreamMergerTest extends TestCase {
     }
 
     public void testManyReadReaderFirst() {
-        int times = 1;
+        int times = 10;
         InputStreamMerger bis = new InputStreamMerger();
         String testString = "test"; //$NON-NLS-1$
 
@@ -287,12 +289,13 @@ public class InputStreamMergerTest extends TestCase {
             throw new RuntimeException(e);
         }
 
-        try {
-            assertTrue(bis.isConsumed());
-        } catch (InterruptedException e) {
-            // never goes here
+        String expectedOutput = ""; //$NON-NLS-1$
+        for (int i = 0; i < times; i++) {
+            expectedOutput += testString;
         }
+        assertEquals(expectedOutput, reader.getRebuiltString());
     }
+
 
     public void testSlowConsumer() {
         int times = 50;
@@ -323,11 +326,11 @@ public class InputStreamMergerTest extends TestCase {
             throw new RuntimeException(e);
         }
 
-        try {
-            assertTrue(bis.isConsumed());
-        } catch (InterruptedException e) {
-            // never goes here
+        String expectedOutput = ""; //$NON-NLS-1$
+        for (int i = 0; i < times; i++) {
+            expectedOutput += testString;
         }
+        assertEquals(expectedOutput, reader.getRebuiltString());
     }
 
     public void testBulkload() throws InterruptedException, IOException {
@@ -443,9 +446,14 @@ public class InputStreamMergerTest extends TestCase {
                 try {
                     int readBytes=0;
                     byte[] buffer = new byte[8];
-                    while ((readBytes = bis.read(buffer)) == -1) {
-                        bis.reportFailure(new RuntimeException("Expected exception text")); //$NON-NLS-1$
-                        break;
+                    int times=0;
+                    while ((readBytes = bis.read(buffer)) > 0) {
+                        rebuiltString += new String(ArrayUtils.subarray(buffer, 0, readBytes));
+                        times++;
+                        if(times == nbReadsBeforeError){
+                            bis.reportFailure(new RuntimeException("Expected exception text")); //$NON-NLS-1$
+                            break;
+                        }
                     }
                 } catch (IOException e) {
                     bis.reportFailure(e);

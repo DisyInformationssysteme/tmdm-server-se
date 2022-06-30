@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2022 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -10,32 +10,23 @@
 
 package org.talend.mdm.bulkload.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Bulkload amount items client
@@ -43,104 +34,101 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class BulkloadClientUtil {
 
+    private static final Log LOG = LogFactory.getLog(BulkloadClientUtil.class);
+
     public static final Integer MAX_HTTP_REQUESTS;
     public static final String CLIENT_CONNECTION_TIMEOUT = "ws_client_connection_timeout"; //$NON-NLS-1$
     public static final String CLIENT_SOCKET_TIMEOUT = "ws_client_receive_timeout"; //$NON-NLS-1$
 
+    public static final int CLIENT_CONNECTION_DEFAULT_TIMEOUT = 60 * 1000;  //millisecond
+    public static final int MAX_HTTP_REQUESTS_DEFAULT = 25;
+
     static {
         String httpRequests = System.getProperty("bulkload.concurrent.http.requests");//$NON-NLS-1$
-        MAX_HTTP_REQUESTS = httpRequests == null? Integer.MAX_VALUE : Integer.parseInt(httpRequests);
+        Integer httpCount = MAX_HTTP_REQUESTS_DEFAULT;
+        try {
+            if (httpRequests != null) {
+                httpCount = Integer.parseInt(httpRequests);
+            }
+            if (httpCount <= 0) {
+                httpCount = MAX_HTTP_REQUESTS_DEFAULT;
+            }
+        } catch (Exception e) {
+            LOG.error("The string does not contain a parsable integer" + e);
+        }
+        MAX_HTTP_REQUESTS = httpCount;
     }
 
     public static void bulkload(String url, String cluster, String concept, String datamodel, boolean validate, boolean smartpk,
             boolean insertonly, boolean updateReport, String source, InputStream itemdata, String username, String password,
             String transactionId, List<String> cookies, String tokenKey, String tokenValue) throws Exception {
+        HostConfiguration config = new HostConfiguration();
+        URI uri = new URI(url, false, StandardCharsets.UTF_8.name());
+        config.setHost(uri);
 
-        HttpPut httpPut = new HttpPut(url);
-        String auth = username + ":" + password;
-        String authHeader = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
-        httpPut.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
-        httpPut.setHeader("Content-Type", "text/xml; charset=utf8"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (transactionId != null) {
-            httpPut.setHeader("transaction-id", transactionId); //$NON-NLS-1$
-        }
-        if (cookies != null) {
-            for (String cookie : cookies) {
-                httpPut.setHeader("Cookie", cookie); //$NON-NLS-1$
+        NameValuePair[] parameters = { new NameValuePair("cluster", cluster), //$NON-NLS-1$
+                new NameValuePair("concept", concept), //$NON-NLS-1$
+                new NameValuePair("datamodel", datamodel), //$NON-NLS-1$
+                new NameValuePair("validate", String.valueOf(validate)), //$NON-NLS-1$
+                new NameValuePair("action", "load"), //$NON-NLS-1$ //$NON-NLS-2$
+                new NameValuePair("smartpk", String.valueOf(smartpk)),//$NON-NLS-1$
+                new NameValuePair("insertonly", String.valueOf(insertonly)), //$NON-NLS-1$
+                new NameValuePair("updateReport", String.valueOf(updateReport)), //$NON-NLS-1$
+                new NameValuePair("source", String.valueOf(source)) }; //$NON-NLS-1$
+
+        HttpClient client = new HttpClient();
+        byte[] authBytes = (username + ":" + password).getBytes(StandardCharsets.UTF_8.name());
+        String authString = Base64.getEncoder().encodeToString(authBytes);
+        HttpClientParams clientParams = client.getParams();
+        clientParams.setAuthenticationPreemptive(true);
+        clientParams.setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+        clientParams.setParameter(HttpConnectionParams.CONNECTION_TIMEOUT, getClientTimeout(CLIENT_CONNECTION_TIMEOUT));
+        clientParams.setParameter(HttpConnectionParams.SO_TIMEOUT, getClientTimeout(CLIENT_SOCKET_TIMEOUT));
+
+        PutMethod putMethod = new PutMethod();
+        // This setPath call is *really* important (if not set, request will be sent to the JBoss root '/')
+        putMethod.setPath(url);
+        String responseBody;
+        try {
+            // Configuration
+            putMethod.setRequestHeader("Authorization", "Basic " + authString);
+            putMethod.setRequestHeader("Content-Type", "text/xml; charset=utf8"); //$NON-NLS-1$ //$NON-NLS-2$
+            if (transactionId != null) {
+                putMethod.setRequestHeader("transaction-id", transactionId); //$NON-NLS-1$
             }
-        }
-        if (tokenKey != null && tokenValue != null) {
-            httpPut.setHeader(tokenKey, tokenValue);
-        }
-
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(getClientTimeout(CLIENT_CONNECTION_TIMEOUT))
-                .setConnectTimeout(getClientTimeout(CLIENT_CONNECTION_TIMEOUT))
-                .setSocketTimeout(getClientTimeout(CLIENT_SOCKET_TIMEOUT))
-                .setExpectContinueEnabled(true)
-                .build();
-
-        CloseableHttpClient client = HttpClientBuilder.create()
-                .setDefaultRequestConfig(requestConfig)
-                .disableCookieManagement()
-                .build();
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("cluster", cluster)); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("concept", concept)); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("datamodel", datamodel)); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("validate", String.valueOf(validate))); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("action", "load")); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("smartpk", String.valueOf(smartpk))); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("insertonly", String.valueOf(insertonly))); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("updateReport", String.valueOf(updateReport))); //$NON-NLS-1$
-        params.add(new BasicNameValuePair("source", String.valueOf(source))); //$NON-NLS-1$
-
-        URI uri = new URIBuilder(httpPut.getURI()).addParameters(params).build();
-        ((HttpRequestBase) httpPut).setURI(uri);
-
-        InputStreamEntity content = new InputStreamEntity(itemdata);
-        content.setChunked(true);
-        httpPut.setEntity(content);
-
-        CloseableHttpResponse response = client.execute(httpPut);
-        if (itemdata instanceof InputStreamMerger) {
-            ((InputStreamMerger) itemdata).setAlreadyProcessed(true);
-        }
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode >= 500) {
-            HttpEntity entity = response.getEntity();
-            String responseResult = StringUtils.EMPTY;
-            if (entity != null) {
-                BufferedReader bufferedReader = null;
-                try {
-                    InputStream inputStream = entity.getContent();
-                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    responseResult = bufferedReader.lines().collect(Collectors.joining(System.lineSeparator()));
-                    bufferedReader.close();
-                } catch (Exception e) {
-                    throw e;
-                } finally {
-                    // releases system resources associated with this stream
-                    if (bufferedReader != null) {
-                        bufferedReader.close();
-                    }
+            if (cookies != null) {
+                for (String cookie : cookies) {
+                    putMethod.addRequestHeader("Cookie", cookie); //$NON-NLS-1$
                 }
             }
-            throw new BulkloadException(responseResult);
+            if (tokenKey != null && tokenValue != null) {
+                putMethod.setRequestHeader(tokenKey, tokenValue);
+            }
+            putMethod.setQueryString(parameters);
+            putMethod.setContentChunked(true);
+            // Set the content of the PUT request
+            putMethod.setRequestEntity(new InputStreamRequestEntity(itemdata));
+
+            client.executeMethod(config, putMethod);
+            responseBody = putMethod.getResponseBodyAsString();
+            if (itemdata instanceof InputStreamMerger) {
+                ((InputStreamMerger) itemdata).setAlreadyProcessed(true);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            putMethod.releaseConnection();
+        }
+
+        int statusCode = putMethod.getStatusCode();
+        if (statusCode >= 500) {
+            throw new BulkloadException(responseBody);
         } else if (statusCode >= 400) {
             throw new BulkloadException("Could not send data to MDM (HTTP status code: " + statusCode + ")."); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        try {
-            response.close();
-            client.close();
-        } catch (IOException e) {
-            throw e;
         }
     }
 
     private static int getClientTimeout(String property) throws Exception {
-        int defaultTimeout = 60000;
         String inputTimeout = System.getProperty(property);
         if (inputTimeout != null) {
             try {
@@ -149,10 +137,10 @@ public class BulkloadClientUtil {
                     return timeout;
                 }
             } catch (Exception exception) {
-                throw new RuntimeException(property + " property value '" + inputTimeout + "' is invalid", exception);  //$NON-NLS-1$//$NON-NLS-2$
+                LOG.error(property + " property value '" + inputTimeout + "' is invalid", exception);  //$NON-NLS-1$//$NON-NLS-2$
             }
         }
-        return defaultTimeout;
+        return CLIENT_CONNECTION_DEFAULT_TIMEOUT;
     }
 
     public static InputStreamMerger bulkload(String url, String cluster, String concept, String dataModel, boolean validate,
@@ -169,7 +157,7 @@ public class BulkloadClientUtil {
         }
         Runnable loadRunnable = new AsyncLoadRunnable(url, cluster, concept, dataModel, validate, smartPK, insertOnly,
                 updateReport, source, merger, username, password, transactionId, cookies, tokenKey, tokenValue,
-                startedBulkloadCount, merger.getReadyRead());
+                startedBulkloadCount);
         Thread loadThread = new Thread(loadRunnable);
         loadThread.start();
         return merger;
@@ -211,12 +199,10 @@ public class BulkloadClientUtil {
 
         private final AtomicInteger startedBulkloadCount;
 
-        private final CountDownLatch readyRead;
-
         public AsyncLoadRunnable(String url, String cluster, String concept, String dataModel, boolean validate, boolean smartPK,
                 boolean insertOnly, boolean updateReport, String source, InputStreamMerger inputStream, String userName,
                 String password, String transactionId, List<String> cookies, String tokenKey, String tokenValue,
-                AtomicInteger startedBulkloadCount, CountDownLatch readyRead) {
+                AtomicInteger startedBulkloadCount) {
             this.url = url;
             this.cluster = cluster;
             this.concept = concept;
@@ -234,16 +220,16 @@ public class BulkloadClientUtil {
             this.tokenKey = tokenKey;
             this.tokenValue = tokenValue;
             this.startedBulkloadCount = startedBulkloadCount;
-            this.readyRead = readyRead;
         }
 
         @Override
         public void run() {
             try {
-                readyRead.await();
                 startedBulkloadCount.incrementAndGet();
-                bulkload(url, cluster, concept, dataModel, validate, smartPK, insertOnly, updateReport, source, inputStream,
-                        userName, password, transactionId, cookies, tokenKey, tokenValue);
+                do {
+                    bulkload(url, cluster, concept, dataModel, validate, smartPK, insertOnly, updateReport, source, inputStream,
+                            userName, password, transactionId, cookies, tokenKey, tokenValue);
+                } while(!inputStream.isConsumed());
             } catch (Throwable e) {
                 inputStream.reportFailure(e);
             } finally {
