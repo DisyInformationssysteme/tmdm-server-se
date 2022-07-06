@@ -792,8 +792,6 @@ public class ForeignKeyHelper {
                     return WSWhereOperator.EQUALS.toString();
                 } else if (Types.DATE.equals(typeName) || Types.DATETIME.equals(typeName) || Types.TIME.equals(typeName)) {
                     return WSWhereOperator.EQUALS.toString();
-                } else if (Types.BOOLEAN.equals(typeName)) {
-                    return WSWhereOperator.EQUALS.toString();
                 } else if (Types.DECIMAL.equals(typeName)) {
                     return WSWhereOperator.EQUALS.toString();
                 } else if (Types.FLOAT.equals(typeName) || Types.LONG.equals(typeName) || Types.UNSIGNED_LONG.equals(typeName)
