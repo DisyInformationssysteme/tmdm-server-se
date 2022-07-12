@@ -22,6 +22,6 @@ public class H2CustomDialect extends H2Dialect {
     public H2CustomDialect() {
         registerColumnType(Types.BOOLEAN, "boolean"); //$NON-NLS-1$
         registerHibernateType(Types.BOOLEAN, "boolean"); //$NON-NLS-1$
-        registerColumnType(Types.LONGVARCHAR, String.format("varchar(%d)", 1048576)); // 1G
+        registerColumnType(Types.LONGVARCHAR, String.format("varchar(%d)", 1048576/*1.0 Megabyte*/)); //$NON-NLS-1$
     }
 }
