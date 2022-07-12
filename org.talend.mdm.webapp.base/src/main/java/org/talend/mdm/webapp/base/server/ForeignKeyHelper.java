@@ -94,7 +94,7 @@ public class ForeignKeyHelper {
         } else {
             model.setFilterValue(ids);
         }
-        holder = getForeignKeyHolder(model, foreignKeyFilterValue);
+        holder = getForeignKeyHolder(model, foreignKeyFilterValue, false);
         String[] results = null;
         if (holder != null) {
             String conceptName = holder.conceptName;
@@ -314,6 +314,11 @@ public class ForeignKeyHelper {
     }
 
     protected static ForeignKeyHolder getForeignKeyHolder(TypeModel model, String foreignKeyFilterValue) throws Exception {
+        return getForeignKeyHolder(model, foreignKeyFilterValue, true);
+    }
+
+    protected static ForeignKeyHolder getForeignKeyHolder(TypeModel model, String foreignKeyFilterValue, boolean withFKInfo)
+            throws Exception {
         String foreignKeyPath = model.getForeignkey();
         List<String> foreignKeyInfo = model.getForeignKeyInfo();
         String filterValue = model.getFilterValue();
@@ -360,7 +365,12 @@ public class ForeignKeyHelper {
             // build query - add a content condition on the pivot if we search for a particular value
             if (filterValue != null
                     && !"".equals(filterValue.trim()) && !".*".equals(filterValue.trim()) && !"'*'".equals(filterValue.trim())) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                WSWhereItem queryWhereItem = getFKQueryCondition(conceptName, foreignKeyPath, xpathInfoForeignKey, filterValue);
+                WSWhereItem queryWhereItem;
+                if (withFKInfo) {
+                    queryWhereItem = getFKQueryCondition(conceptName, foreignKeyPath, xpathInfoForeignKey, filterValue);
+                } else {
+                    queryWhereItem = getFKQueryCondition(conceptName, foreignKeyPath, filterValue);
+                }
                 if (queryWhereItem != null) {
                     conditions.add(queryWhereItem);
                 }
@@ -456,6 +466,52 @@ public class ForeignKeyHelper {
             }
             fkWhere = sb.toString();
         }
+        return Util.buildWhereItems(fkWhere);
+    }
+
+    @SuppressWarnings("unused")
+    protected static WSWhereItem getFKQueryCondition(String concept, String xpathForeignKey, String keyValue) throws Exception {
+        String initxpathForeignKey = Util.getForeignPathFromPath(xpathForeignKey);
+        initxpathForeignKey = initxpathForeignKey.split("/")[0]; //$NON-NLS-1$
+
+        String realXpathForeignKey = null; // In studio, ForeignKey = ConceptName, but not ConceptName/Id
+        List<String> fkXpathList = new ArrayList<String>();
+        StringBuffer sb = new StringBuffer();
+
+        MetadataRepository repository = CommonUtil.getCurrentRepository();
+        ComplexTypeMetadata foreignType = repository.getComplexType(concept);
+        FieldSearchMetadataVisitor visitor = new FieldSearchMetadataVisitor();
+        visitor.setValue(keyValue);
+
+        if (xpathForeignKey.indexOf("/") == -1) { //$NON-NLS-1$
+            String[] fks = Util.getBusinessConceptKeys(initxpathForeignKey);
+            if (fks != null && fks.length > 0) {
+                realXpathForeignKey = fks[0];
+                List<String> tempFkXpathList = new ArrayList<>();
+                for (String item : fks) {
+                    tempFkXpathList.add(item);
+                }
+                fkXpathList.addAll(tempFkXpathList);
+            }
+        } else {
+            fkXpathList.add(xpathForeignKey);
+        }
+        if (fkXpathList != null && fkXpathList.size() > 0) {
+            for (String xpath : fkXpathList) {
+                visitor.setFieldPath(xpath.split("/")); //$NON-NLS-1$
+                String operater = foreignType.accept(visitor);
+                if (operater != null) {
+                    if (sb != null && sb.length() > 0) {
+                        sb.append(" OR "); //$NON-NLS-1$
+                    }
+                    sb.append((xpath.startsWith(".") ? XpathUtil.convertAbsolutePath( //$NON-NLS-1$
+                            (realXpathForeignKey != null && realXpathForeignKey.trim().length() > 0) ? realXpathForeignKey
+                                    : xpathForeignKey,
+                            xpath) : xpath) + " " + operater + " " + keyValue); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+            }
+        }
+        String fkWhere = sb.toString();
         return Util.buildWhereItems(fkWhere);
     }
 
