@@ -151,6 +151,9 @@ class GenerateActions implements DocumentSaver {
                     context.getDataModelName(), saverSource, context.getUserAction());
             updateActions.setPartialDelete(true);
             actions = type.accept(updateActions);
+            if (actions.isEmpty() && !context.getActions().isEmpty()) {
+                actions = context.getActions();
+            }
             break;
         case LOGICAL_DELETE:
             actions = Collections.<Action> singletonList(new LogicalDeleteAction(date, source, userName, type));
