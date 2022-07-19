@@ -108,8 +108,11 @@ public class PartialUpdateSaverContext implements DocumentSaverContext {
 
     @Override
     public void setDatabaseDocument(MutableDocument databaseDocument) {
-        String localName = databaseDocument.asDOM().getDocumentElement().getLocalName();
-        pivot = StringUtils.substringAfter(pivot, localName + '/');
+        if (databaseDocument != null) {
+            String localName = databaseDocument.asDOM().getDocumentElement().getLocalName();
+            String subPivot = StringUtils.substringAfter(pivot, localName + '/');
+            pivot = StringUtils.isEmpty(subPivot) ? pivot : subPivot;
+        }
         delegate.setDatabaseDocument(databaseDocument);
     }
 
