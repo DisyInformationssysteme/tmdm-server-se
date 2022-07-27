@@ -80,6 +80,7 @@ public final class XMLUtils {
 	    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	        factory.setNamespaceAware(true);
 	        factory.setExpandEntityReferences(false);
+	        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 	        DocumentBuilder builder = factory.newDocumentBuilder();
 	    	DOMImplementation impl = builder.getDOMImplementation();
 	    	Document namespaceHolder = impl.createDocument(namespace,(prefix==null?"":prefix+":")+elementName, null);

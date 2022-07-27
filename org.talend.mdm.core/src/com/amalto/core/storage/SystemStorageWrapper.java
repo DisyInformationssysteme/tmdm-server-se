@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -75,7 +76,12 @@ public class SystemStorageWrapper extends StorageWrapper {
     private static final Logger LOGGER = LogManager.getLogger(SystemStorageWrapper.class);
 
     public SystemStorageWrapper() {
-        DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
+        try {
+            DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
+            DOCUMENT_BUILDER_FACTORY.setFeature(MDMXMLUtils.FEATURE_DISALLOW_DOCTYPE, true);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException("Unable to initialize document builder.", e);
+        }
         // Create "system" storage
         StorageAdmin admin = getStorageAdmin();
         if (!admin.exist(StorageAdmin.SYSTEM_STORAGE, StorageType.SYSTEM)) {
