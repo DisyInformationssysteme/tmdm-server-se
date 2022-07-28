@@ -10,13 +10,15 @@
 package org.talend.mdm.commmon.util.core;
 
 import java.io.File;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
+import org.apache.commons.configuration2.HierarchicalConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.talend.mdm.commmon.util.core.EncryptUtil;
-import org.talend.mdm.commmon.util.core.MDMConfiguration;
 
 import junit.framework.TestCase;
 
@@ -31,16 +33,14 @@ public class EncryptUtilTest extends TestCase {
 
         File confFile = new File(path + "mdm.conf");
         PropertiesConfiguration confConfig = new PropertiesConfiguration();
-        confConfig.setDelimiterParsingDisabled(true);
-        confConfig.load(confFile);
+        confConfig.read(new InputStreamReader(new FileInputStream(confFile)));
         assertEquals("aYfBEdcXYP3t9pofaispXA==,Encrypt", confConfig.getString(MDMConfiguration.ADMIN_PASSWORD));
         assertEquals("tKyTop7U6czAJKGTd9yWRA==,Encrypt", confConfig.getString(MDMConfiguration.TECHNICAL_PASSWORD));
         assertEquals("DlqU02M503JUOVBeup29+w==,Encrypt", confConfig.getString(EncryptUtil.ACTIVEMQ_PASSWORD));
 
         File datasource = new File(path + "datasources.xml");
-        XMLConfiguration config = new XMLConfiguration();
-        config.setDelimiterParsingDisabled(true);
-        config.load(datasource);
+        Configurations configs = new Configurations();
+        XMLConfiguration config = configs.xml(datasource);
 
         HierarchicalConfiguration sub = config.configurationAt("datasource(0)");
         String password = sub.getString("master.rdbms-configuration.connection-password");
@@ -50,9 +50,9 @@ public class EncryptUtilTest extends TestCase {
 
         sub = config.configurationAt("datasource(1)");
         password = sub.getString("master.rdbms-configuration.connection-password");
-        assertEquals("+WNho+eyvY2IdYENFaoKIA==,Encrypt", password);
+        assertEquals("talend123", password);
         password = sub.getString("master.rdbms-configuration.init.connection-password");
-        assertEquals("+WNho+eyvY2IdYENFaoKIA==,Encrypt", password);
+        assertEquals("talend123", password);
 
     }
 }
