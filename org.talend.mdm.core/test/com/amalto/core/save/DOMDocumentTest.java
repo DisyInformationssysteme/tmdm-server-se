@@ -53,6 +53,9 @@ public class DOMDocumentTest extends TestCase {
     }
 
     public void testIncludeXSINamespace() throws Exception {
+        System.setProperty("javax.xml.transform.TransformerFactory",
+                "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
+
         String lineSeparator = System.getProperty("line.separator");
         StringBuilder xmlBuilder = new StringBuilder("<Organisation xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
         xmlBuilder.append(lineSeparator);
