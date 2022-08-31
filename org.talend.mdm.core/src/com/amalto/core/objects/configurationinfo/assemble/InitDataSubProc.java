@@ -21,7 +21,7 @@ public class InitDataSubProc extends AssembleSubProc{
 	public void run() throws Exception {
 
 		//perform initial
-		boolean autoinit = "true".equals(MDMConfiguration.getConfiguration().getProperty(
+		boolean autoinit = "true".equalsIgnoreCase(MDMConfiguration.getConfiguration().getProperty(
 				"system.data.auto.init",
 				"false"
 			));
