@@ -22,7 +22,7 @@ public class StartEngineSubProc extends AssembleSubProc{
 	@Override
 	public void run() throws Exception {
     	//Start Routing Engine
-		boolean autostart = "true".equals(MDMConfiguration.getConfiguration().getProperty(
+		boolean autostart = "true".equalsIgnoreCase(MDMConfiguration.getConfiguration().getProperty(
 			"subscription.engine.autostart",
 			"true"
 		));
