@@ -140,6 +140,11 @@ public class JobContainer {
 
         // Initialize default system properties
         standardProperties = StandardPropertiesStrategyFactory.create().getStandardProperties();
+
+        // update system properties for tSoap component
+        standardProperties.setProperty("javax.xml.soap.SOAPConnectionFactory",
+                "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
+        standardProperties.setProperty("javax.xml.soap.MetaFactory", "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
     }
 
     /**
