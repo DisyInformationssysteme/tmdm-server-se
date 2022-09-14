@@ -66,7 +66,7 @@ public class DataStatistics {
         StorageAdmin storageAdmin = ServerContext.INSTANCE.get().getStorageAdmin();
         Storage dataStorage = storageAdmin.get(containerName, StorageType.MASTER);
         if (dataStorage == null) {
-            throw new IllegalArgumentException("Container '" + containerName + "' does not exist.");
+            return Response.status(Response.Status.NOT_FOUND).entity("Container '" + containerName + "' does not exist.").build();
         }
         // Build statistics
         SortedSet<TypeEntry> entries = new TreeSet<TypeEntry>(new Comparator<TypeEntry>() {
@@ -128,7 +128,7 @@ public class DataStatistics {
                     LOGGER.debug("Unable to compute statistics due to storage exception.", e);
                 }
             }
-            return Response.status(Response.Status.NO_CONTENT).build();
+            throw new IllegalArgumentException(e.getMessage());
         }
         // Write results
         try {
@@ -169,7 +169,7 @@ public class DataStatistics {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Unable to send statistics due to storage exception.", e);
             }
-            return Response.status(Response.Status.NO_CONTENT).build();
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 

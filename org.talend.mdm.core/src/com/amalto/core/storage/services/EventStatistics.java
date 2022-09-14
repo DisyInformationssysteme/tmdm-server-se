@@ -115,7 +115,7 @@ public class EventStatistics {
                     LOGGER.debug("Unable to compute statistics due to storage exception.", e);
                 }
             }
-            return Response.status(Response.Status.NO_CONTENT).build();
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 

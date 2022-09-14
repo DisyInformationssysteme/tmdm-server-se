@@ -98,7 +98,7 @@ public class JournalStatistics {
         StorageAdmin storageAdmin = ServerContext.INSTANCE.get().getStorageAdmin();
         Storage dataStorage = storageAdmin.get(containerName, StorageType.MASTER);
         if (dataStorage == null) {
-            throw new IllegalArgumentException("Container '" + containerName + "' does not exist.");
+            return Response.status(Response.Status.NOT_FOUND).entity("Container '" + containerName + "' does not exist.").build();
         }
         Storage updateReportStorage = storageAdmin.get(XSystemObjects.DC_UPDATE_PREPORT.getName(), StorageType.MASTER);
         ComplexTypeMetadata updateType = updateReportStorage.getMetadataRepository().getComplexType("Update");//$NON-NLS-1$
@@ -139,7 +139,7 @@ public class JournalStatistics {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Unable to compute top " + top + " types due to storage exception.", e);
                 }
-                return Response.status(Response.Status.NO_CONTENT).build();
+                throw new IllegalArgumentException(e.getMessage());
             }
         }
         // Build statistics
@@ -222,7 +222,7 @@ public class JournalStatistics {
                     LOGGER.debug("Unable to compute statistics due to storage exception.", e);
                 }
             }
-            return Response.status(Response.Status.NO_CONTENT).build();
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 }
