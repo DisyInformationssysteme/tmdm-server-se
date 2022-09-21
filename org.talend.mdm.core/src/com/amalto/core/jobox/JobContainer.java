@@ -145,6 +145,8 @@ public class JobContainer {
         standardProperties.setProperty("javax.xml.soap.SOAPConnectionFactory",
                 "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
         standardProperties.setProperty("javax.xml.soap.MetaFactory", "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
+        // Set the system property for Google Drive components
+        standardProperties.setProperty("java.class.path", ".");
     }
 
     /**
