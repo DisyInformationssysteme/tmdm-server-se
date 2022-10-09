@@ -12,7 +12,8 @@ package org.talend.mdm.ext.publish;
 import org.restlet.Application;
 import org.restlet.Context;
 import org.restlet.Restlet;
-import org.restlet.Router;
+import org.restlet.routing.Router;
+import org.restlet.routing.Template;
 import org.talend.mdm.ext.publish.filter.AccessControlFilter;
 import org.talend.mdm.ext.publish.resource.BarFileResource;
 import org.talend.mdm.ext.publish.resource.CustomTypesSetResource;
@@ -25,6 +26,7 @@ import org.talend.mdm.ext.publish.resource.PicturesResource;
 public class ServerServletApplication extends Application {
 
     public static final String ROUTE_CONTEXT_PATH = "/services/pubcomponent"; ////$NON-NLS-1$
+
     public ServerServletApplication() {
         super();
     }
@@ -34,11 +36,9 @@ public class ServerServletApplication extends Application {
     }
 
     @Override
-    public Restlet createRoot() {
-
-        // Create a router Restlet that routes each call to a
-        // new instance of HelloWorldResource.
-        Router router = new Router(getContext());
+    public Restlet createInboundRoot() {
+        final Router router = new Router(getContext());
+        router.setDefaultMatchingMode(Template.MODE_EQUALS);
 
         // Defines a route for the resource "list of dataModels"
         router.attach(ROUTE_CONTEXT_PATH + '/' + ResourceType.DATAMODELS.getName(), DataModelsResource.class);
@@ -61,5 +61,4 @@ public class ServerServletApplication extends Application {
 
         return accessControlFilter;
     }
-
 }

@@ -10,19 +10,19 @@
 package org.talend.mdm.ext.publish.resource;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import javax.ws.rs.core.Response.Status;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.restlet.Context;
+import org.apache.logging.log4j.Logger;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.resource.DomRepresentation;
-import org.restlet.resource.Representation;
+import org.restlet.ext.xml.DomRepresentation;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.Variant;
 import org.talend.mdm.ext.publish.util.DAOFactory;
 import org.talend.mdm.ext.publish.util.DomainObjectsDAO;
 import org.xml.sax.SAXException;
@@ -34,26 +34,32 @@ public class CustomTypesSetResource extends BaseResource {
 
     private static Logger log = LogManager.getLogger(CustomTypesSetResource.class);
 
-    String customTypesSetName;
+    private String customTypesSetName;
 
-    DomainObjectsDAO domainObjectsDAO = null;
-
-    public CustomTypesSetResource(Context context, Request request, Response response) {
-        super(context, request, response);
-
-        this.customTypesSetName = getAttributeInUrl("customTypesSetName");//$NON-NLS-1$
-        this.domainObjectsDAO = DAOFactory.getUniqueInstance().getDomainObjectDAO();
-
-    }
+    private DomainObjectsDAO domainObjectsDAO = null;
 
     @Override
-    protected Representation getResourceRepresent(Variant variant) throws ResourceException {
+    protected void doInit() throws ResourceException {
+        super.doInit();
+        this.customTypesSetName = getAttributeInUrl("customTypesSetName"); //$NON-NLS-1$
+        this.domainObjectsDAO = DAOFactory.getUniqueInstance().getDomainObjectDAO();
+        if (log.isDebugEnabled()) {
+            log.debug("request params customTypesSetName=" + customTypesSetName);
+        }
+    }
+
+    @Get
+    public Representation getResourceRepresent(Variant variant) throws ResourceException {
         // Generate the right representation according to its media type.
         if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
             DomRepresentation representation = null;
             try {
-                representation = new DomRepresentation(MediaType.TEXT_XML, Util.parse(domainObjectsDAO
-                        .getResource(customTypesSetName)));
+                String content = domainObjectsDAO.getResource(customTypesSetName);
+                if (Objects.isNull(content)) {
+                    throw new ResourceException(Status.NO_CONTENT.getStatusCode(),
+                            "Failed to fetch resource by customTypesSetName=" + customTypesSetName);
+                }
+                representation = new DomRepresentation(MediaType.TEXT_XML, Util.parse(content));
                 representation.getDocument().normalize();
             } catch (ParserConfigurationException e) {
                 log.error(e.getLocalizedMessage(), e);
@@ -69,5 +75,4 @@ public class CustomTypesSetResource extends BaseResource {
         }
         return null;
     }
-
 }

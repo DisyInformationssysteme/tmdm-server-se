@@ -384,13 +384,12 @@
     <!-- org.talend.mdm.ext.publish.component -->
     <servlet>
         <servlet-name>RestletServlet</servlet-name>
-        <servlet-class>com.noelios.restlet.ext.servlet.ServerServlet</servlet-class>
+        <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RestletServlet</servlet-name>
         <url-pattern>/services/pubcomponent/*</url-pattern>
     </servlet-mapping>
-       
     <session-config>
         <session-timeout>30</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>

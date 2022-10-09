@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.restlet.Filter;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.routing.Filter;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.talend.mdm.ext.publish.ResourceType;
 import org.talend.mdm.ext.publish.ServerServletApplication;
 

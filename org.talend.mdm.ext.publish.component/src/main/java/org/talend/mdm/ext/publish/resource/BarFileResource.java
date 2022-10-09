@@ -11,14 +11,12 @@ package org.talend.mdm.ext.publish.resource;
 
 import java.io.File;
 
-import org.restlet.Context;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.resource.FileRepresentation;
-import org.restlet.resource.Representation;
+import org.restlet.representation.FileRepresentation;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.Variant;
 
 import com.amalto.core.util.Util;
 
@@ -32,18 +30,13 @@ public class BarFileResource extends BaseResource {
 
     private String barFileName;
 
-    public BarFileResource(Context context, Request request, Response response) {
-        super(context, request, response);
-
-        // TODO:get from core
+    public BarFileResource() {
         this.barFileHome = Util.getBarHomeDir();
-
         this.barFileName = getAttributeInUrl("barFileName").replace("$$", ".") + ".bar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
     }
 
-    @Override
-    protected Representation getResourceRepresent(Variant variant) throws ResourceException {
+    @Get
+    public Representation getResourceRepresent(Variant variant) throws ResourceException {
 
         String filePath = barFileHome + File.separator + barFileName;
         if (new File(filePath).exists()) {
@@ -54,7 +47,5 @@ public class BarFileResource extends BaseResource {
         } else {
             return null;
         }
-
     }
-
 }

@@ -12,15 +12,13 @@ package org.talend.mdm.ext.publish.resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.restlet.Context;
+import org.apache.logging.log4j.Logger;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.resource.Representation;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.Variant;
 import org.talend.mdm.ext.publish.model.PicturePojo;
 import org.talend.mdm.ext.publish.util.DAOFactory;
 import org.talend.mdm.ext.publish.util.PicturesDAO;
@@ -42,10 +40,7 @@ public class PicturesResource extends BaseResource {
 
     private List<PicturePojo> picturePojos = null;
 
-    public PicturesResource(Context context, Request request, Response response) {
-
-        super(context, request, response);
-
+    public PicturesResource() {
         picturesDAO = DAOFactory.getUniqueInstance().getPicturesDAO(picturesLocation);
 
         // get resource
@@ -65,7 +60,6 @@ public class PicturesResource extends BaseResource {
         } catch (Exception e1) {
             LOGGER.error(e1.getMessage(), e1);
         }
-
     }
 
     private String[] parsePK(String pk) {
@@ -93,8 +87,8 @@ public class PicturesResource extends BaseResource {
         return parsedPK;
     }
 
-    @Override
-    protected Representation getResourceRepresent(Variant variant) throws ResourceException {
+    @Get
+    public Representation getResourceRepresent(Variant variant) throws ResourceException {
 
         // Generate the right representation according to its media type.
         if (MediaType.TEXT_XML.equals(variant.getMediaType())) {
@@ -102,5 +96,4 @@ public class PicturesResource extends BaseResource {
         }
         return null;
     }
-
 }
