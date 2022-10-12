@@ -22,7 +22,7 @@ import com.google.gwt.xml.client.XMLParser;
 
 public class ImageUtil {
 
-    final public static String IMAGE_SERVER_PATH = "services/pubcomponent/pictures"; //$NON-NLS-1$
+    final public static String IMAGE_SERVER_PATH = "services/pubcomponent/pictures/"; //$NON-NLS-1$
 
     final public static String IMAGE_PATH = "imageserver/"; //$NON-NLS-1$
 

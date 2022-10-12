@@ -30,7 +30,9 @@ public class BarFileResource extends BaseResource {
 
     private String barFileName;
 
-    public BarFileResource() {
+    @Override
+    protected void doInit() throws ResourceException {
+        super.doInit();
         this.barFileHome = Util.getBarHomeDir();
         this.barFileName = getAttributeInUrl("barFileName").replace("$$", ".") + ".bar"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     }

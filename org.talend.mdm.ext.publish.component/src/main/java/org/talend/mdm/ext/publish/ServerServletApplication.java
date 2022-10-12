@@ -41,19 +41,19 @@ public class ServerServletApplication extends Application {
         router.setDefaultMatchingMode(Template.MODE_EQUALS);
 
         // Defines a route for the resource "list of dataModels"
-        router.attach(ROUTE_CONTEXT_PATH + '/' + ResourceType.DATAMODELS.getName(), DataModelsResource.class);
+        router.attach(ROUTE_CONTEXT_PATH + '/' + ResourceType.DATAMODELS.getName() + '/', DataModelsResource.class);
         // Defines a route for the resource "dataModel"
-        router.attach("/" + ResourceType.DATAMODELS.getName() + "/{dataModelName}", DataModelResource.class); //$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.DATAMODELS.getName() + "/{dataModelName}" + '/', DataModelResource.class); //$NON-NLS-1$ //$NON-NLS-2$
 
-        router.attach("/" + ResourceType.DATAMODELSTYPES.getName() + "/{dataModelName}", DataModelsTypesResource.class);//$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.DATAMODELSTYPES.getName() + "/{dataModelName}" + '/', DataModelsTypesResource.class);//$NON-NLS-1$ //$NON-NLS-2$
 
-        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName(), CustomTypesSetsResource.class);//$NON-NLS-1$
+        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName() + '/', CustomTypesSetsResource.class);//$NON-NLS-1$
 
-        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName() + "/{customTypesSetName}", CustomTypesSetResource.class);//$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName() + "/{customTypesSetName}" + '/', CustomTypesSetResource.class);//$NON-NLS-1$ //$NON-NLS-2$
 
-        router.attach("/" + ResourceType.PICTURES.getName(), PicturesResource.class);//$NON-NLS-1$
+        router.attach("/" + ResourceType.PICTURES.getName() + '/', PicturesResource.class);//$NON-NLS-1$
 
-        router.attach("/" + ResourceType.BARFILE.getName() + "/{barFileName}", BarFileResource.class); //$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.BARFILE.getName() + "/{barFileName}" + '/', BarFileResource.class); //$NON-NLS-1$ //$NON-NLS-2$
 
         // creates the filter and add it in front of the router
         AccessControlFilter accessControlFilter = new AccessControlFilter();
