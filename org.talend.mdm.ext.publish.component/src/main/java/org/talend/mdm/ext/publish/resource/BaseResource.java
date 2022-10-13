@@ -9,19 +9,6 @@
  */
 package org.talend.mdm.ext.publish.resource;
 
-import com.amalto.core.objects.datamodel.DataModelPOJO;
-import com.amalto.core.objects.datamodel.DataModelPOJOPK;
-import com.amalto.core.util.Util;
-import com.amalto.core.util.XtentisException;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.restlet.Context;
-import org.restlet.data.*;
-import org.restlet.resource.*;
-import org.talend.mdm.ext.publish.model.PicturePojo;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -29,35 +16,35 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.restlet.Response;
+import org.restlet.data.MediaType;
+import org.restlet.data.Status;
+import org.restlet.ext.xml.DomRepresentation;
+import org.restlet.representation.Representation;
+import org.restlet.resource.ResourceException;
+import org.restlet.resource.ServerResource;
+import org.talend.mdm.ext.publish.model.PicturePojo;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.amalto.core.objects.datamodel.DataModelPOJO;
+import com.amalto.core.objects.datamodel.DataModelPOJOPK;
+import com.amalto.core.util.Util;
+import com.amalto.core.util.XtentisException;
+
 /**
  * Base resource class that supports common behaviours or attributes shared by all resources.
  *
  */
-public abstract class BaseResource extends Resource {
+public abstract class BaseResource extends ServerResource {
 
     private static Logger log = LogManager.getLogger(BaseResource.class);
 
-    public BaseResource(Context context, Request request, Response response) {
-        super(context, request, response);
-
-        // This representation has only one type of representation.
-        getVariants().add(new Variant(MediaType.TEXT_XML));
+    protected void doInit() throws ResourceException {
+        getVariants().forEach(item -> item.setMediaType(MediaType.TEXT_XML));
     }
-
-    /**
-     * Returns a full representation for a given variant.
-     */
-    @Override
-    public Representation represent(Variant variant) throws ResourceException {
-        Representation resourceRepresent = getResourceRepresent(variant);
-
-        // set characterSet
-        if (resourceRepresent != null)
-            resourceRepresent.setCharacterSet(CharacterSet.UTF_8);
-        return resourceRepresent;
-    }
-
-    protected abstract Representation getResourceRepresent(Variant variant) throws ResourceException;
 
     protected String getAttributeInUrl(String attributeKey) {
         return getAttributeInUrl(attributeKey, true);
@@ -77,9 +64,7 @@ public abstract class BaseResource extends Resource {
                 log.warn("Unable to decode the string with the UTF-8 character set.", uee); //$NON-NLS-1$
             }
         }
-
         return attribute;
-
     }
 
     /**
@@ -145,7 +130,6 @@ public abstract class BaseResource extends Resource {
         } catch (IOException e) {
             log.error(e.getLocalizedMessage(), e);
         }
-
         return representation;
     }
 
@@ -186,13 +170,11 @@ public abstract class BaseResource extends Resource {
                     }
                 }
             }
-
             d.normalize();
 
         } catch (IOException e) {
             log.error(e.getLocalizedMessage(), e);
         }
-
         return representation;
     }
 
@@ -224,13 +206,11 @@ public abstract class BaseResource extends Resource {
                     entryElement.appendChild(entryUriElement);
                 }
             }
-
             d.normalize();
 
         } catch (IOException e) {
             log.error(e.getLocalizedMessage(), e);
         }
-
         return representation;
     }
 
@@ -248,5 +228,4 @@ public abstract class BaseResource extends Resource {
         }
         return dataModelPOJO;
     }
-
 }

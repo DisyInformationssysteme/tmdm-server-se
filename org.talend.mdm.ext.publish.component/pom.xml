@@ -41,12 +41,16 @@
         </dependency>
         <!-- 3rd party dependencies -->
         <dependency>
-            <groupId>com.noelios.restlet</groupId>
-            <artifactId>com.noelios.restlet.ext.servlet</artifactId>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.noelios.restlet</groupId>
-            <artifactId>com.noelios.restlet</artifactId>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet.ext.xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet.ext.servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dom4j</groupId>

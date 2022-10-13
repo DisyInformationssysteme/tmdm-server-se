@@ -12,7 +12,8 @@ package org.talend.mdm.ext.publish;
 import org.restlet.Application;
 import org.restlet.Context;
 import org.restlet.Restlet;
-import org.restlet.Router;
+import org.restlet.routing.Router;
+import org.restlet.routing.Template;
 import org.talend.mdm.ext.publish.filter.AccessControlFilter;
 import org.talend.mdm.ext.publish.resource.BarFileResource;
 import org.talend.mdm.ext.publish.resource.CustomTypesSetResource;
@@ -25,6 +26,7 @@ import org.talend.mdm.ext.publish.resource.PicturesResource;
 public class ServerServletApplication extends Application {
 
     public static final String ROUTE_CONTEXT_PATH = "/services/pubcomponent"; ////$NON-NLS-1$
+
     public ServerServletApplication() {
         super();
     }
@@ -34,26 +36,24 @@ public class ServerServletApplication extends Application {
     }
 
     @Override
-    public Restlet createRoot() {
-
-        // Create a router Restlet that routes each call to a
-        // new instance of HelloWorldResource.
-        Router router = new Router(getContext());
+    public Restlet createInboundRoot() {
+        final Router router = new Router(getContext());
+        router.setDefaultMatchingMode(Template.MODE_EQUALS);
 
         // Defines a route for the resource "list of dataModels"
-        router.attach(ROUTE_CONTEXT_PATH + '/' + ResourceType.DATAMODELS.getName(), DataModelsResource.class);
+        router.attach(ROUTE_CONTEXT_PATH + '/' + ResourceType.DATAMODELS.getName() + '/', DataModelsResource.class);
         // Defines a route for the resource "dataModel"
-        router.attach("/" + ResourceType.DATAMODELS.getName() + "/{dataModelName}", DataModelResource.class); //$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.DATAMODELS.getName() + "/{dataModelName}" + '/', DataModelResource.class); //$NON-NLS-1$ //$NON-NLS-2$
 
-        router.attach("/" + ResourceType.DATAMODELSTYPES.getName() + "/{dataModelName}", DataModelsTypesResource.class);//$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.DATAMODELSTYPES.getName() + "/{dataModelName}" + '/', DataModelsTypesResource.class);//$NON-NLS-1$ //$NON-NLS-2$
 
-        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName(), CustomTypesSetsResource.class);//$NON-NLS-1$
+        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName() + '/', CustomTypesSetsResource.class);//$NON-NLS-1$
 
-        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName() + "/{customTypesSetName}", CustomTypesSetResource.class);//$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.CUSTOMTYPESSETS.getName() + "/{customTypesSetName}" + '/', CustomTypesSetResource.class);//$NON-NLS-1$ //$NON-NLS-2$
 
-        router.attach("/" + ResourceType.PICTURES.getName(), PicturesResource.class);//$NON-NLS-1$
+        router.attach("/" + ResourceType.PICTURES.getName() + '/', PicturesResource.class);//$NON-NLS-1$
 
-        router.attach("/" + ResourceType.BARFILE.getName() + "/{barFileName}", BarFileResource.class); //$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.BARFILE.getName() + "/{barFileName}" + '/', BarFileResource.class); //$NON-NLS-1$ //$NON-NLS-2$
 
         // creates the filter and add it in front of the router
         AccessControlFilter accessControlFilter = new AccessControlFilter();
@@ -61,5 +61,4 @@ public class ServerServletApplication extends Application {
 
         return accessControlFilter;
     }
-
 }
