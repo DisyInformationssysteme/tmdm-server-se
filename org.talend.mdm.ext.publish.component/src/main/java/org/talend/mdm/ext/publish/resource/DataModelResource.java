@@ -13,16 +13,14 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.restlet.Context;
+import org.apache.logging.log4j.Logger;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.resource.DomRepresentation;
-import org.restlet.resource.Representation;
+import org.restlet.ext.xml.DomRepresentation;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
-import org.restlet.resource.Variant;
 import org.xml.sax.SAXException;
 
 import com.amalto.core.objects.datamodel.DataModelPOJO;
@@ -36,22 +34,22 @@ public class DataModelResource extends BaseResource {
 
     private static Logger log = LogManager.getLogger(CustomTypesSetResource.class);
 
-    String dataModelName;
+    private String dataModelName;
 
-    DataModelPOJO dataModelPOJO = null;
-
-    public DataModelResource(Context context, Request request, Response response) {
-        super(context, request, response);
-        // Get the "dataModelName" attribute value taken from the URI template
-        // /dataModels/{dataModelName}.
-        this.dataModelName = getAttributeInUrl("dataModelName");//$NON-NLS-1$
-        // System.out.println(this.dataModelName);
-        this.dataModelPOJO = getDataModel(dataModelName);
-
-    }
+    private DataModelPOJO dataModelPOJO = null;
 
     @Override
-    protected Representation getResourceRepresent(Variant variant) throws ResourceException {
+    protected void doInit() throws ResourceException {
+        super.doInit();
+        this.dataModelName = getAttributeInUrl("dataModelName"); //$NON-NLS-1$
+        this.dataModelPOJO = getDataModel(dataModelName); //$NON-NLS-1$
+        if (log.isDebugEnabled()) {
+            log.debug("request params dataModelName=" + dataModelName + ", dataModelPOJO=" + dataModelPOJO);
+        }
+    }
+
+    @Get
+    public Representation getResourceRepresent(Variant variant) throws ResourceException {
         // Generate the right representation according to its media type.
         if (MediaType.TEXT_XML.equals(variant.getMediaType()) && dataModelPOJO != null) {
             DomRepresentation representation = null;
@@ -70,5 +68,4 @@ public class DataModelResource extends BaseResource {
         }
         return null;
     }
-
 }
