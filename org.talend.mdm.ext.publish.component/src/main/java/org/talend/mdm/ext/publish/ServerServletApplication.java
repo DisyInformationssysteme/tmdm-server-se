@@ -53,7 +53,7 @@ public class ServerServletApplication extends Application {
 
         router.attach("/" + ResourceType.PICTURES.getName() + '/', PicturesResource.class);//$NON-NLS-1$
 
-        router.attach("/" + ResourceType.BARFILE.getName() + "/{barFileName}" + '/', BarFileResource.class); //$NON-NLS-1$ //$NON-NLS-2$
+        router.attach("/" + ResourceType.BARFILE.getName() + "/{barFileName}", BarFileResource.class); //$NON-NLS-1$ //$NON-NLS-2$
 
         // creates the filter and add it in front of the router
         AccessControlFilter accessControlFilter = new AccessControlFilter();
