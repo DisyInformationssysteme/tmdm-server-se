@@ -178,6 +178,9 @@ public class UploadFile extends HttpServlet {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Writing file '" + file.getAbsolutePath() + "'"); //$NON-NLS-1$//$NON-NLS-2$
         }
+        if (file.exists()) {
+            file.delete();
+        }
         item.write(file);
         return file;
     }
