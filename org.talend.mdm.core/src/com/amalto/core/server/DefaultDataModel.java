@@ -64,7 +64,7 @@ public class DefaultDataModel implements DataModel {
         try {
             DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
             DOCUMENT_BUILDER_FACTORY.setExpandEntityReferences(false);
-            DOCUMENT_BUILDER_FACTORY.setFeature(MDMXMLUtils.FEATURE_DISALLOW_DOCTYPE, true);
+            DOCUMENT_BUILDER_FACTORY.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         } catch (Exception e) {
             throw new XmlBeanDefinitionException("Error occurred to initialize DocumentBuilderFactory", e);
         }
