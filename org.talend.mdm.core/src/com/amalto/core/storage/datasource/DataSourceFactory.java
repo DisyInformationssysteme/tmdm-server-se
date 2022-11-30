@@ -67,6 +67,18 @@ public class DataSourceFactory implements ApplicationContextAware {
 
     private static boolean updated = false;
 
+    static {
+        try {
+            factory.setExpandEntityReferences(false);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred during data sources XML configuration parsing", e);
+        }
+    }
+
     public static DataSourceFactory getInstance() {
         if (applicationContext != null) {
             return applicationContext.getBean(DataSourceFactory.class);
@@ -120,11 +132,6 @@ public class DataSourceFactory implements ApplicationContextAware {
     private static Map<String, DataSourceDefinition> readDocument(InputStream configurationAsStream) {
         Document document;
         try {
-            factory.setExpandEntityReferences(false);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             document = documentBuilder.parse(configurationAsStream);
         } catch (Exception e) {
