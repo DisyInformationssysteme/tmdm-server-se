@@ -65,6 +65,10 @@
                     <groupId>com.opencsv</groupId>
                     <artifactId>opencsv</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
