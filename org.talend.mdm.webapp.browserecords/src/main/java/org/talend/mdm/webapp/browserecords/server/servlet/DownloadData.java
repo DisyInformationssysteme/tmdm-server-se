@@ -12,6 +12,7 @@ package org.talend.mdm.webapp.browserecords.server.servlet;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,10 +55,10 @@ public class DownloadData extends HttpServlet {
 
         String viewPk = request.getParameter("tableName"); //$NON-NLS-1$
         String concept = ViewHelper.getConceptFromDefaultViewName(viewPk);
-        String header = new String(request.getParameter("header").getBytes("iso-8859-1"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String header = new String(request.getParameter("header").getBytes("iso-8859-1"), StandardCharsets.UTF_8.name()); //$NON-NLS-1$ //$NON-NLS-2$
         String xpath = request.getParameter("xpath"); //$NON-NLS-1$
         String criteria = request.getParameter("criteria"); //$NON-NLS-1$
-        String name = new String(request.getParameter("fileName").getBytes("iso-8859-1"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String name = new String(request.getParameter("fileName").getBytes("iso-8859-1"), StandardCharsets.UTF_8.name()); //$NON-NLS-1$ //$NON-NLS-2$
         String fileType = request.getParameter("fileType"); //$NON-NLS-1$
         String multipleValueSeparator = request.getParameter("multipleValueSeparator"); //$NON-NLS-1$
         boolean fkResovled = Boolean.valueOf(request.getParameter("fkResovled")); //$NON-NLS-1$
@@ -92,8 +93,8 @@ public class DownloadData extends HttpServlet {
                 throw new ServletException(messages.getMessage("unsupported_file_type", fileType)); //$NON-NLS-1$
             }
             response.setHeader("Content-Disposition", //$NON-NLS-1$
-                    "attachment; filename=\"" + URLEncoder.encode(writer.generateFileName(name), "UTF-8") + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            response.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
+                    "attachment; filename=\"" + URLEncoder.encode(writer.generateFileName(name), StandardCharsets.UTF_8.name()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             OutputStream out = response.getOutputStream();
             writer.writeFile();
             writer.write(out);
