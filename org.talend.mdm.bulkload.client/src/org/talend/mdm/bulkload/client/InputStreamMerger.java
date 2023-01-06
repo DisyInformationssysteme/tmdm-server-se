@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2023 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -12,6 +12,7 @@ package org.talend.mdm.bulkload.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -37,6 +38,8 @@ public class InputStreamMerger extends InputStream {
      * Receives orders from the consumer (can be either stop order acknowledgment or failure notifications)
      */
     private final LinkedBlockingQueue<InternalMessage> consumerToProducer;
+
+    private final CountDownLatch readyRead = new CountDownLatch(1);
 
     /**
      * The current stream being processed
@@ -88,6 +91,8 @@ public class InputStreamMerger extends InputStream {
             this.alreadyPushed = true;
         } catch (InterruptedException e) {
             throw new RuntimeException("Push was interrupted", e); //$NON-NLS-1$
+        } finally {
+            getReadyRead().countDown();
         }
     }
 
@@ -108,10 +113,12 @@ public class InputStreamMerger extends InputStream {
             this.stopped = true;
             return;
         }
+
         try {
             producerToConsumer.put(msg);
-            InternalMessage response = consumerToProducer.take();
-            if (response.isFailureMessage()) {
+//            InternalMessage response = consumerToProducer.take();
+            InternalMessage response = consumerToProducer.poll();
+            if (response != null && response.isFailureMessage()) {
                 throw new IOException("Consumer error", response.getFailure()); //$NON-NLS-1$
             }
         } catch (InterruptedException e) {
@@ -221,6 +228,10 @@ public class InputStreamMerger extends InputStream {
         }
     }
 
+    public CountDownLatch getReadyRead() {
+        return readyRead;
+    }
+
     /***
      * Internal message exchanged in queues
      */
@@ -328,7 +339,7 @@ public class InputStreamMerger extends InputStream {
     public void setAlreadyProcessed(boolean alreadyProcessed) {
         this.alreadyProcessed = alreadyProcessed;
     }
-    protected boolean isConsumed() {
-        return producerToConsumer.isEmpty();
+    protected boolean isConsumed() throws InterruptedException {
+        return producerToConsumer.isEmpty() || producerToConsumer.take().mustStop();
     }
 }
