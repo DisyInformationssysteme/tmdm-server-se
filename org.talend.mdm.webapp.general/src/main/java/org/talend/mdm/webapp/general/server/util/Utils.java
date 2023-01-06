@@ -11,6 +11,8 @@ package org.talend.mdm.webapp.general.server.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -198,6 +200,7 @@ public class Utils {
                         }
                     }
                 } else {
+                    gxtEntryModule = URLEncoder.encode(gxtEntryModule, StandardCharsets.UTF_8.name());
                     String tmp = "<script type=\"text/javascript\" src=\"" + gxtEntryModule + "/" //$NON-NLS-1$ //$NON-NLS-2$
                             + gxtEntryModule + ".nocache.js\"></script>\n"; //$NON-NLS-1$
                     if ("browserecords".equals(context) && "browserecords".equals(gxtEntryModule)) { //$NON-NLS-1$ //$NON-NLS-2$
