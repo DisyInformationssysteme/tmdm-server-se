@@ -61,7 +61,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>commons-codec,commons-lang,httpclient5,httpcore5,commons-logging</includeArtifactIds>
+                            <includeArtifactIds>commons-codec,commons-lang,httpclient5,httpcore5,httpcore5-h2,commons-logging</includeArtifactIds>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
@@ -146,6 +146,11 @@
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5</artifactId>
+            <version>5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-h2</artifactId>
             <version>5.2</version>
         </dependency>
         <!-- TEST DEPENDENCIES -->
