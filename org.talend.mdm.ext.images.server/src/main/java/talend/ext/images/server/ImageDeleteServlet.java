@@ -62,7 +62,7 @@ public class ImageDeleteServlet extends HttpServlet {
             if (uri == null || uri.length() == 0) {
                 return buildDeleteResult(false, "Request parameter 'uri' can not be empty!"); //$NON-NLS-1$
             }
-            String contextPath = request.getSession().getServletContext().getContextPath();
+            String contextPath = request.getContextPath();
             // normalize uri
             uri = normalizeURI(uri, contextPath);
             String toDeleteFilePath = buildDeleteFilePath(uri);
