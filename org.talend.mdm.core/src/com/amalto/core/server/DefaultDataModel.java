@@ -37,6 +37,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
+import com.amalto.commons.core.utils.ValidateUtil;
 import com.amalto.core.objects.ObjectPOJO;
 import com.amalto.core.objects.ObjectPOJOPK;
 import com.amalto.core.objects.datamodel.DataModelPOJO;
@@ -183,6 +184,7 @@ public class DefaultDataModel implements DataModel {
             Node existingNode;
             synchronized (X_PATH) {
                 conceptName = (String) X_PATH.evaluate("/xsd:element/@name", newConceptAsDOM, XPathConstants.STRING); //$NON-NLS-1$
+                ValidateUtil.matchCommonRegex(conceptName);
                 existingNode = (Node) X_PATH.evaluate(
                         "/xsd:schema/xsd:element[@name='" + conceptName + "']", schemaAsDOM, XPathConstants.NODE); //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -216,6 +218,7 @@ public class DefaultDataModel implements DataModel {
             Document schemaAsDOM = builder.parse(new InputSource(new StringReader(schema)));
             Node existingNode;
             synchronized (X_PATH) {
+                ValidateUtil.matchCommonRegex(businessConceptName);
                 existingNode = (Node) X_PATH.evaluate(
                         "/xsd:schema/xsd:element[@name='" + businessConceptName + "']", schemaAsDOM, XPathConstants.NODE); //$NON-NLS-1$ //$NON-NLS-2$
             }
