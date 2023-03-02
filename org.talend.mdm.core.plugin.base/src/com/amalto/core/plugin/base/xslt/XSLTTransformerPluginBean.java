@@ -11,6 +11,7 @@ package com.amalto.core.plugin.base.xslt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.OutputKeys;
@@ -372,6 +374,8 @@ public class XSLTTransformerPluginBean extends Plugin {
         try {
             // fetch data from context
             Transformer transformer = (Transformer) context.get(TRANSFORMER);
+            transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.toString());
+
             String outputMethod = (String) context.get(OUTPUT_METHOD);
             TypedContent xmlTC = (TypedContent) context.get(INPUT_XML);
 
@@ -452,6 +456,14 @@ public class XSLTTransformerPluginBean extends Plugin {
                     xrefe = processMappings(xrefe);
                 }
                 TransformerFactory transFactory = new net.sf.saxon.TransformerFactoryImpl();
+                try {
+                    transFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    transFactory.setAttribute("http://saxon.sf.net/feature/version-warning", Boolean.FALSE);
+                    transFactory.setAttribute("http://saxon.sf.net/feature/allow-external-functions", Boolean.FALSE);
+                    transFactory.setAttribute("http://saxon.sf.net/feature/trace-external-functions", Boolean.FALSE);
+                } catch (Exception e) {
+                    LOG.warn("failed to add extral attribute of TransformerFactory, caused by " + e);
+                }
                 Transformer serializer = transFactory.newTransformer();
                 serializer.setOutputProperty(OutputKeys.METHOD, outputMethod);
                 serializer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
