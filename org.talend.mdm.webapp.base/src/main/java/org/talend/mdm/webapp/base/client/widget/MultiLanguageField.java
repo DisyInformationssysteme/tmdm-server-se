@@ -359,155 +359,155 @@ public class MultiLanguageField extends TextField<String> {
     }
 
     private void displayMultLanguageWindow() {
-        final Window window = new Window();
-        window.setPlain(true);
-        window.setModal(true);
-        window.setBlinkModal(true);
-        window.setHeading(BaseMessagesFactory.getMessages().open_mls_title());
-        window.setLayout(new FitLayout());
-        window.setSize(600, 350);
-        GridView view = new GridView();
-        List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
-        final ListStore<ItemBaseModel> languageList = new ListStore<ItemBaseModel>();
-        final ListStore<ItemBaseModel> store = new ListStore<ItemBaseModel>();
-        final MultiLanguageRowEditor re = new MultiLanguageRowEditor(MultiLanguageField.this, window);
-        final ComboBox<ItemBaseModel> combo = new ComboBox<ItemBaseModel>();
-        combo.setDisplayField("language"); //$NON-NLS-1$
-        combo.setValueField("value"); //$NON-NLS-1$
-        combo.setStore(languageList);
-        combo.setTriggerAction(TriggerAction.ALL);
-        languageList.add(LanguageUtil.getInstance().getLanguages());
-        languageColumnMap = LanguageUtil.getInstance().getLanguageColumnMap();
-
-        final CellEditor editor = new CellEditor(combo) {
-
-            @Override
-            public Object preProcessValue(Object value) {
-                if (value == null) {
-                    return value;
-                }
-                if (Boolean.parseBoolean(store.getAt(re.getSelectedRowIndex()).get("isNewNode").toString())) {
-                    this.getField().setEnabled(true);
-                } else {
-                    this.getField().setEnabled(false);
-                }
-                return languageColumnMap.get(value);
-            }
-
-            @Override
-            public Object postProcessValue(Object value) {
-                if (value == null) {
-                    return value;
-                }
-                return ((ItemBaseModel) value).get("value"); //$NON-NLS-1$
-            }
-        };
-        ColumnConfig languageColumn = new ColumnConfig("language", BaseMessagesFactory.getMessages().language_title(), 200); //$NON-NLS-1$
-        languageColumn.setRenderer(new GridCellRenderer<ItemBaseModel>() {
-
-            @Override
-            public Object render(ItemBaseModel model, String property, ColumnData config, int rowIndex, int colIndex,
-                    ListStore<ItemBaseModel> store, Grid<ItemBaseModel> grid) {
-                return languageColumnMap.get(model.get("language")).get("language"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-
-        });
-        languageColumn.setEditor(editor);
-        TextField<String> text = new TextField<String>();
-        ColumnConfig valueColumn = new ColumnConfig("value", BaseMessagesFactory.getMessages().value_title(), 200); //$NON-NLS-1$
-        valueColumn.setRenderer(new GridCellRenderer<ItemBaseModel>() {
-
-            @Override
-            public Object render(ItemBaseModel model, String property, ColumnData config, int rowIndex, int colIndex,
-                    ListStore<ItemBaseModel> store, Grid<ItemBaseModel> grid) {
-                return model.get("value"); //$NON-NLS-1$
-            }
-
-        });
-        valueColumn.setEditor(new CellEditor(text));
-
-        final CheckBoxSelectionModel<ItemBaseModel> selectionModel = new CheckBoxSelectionModel<ItemBaseModel>();
-        columns.add(selectionModel.getColumn());
-        columns.add(languageColumn);
-        columns.add(valueColumn);
-        ColumnModel cm = new ColumnModel(columns);
-
-        LinkedHashMap<String, String> languageValueMap = this.multiLanguageModel.getLanguageValueMap();
-        for (String language : languageValueMap.keySet()) {
-            ItemBaseModel model = new ItemBaseModel();
-            model.set("language", language); //$NON-NLS-1$
-            model.set("value", languageValueMap.get(language)); //$NON-NLS-1$
-            model.set("isNewNode", false); //$NON-NLS-1$
-            store.add(model);
-        }
-
-        Grid<ItemBaseModel> grid = new Grid<ItemBaseModel>(store, cm);
-        grid.setTrackMouseOver(false);
-        grid.setLoadMask(true);
-        grid.setBorders(false);
-        grid.setSelectionModel(selectionModel);
-        grid.addPlugin(selectionModel);
-        grid.addPlugin(re);
-        grid.setView(view);
-        grid.getView().setForceFit(true);
-        hookContextMenu(re, grid);
-        ToolBar toolBar = new ToolBar();
-        Button addButton = new Button(BaseMessagesFactory.getMessages().add_btn(), AbstractImagePrototype.create(Icons.INSTANCE
-                .Create()));
-        addButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
-           @Override
-            public void componentSelected(ButtonEvent ce) {
-                setAdding(true);
-                ItemBaseModel model = new ItemBaseModel();
-                model.set("language", "EN"); //$NON-NLS-1$//$NON-NLS-2$
-                model.set("value", ""); //$NON-NLS-1$//$NON-NLS-2$
-                model.set("isNewNode", true); //$NON-NLS-1$
-
-                if (re.isEditing()) {
-                    re.stopEditing(false);
-                }
-
-                store.add(model);
-                re.startEditing(store.indexOf(model), true);
-            }
-        });
-        Button removeButton = new Button(BaseMessagesFactory.getMessages().remove_btn(),
-                AbstractImagePrototype.create(Icons.INSTANCE.Delete()));
-        removeButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
-
-            @Override
-            public void componentSelected(ButtonEvent ce) {
-                List<ItemBaseModel> selectedModelList = selectionModel.getSelectedItems();
-                if (selectedModelList != null && selectedModelList.size() > 0) {
-                    for (int i = selectedModelList.size() - 1; i >= 0; i--) {
-                        ItemBaseModel model = selectedModelList.get(i);
-                        multiLanguageModel.setValueByLanguage(model.get("language").toString(), null); //$NON-NLS-1$
-                        store.remove(model);
-                    }
-                    setMultiLanguageStringValue(getMultiLanguageStringValue());
-                    MultiLanguageField.this.fireEvent(Events.Change);
-                }
-            }
-        });
-        toolBar.add(addButton);
-        toolBar.add(new SeparatorToolItem());
-        toolBar.add(removeButton);
-        toolBar.add(new SeparatorToolItem());
-        window.setTopComponent(toolBar);
-        window.add(grid);
-        window.setScrollMode(Scroll.AUTO);
-
-        Button closeBTN = new Button(GXT.MESSAGES.messageBox_close());
-        closeBTN.addSelectionListener(new SelectionListener<ButtonEvent>() {
-
-            @Override
-            public void componentSelected(ButtonEvent ce) {
-                setMultiLanguageStringValue(getMultiLanguageStringValue());
-                window.hide();
-            }
-        });
-        window.addButton(closeBTN);
-        window.show();
+//        final Window window = new Window();
+//        window.setPlain(true);
+//        window.setModal(true);
+//        window.setBlinkModal(true);
+//        window.setHeading(BaseMessagesFactory.getMessages().open_mls_title());
+//        window.setLayout(new FitLayout());
+//        window.setSize(600, 350);
+//        GridView view = new GridView();
+//        List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
+//        final ListStore<ItemBaseModel> languageList = new ListStore<ItemBaseModel>();
+//        final ListStore<ItemBaseModel> store = new ListStore<ItemBaseModel>();
+//        final MultiLanguageRowEditor re = new MultiLanguageRowEditor(MultiLanguageField.this, window);
+//        final ComboBox<ItemBaseModel> combo = new ComboBox<ItemBaseModel>();
+//        combo.setDisplayField("language"); //$NON-NLS-1$
+//        combo.setValueField("value"); //$NON-NLS-1$
+//        combo.setStore(languageList);
+//        combo.setTriggerAction(TriggerAction.ALL);
+//        languageList.add(LanguageUtil.getInstance().getLanguages());
+//        languageColumnMap = LanguageUtil.getInstance().getLanguageColumnMap();
+//
+//        final CellEditor editor = new CellEditor(combo) {
+//
+//            @Override
+//            public Object preProcessValue(Object value) {
+//                if (value == null) {
+//                    return value;
+//                }
+//                if (Boolean.parseBoolean(store.getAt(re.getSelectedRowIndex()).get("isNewNode").toString())) {
+//                    this.getField().setEnabled(true);
+//                } else {
+//                    this.getField().setEnabled(false);
+//                }
+//                return languageColumnMap.get(value);
+//            }
+//
+//            @Override
+//            public Object postProcessValue(Object value) {
+//                if (value == null) {
+//                    return value;
+//                }
+//                return ((ItemBaseModel) value).get("value"); //$NON-NLS-1$
+//            }
+//        };
+//        ColumnConfig languageColumn = new ColumnConfig("language", BaseMessagesFactory.getMessages().language_title(), 200); //$NON-NLS-1$
+//        languageColumn.setRenderer(new GridCellRenderer<ItemBaseModel>() {
+//
+//            @Override
+//            public Object render(ItemBaseModel model, String property, ColumnData config, int rowIndex, int colIndex,
+//                    ListStore<ItemBaseModel> store, Grid<ItemBaseModel> grid) {
+//                return languageColumnMap.get(model.get("language")).get("language"); //$NON-NLS-1$ //$NON-NLS-2$
+//            }
+//
+//        });
+//        languageColumn.setEditor(editor);
+//        TextField<String> text = new TextField<String>();
+//        ColumnConfig valueColumn = new ColumnConfig("value", BaseMessagesFactory.getMessages().value_title(), 200); //$NON-NLS-1$
+//        valueColumn.setRenderer(new GridCellRenderer<ItemBaseModel>() {
+//
+//            @Override
+//            public Object render(ItemBaseModel model, String property, ColumnData config, int rowIndex, int colIndex,
+//                    ListStore<ItemBaseModel> store, Grid<ItemBaseModel> grid) {
+//                return model.get("value"); //$NON-NLS-1$
+//            }
+//
+//        });
+//        valueColumn.setEditor(new CellEditor(text));
+//
+//        final CheckBoxSelectionModel<ItemBaseModel> selectionModel = new CheckBoxSelectionModel<ItemBaseModel>();
+//        columns.add(selectionModel.getColumn());
+//        columns.add(languageColumn);
+//        columns.add(valueColumn);
+//        ColumnModel cm = new ColumnModel(columns);
+//
+//        LinkedHashMap<String, String> languageValueMap = this.multiLanguageModel.getLanguageValueMap();
+//        for (String language : languageValueMap.keySet()) {
+//            ItemBaseModel model = new ItemBaseModel();
+//            model.set("language", language); //$NON-NLS-1$
+//            model.set("value", languageValueMap.get(language)); //$NON-NLS-1$
+//            model.set("isNewNode", false); //$NON-NLS-1$
+//            store.add(model);
+//        }
+//
+//        Grid<ItemBaseModel> grid = new Grid<ItemBaseModel>(store, cm);
+//        grid.setTrackMouseOver(false);
+//        grid.setLoadMask(true);
+//        grid.setBorders(false);
+//        grid.setSelectionModel(selectionModel);
+//        grid.addPlugin(selectionModel);
+//        grid.addPlugin(re);
+//        grid.setView(view);
+//        grid.getView().setForceFit(true);
+//        hookContextMenu(re, grid);
+//        ToolBar toolBar = new ToolBar();
+//        Button addButton = new Button(BaseMessagesFactory.getMessages().add_btn(), AbstractImagePrototype.create(Icons.INSTANCE
+//                .Create()));
+//        addButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+//           @Override
+//            public void componentSelected(ButtonEvent ce) {
+//                setAdding(true);
+//                ItemBaseModel model = new ItemBaseModel();
+//                model.set("language", "EN"); //$NON-NLS-1$//$NON-NLS-2$
+//                model.set("value", ""); //$NON-NLS-1$//$NON-NLS-2$
+//                model.set("isNewNode", true); //$NON-NLS-1$
+//
+//                if (re.isEditing()) {
+//                    re.stopEditing(false);
+//                }
+//
+//                store.add(model);
+//                re.startEditing(store.indexOf(model), true);
+//            }
+//        });
+//        Button removeButton = new Button(BaseMessagesFactory.getMessages().remove_btn(),
+//                AbstractImagePrototype.create(Icons.INSTANCE.Delete()));
+//        removeButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+//
+//            @Override
+//            public void componentSelected(ButtonEvent ce) {
+//                List<ItemBaseModel> selectedModelList = selectionModel.getSelectedItems();
+//                if (selectedModelList != null && selectedModelList.size() > 0) {
+//                    for (int i = selectedModelList.size() - 1; i >= 0; i--) {
+//                        ItemBaseModel model = selectedModelList.get(i);
+//                        multiLanguageModel.setValueByLanguage(model.get("language").toString(), null); //$NON-NLS-1$
+//                        store.remove(model);
+//                    }
+//                    setMultiLanguageStringValue(getMultiLanguageStringValue());
+//                    MultiLanguageField.this.fireEvent(Events.Change);
+//                }
+//            }
+//        });
+//        toolBar.add(addButton);
+//        toolBar.add(new SeparatorToolItem());
+//        toolBar.add(removeButton);
+//        toolBar.add(new SeparatorToolItem());
+//        window.setTopComponent(toolBar);
+//        window.add(grid);
+//        window.setScrollMode(Scroll.AUTO);
+//
+//        Button closeBTN = new Button(GXT.MESSAGES.messageBox_close());
+//        closeBTN.addSelectionListener(new SelectionListener<ButtonEvent>() {
+//
+//            @Override
+//            public void componentSelected(ButtonEvent ce) {
+//                setMultiLanguageStringValue(getMultiLanguageStringValue());
+//                window.hide();
+//            }
+//        });
+//        window.addButton(closeBTN);
+//        window.show();
     }
 
     private void hookContextMenu(final MultiLanguageRowEditor re, final Grid<ItemBaseModel> grid) {

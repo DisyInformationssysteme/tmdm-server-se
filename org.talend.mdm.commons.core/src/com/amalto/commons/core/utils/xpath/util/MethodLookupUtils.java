@@ -21,8 +21,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import com.amalto.commons.core.utils.xpath.JXPathException;
-import com.sun.org.apache.xalan.internal.extensions.ExpressionContext;
+//import com.amalto.commons.core.utils.xpath.JXPathException;
+//import com.sun.org.apache.xalan.internal.extensions.ExpressionContext;
 
 /**
  * Method lookup utilities, which find static and non-static methods as well
@@ -80,26 +80,26 @@ public class MethodLookupUtils {
 
         // Then - with type conversion
         Constructor[] constructors = targetClass.getConstructors();
-        for (int i = 0; i < constructors.length; i++) {
-            int match =
-                matchParameterTypes(
-                    constructors[i].getParameterTypes(),
-                    parameters);
-            if (match != NO_MATCH) {
-                if (match > currentMatch) {
-                    constructor = constructors[i];
-                    currentMatch = match;
-                    ambiguous = false;
-                }
-                else if (match == currentMatch) {
-                    ambiguous = true;
-                }
-            }
-        }
-        if (ambiguous) {
-            throw new JXPathException(
-                "Ambigous constructor " + Arrays.asList(parameters));
-        }
+//        for (int i = 0; i < constructors.length; i++) {
+//            int match =
+//                matchParameterTypes(
+//                    constructors[i].getParameterTypes(),
+//                    parameters);
+//            if (match != NO_MATCH) {
+//                if (match > currentMatch) {
+//                    constructor = constructors[i];
+//                    currentMatch = match;
+//                    ambiguous = false;
+//                }
+//                else if (match == currentMatch) {
+//                    ambiguous = true;
+//                }
+//            }
+//        }
+//        if (ambiguous) {
+//            throw new JXPathException(
+//                "Ambigous constructor " + Arrays.asList(parameters));
+//        }
         return constructor;
     }
 
@@ -149,28 +149,28 @@ public class MethodLookupUtils {
 
         // Then - with type conversion
         Method[] methods = targetClass.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            if (Modifier.isStatic(methods[i].getModifiers())
-                && methods[i].getName().equals(name)) {
-                int match =
-                    matchParameterTypes(
-                        methods[i].getParameterTypes(),
-                        parameters);
-                if (match != NO_MATCH) {
-                    if (match > currentMatch) {
-                        method = methods[i];
-                        currentMatch = match;
-                        ambiguous = false;
-                    }
-                    else if (match == currentMatch) {
-                        ambiguous = true;
-                    }
-                }
-            }
-        }
-        if (ambiguous) {
-            throw new JXPathException("Ambigous method call: " + name);
-        }
+//        for (int i = 0; i < methods.length; i++) {
+//            if (Modifier.isStatic(methods[i].getModifiers())
+//                && methods[i].getName().equals(name)) {
+//                int match =
+//                    matchParameterTypes(
+//                        methods[i].getParameterTypes(),
+//                        parameters);
+//                if (match != NO_MATCH) {
+//                    if (match > currentMatch) {
+//                        method = methods[i];
+//                        currentMatch = match;
+//                        ambiguous = false;
+//                    }
+//                    else if (match == currentMatch) {
+//                        ambiguous = true;
+//                    }
+//                }
+//            }
+//        }
+//        if (ambiguous) {
+//            throw new JXPathException("Ambigous method call: " + name);
+//        }
         return method;
     }
 
@@ -195,7 +195,7 @@ public class MethodLookupUtils {
             return null;
         }
 
-        targetClass = TypeUtils.convert(parameters[0], targetClass).getClass();
+//        targetClass = TypeUtils.convert(parameters[0], targetClass).getClass();
 
         boolean tryExact = true;
         int count = parameters.length - 1;
@@ -234,28 +234,28 @@ public class MethodLookupUtils {
 
         // Then - with type conversion
         Method[] methods = targetClass.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            if (!Modifier.isStatic(methods[i].getModifiers())
-                && methods[i].getName().equals(name)) {
-                int match =
-                    matchParameterTypes(
-                        methods[i].getParameterTypes(),
-                        arguments);
-                if (match != NO_MATCH) {
-                    if (match > currentMatch) {
-                        method = methods[i];
-                        currentMatch = match;
-                        ambiguous = false;
-                    }
-                    else if (match == currentMatch) {
-                        ambiguous = true;
-                    }
-                }
-            }
-        }
-        if (ambiguous) {
-            throw new JXPathException("Ambigous method call: " + name);
-        }
+//        for (int i = 0; i < methods.length; i++) {
+//            if (!Modifier.isStatic(methods[i].getModifiers())
+//                && methods[i].getName().equals(name)) {
+//                int match =
+//                    matchParameterTypes(
+//                        methods[i].getParameterTypes(),
+//                        arguments);
+//                if (match != NO_MATCH) {
+//                    if (match > currentMatch) {
+//                        method = methods[i];
+//                        currentMatch = match;
+//                        ambiguous = false;
+//                    }
+//                    else if (match == currentMatch) {
+//                        ambiguous = true;
+//                    }
+//                }
+//            }
+//        }
+//        if (ambiguous) {
+//            throw new JXPathException("Ambigous method call: " + name);
+//        }
         return method;
     }
 
@@ -268,26 +268,27 @@ public class MethodLookupUtils {
     private static int matchParameterTypes(
         Class[] types,
         Object[] parameters) {
-        int pi = 0;
-        if (types.length >= 1
-            && ExpressionContext.class.isAssignableFrom(types[0])) {
-            pi++;
-        }
-        int length = parameters == null ? 0 : parameters.length;
-        if (types.length != length + pi) {
-            return NO_MATCH;
-        }
-        int totalMatch = EXACT_MATCH;
-        for (int i = 0; i < length; i++) {
-            int match = matchType(types[i + pi], parameters[i]);
-            if (match == NO_MATCH) {
-                return NO_MATCH;
-            }
-            if (match < totalMatch) {
-                totalMatch = match;
-            }
-        }
-        return totalMatch;
+//        int pi = 0;
+//        if (types.length >= 1
+//            && ExpressionContext.class.isAssignableFrom(types[0])) {
+//            pi++;
+//        }
+//        int length = parameters == null ? 0 : parameters.length;
+//        if (types.length != length + pi) {
+//            return NO_MATCH;
+//        }
+//        int totalMatch = EXACT_MATCH;
+//        for (int i = 0; i < length; i++) {
+//            int match = matchType(types[i + pi], parameters[i]);
+//            if (match == NO_MATCH) {
+//                return NO_MATCH;
+//            }
+//            if (match < totalMatch) {
+//                totalMatch = match;
+//            }
+//        }
+//        return totalMatch;
+            return 0;
     }
 
     /**
@@ -310,9 +311,9 @@ public class MethodLookupUtils {
             return EXACT_MATCH;
         }
 
-        if (TypeUtils.canConvert(object, expected)) {
-            return APPROXIMATE_MATCH;
-        }
+//        if (TypeUtils.canConvert(object, expected)) {
+//            return APPROXIMATE_MATCH;
+//        }
 
         return NO_MATCH;
     }

@@ -90,18 +90,7 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>gwt-compile</id>
-                        <configuration>
-                            <module>org.talend.mdm.webapp.recyclebin.recyclebin</module>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
         </plugins>
     </build>
     

@@ -9,32 +9,32 @@
  */
 package org.talend.mdm.webapp.base.client.util;
 
-import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.extjs.gxt.ui.client.widget.MessageBox.MessageBoxType;
+//import com.extjs.gxt.ui.client.widget.MessageBox;
+//import com.extjs.gxt.ui.client.widget.MessageBox.MessageBoxType;
 
 
 public class WaitBox {
 
-    private static MessageBox waitBox;
+//    private static MessageBox waitBox;
 
     public static void show(String title, String msg, String progressText) {
-    	hide();
-    	waitBox = new MessageBox();
-    	waitBox.setType(MessageBoxType.WAIT);
-        waitBox.setButtons(""); //$NON-NLS-1$
-        waitBox.setClosable(false);
-
-        waitBox.setTitle(title);
-        waitBox.setMessage(msg);
-        waitBox.setProgressText(progressText);
-        waitBox.show();
+//    	hide();
+//    	waitBox = new MessageBox();
+//    	waitBox.setType(MessageBoxType.WAIT);
+//        waitBox.setButtons(""); //$NON-NLS-1$
+//        waitBox.setClosable(false);
+//
+//        waitBox.setTitle(title);
+//        waitBox.setMessage(msg);
+//        waitBox.setProgressText(progressText);
+//        waitBox.show();
     }
 
     public static void hide() {
-    	if (waitBox != null){
-	        if (waitBox.getDialog() != null){
-	            waitBox.close();
-	        }
-    	}
+//    	if (waitBox != null){
+//	        if (waitBox.getDialog() != null){
+//	            waitBox.close();
+//	        }
+//    	}
     }
 }

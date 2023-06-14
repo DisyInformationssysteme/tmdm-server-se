@@ -91,21 +91,7 @@
     <build>
         <plugins>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>gwt-compile</id>
-                        <configuration>
-                            <modules>
-                                <module>org.talend.mdm.webapp.stagingarea.control.StagingAreaControl</module>
-                                <module>org.talend.mdm.webapp.stagingareabrowser.StagingareaBrowse</module>
-                            </modules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
         </plugins>
     </build>
     

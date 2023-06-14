@@ -220,8 +220,6 @@
                         <id>gwt-compile</id>
                         <configuration>
                             <modules>
-                                <module>org.talend.mdm.webapp.browserecords.BrowseRecords</module>
-                                <module>org.talend.mdm.webapp.browserecordsinstaging.BrowseRecordsInStaging</module>
                             </modules>
                         </configuration>
                     </execution>

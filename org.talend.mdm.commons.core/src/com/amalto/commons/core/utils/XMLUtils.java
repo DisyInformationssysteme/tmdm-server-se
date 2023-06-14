@@ -33,8 +33,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.org.apache.xpath.internal.XPathAPI;
-import com.sun.org.apache.xpath.internal.objects.XObject;
+//import com.sun.org.apache.xpath.internal.XPathAPI;
+//import com.sun.org.apache.xpath.internal.objects.XObject;
 
 /**
  * XML Manipulation routines
@@ -113,20 +113,21 @@ public final class XMLUtils {
 	 * @throws TransformerException
 	 */
 	public static NodeList getNodeList(Node contextNode, String xPath, String namespace, String prefix) throws TransformerException{
-		try {
-		    XObject xo = XPathAPI.eval(
-	    		contextNode,
-				xPath,
-				(namespace == null) ? contextNode : getRootElement("nsholder",namespace,prefix)
-		    );
-		    if (xo.getType() != XObject.CLASS_NODESET) return null;
-		    return xo.nodelist();
-    	} catch (TransformerException e) {
-    	    String err = "Unable to get the Nodes List for xpath '"+xPath+"'"
-    	    	+((contextNode==null) ? "" : " for Node "+contextNode.getLocalName())
-    			+": "+e.getLocalizedMessage();
-    		throw new TransformerException(err);
-    	}
+//		try {
+//		    XObject xo = XPathAPI.eval(
+//	    		contextNode,
+//				xPath,
+//				(namespace == null) ? contextNode : getRootElement("nsholder",namespace,prefix)
+//		    );
+//		    if (xo.getType() != XObject.CLASS_NODESET) return null;
+//		    return xo.nodelist();
+//    	} catch (TransformerException e) {
+//    	    String err = "Unable to get the Nodes List for xpath '"+xPath+"'"
+//    	    	+((contextNode==null) ? "" : " for Node "+contextNode.getLocalName())
+//    			+": "+e.getLocalizedMessage();
+//    		throw new TransformerException(err);
+//    	}
+	    return null;
 	}
 
     /**
@@ -152,26 +153,27 @@ public final class XMLUtils {
         //test for incomplete path
         //if (! xPath.endsWith(")")) xPath+="/text()";
 
-        try {
-	        XObject xo = XPathAPI.eval(contextNode, xPath,namespaceNode);
-	        if (xo.getType() == XObject.CLASS_NODESET) {
-	            NodeList l = xo.nodelist();
-	            int len = l.getLength();
-	            results = new String[len];
-	            for (int i = 0; i < len; i++) {
-	                Node n = l.item(i);
-	                results[i] = n.getNodeValue();
-	            }
-	        } else {
-	            results = new String[]{xo.toString()};
-	        }
-		} catch (TransformerException e) {
-			String err = "Unable to get the text node(s) of "+xPath
-					+": " + e.getClass().getName() + ": "
-					+ e.getLocalizedMessage();
-			throw new TransformerException(err);
-		}
-		return results;
+//        try {
+//	        XObject xo = XPathAPI.eval(contextNode, xPath,namespaceNode);
+//	        if (xo.getType() == XObject.CLASS_NODESET) {
+//	            NodeList l = xo.nodelist();
+//	            int len = l.getLength();
+//	            results = new String[len];
+//	            for (int i = 0; i < len; i++) {
+//	                Node n = l.item(i);
+//	                results[i] = n.getNodeValue();
+//	            }
+//	        } else {
+//	            results = new String[]{xo.toString()};
+//	        }
+//		} catch (TransformerException e) {
+//			String err = "Unable to get the text node(s) of "+xPath
+//					+": " + e.getClass().getName() + ": "
+//					+ e.getLocalizedMessage();
+//			throw new TransformerException(err);
+//		}
+//		return results;
+        return null;
     }
 
     public static Transformer generateTransformer() throws TransformerConfigurationException {
