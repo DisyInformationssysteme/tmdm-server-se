@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
+//import javax.xml.parsers.DocumentBuilder;
+//import javax.xml.xpath.XPath;
+//import javax.xml.xpath.XPathConstants;
+//import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -44,14 +44,14 @@ import org.talend.mdm.commmon.util.core.ICoreConstants;
 import org.talend.mdm.commmon.util.core.MDMConfiguration;
 import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.commmon.util.webapp.XSystemObjects;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+//import org.w3c.dom.Element;
+//import org.w3c.dom.NodeList;
+//import org.xml.sax.InputSource;
 
 import com.amalto.core.audit.MDMAuditLogger;
 import com.amalto.core.integrity.FKIntegrityCheckResult;
 import com.amalto.core.jobox.util.JobNotFoundException;
-import com.amalto.core.metadata.ClassRepository;
+//import com.amalto.core.metadata.ClassRepository;
 import com.amalto.core.migration.MigrationRepository;
 import com.amalto.core.objects.DroppedItemPOJO;
 import com.amalto.core.objects.DroppedItemPOJOPK;
@@ -717,61 +717,62 @@ public abstract class IXtentisWSDelegator implements IBeanDelegator, XtentisPort
         // With Universe, this method must be reviewed since various concepts
         // may be store in various revisions
         try {
-            String dataClusterName = wsGetItemPKsByCriteria.getWsDataClusterPK().getPk();
-            // Check if user is allowed to read the cluster
-            ILocalUser user = LocalUser.getLocalUser();
-            boolean authorized = false;
-            if (LocalUser.isAdminUser(user.getUsername())) {
-                authorized = true;
-            } else if (user.userCanRead(DataClusterPOJO.class, dataClusterName)) {
-                authorized = true;
-            }
-            if (!authorized) {
-                throw new RemoteException("Unauthorized read access on data cluster '" + dataClusterName + "' by user '" //$NON-NLS-1$ //$NON-NLS-2$
-                        + user.getUsername() + "'"); //$NON-NLS-1$
-            }
-            // If not all concepts are store in the same revision,
-            // force the concept to be specified by the user.
-            // It would be too demanding to get all the concepts in all revisions (?)
-            // The meat of this method should be ported to ItemCtrlBean
-            String conceptName = wsGetItemPKsByCriteria.getConceptName();
-            ItemPKCriteria criteria = new ItemPKCriteria();
-            criteria.setClusterName(dataClusterName);
-            criteria.setConceptName(conceptName);
-            criteria.setContentKeywords(wsGetItemPKsByCriteria.getContentKeywords());
-            criteria.setKeysKeywords(wsGetItemPKsByCriteria.getKeysKeywords());
-            criteria.setKeys(wsGetItemPKsByCriteria.getKeys());
-            criteria.setCompoundKeyKeywords(false);
-            criteria.setFromDate(wsGetItemPKsByCriteria.getFromDate());
-            criteria.setToDate(wsGetItemPKsByCriteria.getToDate());
-            criteria.setMaxItems(wsGetItemPKsByCriteria.getMaxItems());
-            criteria.setSkip(wsGetItemPKsByCriteria.getSkip());
-            criteria.setUseFTSearch(useFTSearch);
-            List<String> results = com.amalto.core.util.Util.getItemCtrl2Local().getItemPKsByCriteria(criteria);
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            DocumentBuilder documentBuilder = MDMXMLUtils.getDocumentBuilder().get();
-            WSItemPKsByCriteriaResponseResults[] res = new WSItemPKsByCriteriaResponseResults[results.size()];
-            int i = 0;
-            for (String result : results) {
-                if (i == 0) {
-                    res[i++] = new WSItemPKsByCriteriaResponseResults(System.currentTimeMillis(), new WSItemPK(
-                            wsGetItemPKsByCriteria.getWsDataClusterPK(), result, null), ""); //$NON-NLS-1$
-                    continue;
-                }
-                Element r = documentBuilder.parse(new InputSource(new StringReader(result))).getDocumentElement();
-                long t = new Long(xpath.evaluate("t", r)); //$NON-NLS-1$
-                String cn = xpath.evaluate("n", r); //$NON-NLS-1$
-                String taskId = xpath.evaluate("taskId", r); //$NON-NLS-1$
-
-                NodeList idsList = (NodeList) xpath.evaluate("./ids/i", r, XPathConstants.NODESET); //$NON-NLS-1$
-                String[] ids = new String[idsList.getLength()];
-                for (int j = 0; j < idsList.getLength(); j++) {
-                    ids[j] = (idsList.item(j).getFirstChild() == null ? "" : idsList.item(j).getFirstChild().getNodeValue()); //$NON-NLS-1$
-                }
-                res[i++] = new WSItemPKsByCriteriaResponseResults(t, new WSItemPK(wsGetItemPKsByCriteria.getWsDataClusterPK(),
-                        cn, ids), taskId);
-            }
-            return new WSItemPKsByCriteriaResponse(res);
+//            String dataClusterName = wsGetItemPKsByCriteria.getWsDataClusterPK().getPk();
+//            // Check if user is allowed to read the cluster
+//            ILocalUser user = LocalUser.getLocalUser();
+//            boolean authorized = false;
+//            if (LocalUser.isAdminUser(user.getUsername())) {
+//                authorized = true;
+//            } else if (user.userCanRead(DataClusterPOJO.class, dataClusterName)) {
+//                authorized = true;
+//            }
+//            if (!authorized) {
+//                throw new RemoteException("Unauthorized read access on data cluster '" + dataClusterName + "' by user '" //$NON-NLS-1$ //$NON-NLS-2$
+//                        + user.getUsername() + "'"); //$NON-NLS-1$
+//            }
+//            // If not all concepts are store in the same revision,
+//            // force the concept to be specified by the user.
+//            // It would be too demanding to get all the concepts in all revisions (?)
+//            // The meat of this method should be ported to ItemCtrlBean
+//            String conceptName = wsGetItemPKsByCriteria.getConceptName();
+//            ItemPKCriteria criteria = new ItemPKCriteria();
+//            criteria.setClusterName(dataClusterName);
+//            criteria.setConceptName(conceptName);
+//            criteria.setContentKeywords(wsGetItemPKsByCriteria.getContentKeywords());
+//            criteria.setKeysKeywords(wsGetItemPKsByCriteria.getKeysKeywords());
+//            criteria.setKeys(wsGetItemPKsByCriteria.getKeys());
+//            criteria.setCompoundKeyKeywords(false);
+//            criteria.setFromDate(wsGetItemPKsByCriteria.getFromDate());
+//            criteria.setToDate(wsGetItemPKsByCriteria.getToDate());
+//            criteria.setMaxItems(wsGetItemPKsByCriteria.getMaxItems());
+//            criteria.setSkip(wsGetItemPKsByCriteria.getSkip());
+//            criteria.setUseFTSearch(useFTSearch);
+//            List<String> results = com.amalto.core.util.Util.getItemCtrl2Local().getItemPKsByCriteria(criteria);
+//            XPath xpath = XPathFactory.newInstance().newXPath();
+//            DocumentBuilder documentBuilder = MDMXMLUtils.getDocumentBuilder().get();
+//            WSItemPKsByCriteriaResponseResults[] res = new WSItemPKsByCriteriaResponseResults[results.size()];
+//            int i = 0;
+//            for (String result : results) {
+//                if (i == 0) {
+//                    res[i++] = new WSItemPKsByCriteriaResponseResults(System.currentTimeMillis(), new WSItemPK(
+//                            wsGetItemPKsByCriteria.getWsDataClusterPK(), result, null), ""); //$NON-NLS-1$
+//                    continue;
+//                }
+//                Element r = documentBuilder.parse(new InputSource(new StringReader(result))).getDocumentElement();
+//                long t = new Long(xpath.evaluate("t", r)); //$NON-NLS-1$
+//                String cn = xpath.evaluate("n", r); //$NON-NLS-1$
+//                String taskId = xpath.evaluate("taskId", r); //$NON-NLS-1$
+//
+//                NodeList idsList = (NodeList) xpath.evaluate("./ids/i", r, XPathConstants.NODESET); //$NON-NLS-1$
+//                String[] ids = new String[idsList.getLength()];
+//                for (int j = 0; j < idsList.getLength(); j++) {
+//                    ids[j] = (idsList.item(j).getFirstChild() == null ? "" : idsList.item(j).getFirstChild().getNodeValue()); //$NON-NLS-1$
+//                }
+//                res[i++] = new WSItemPKsByCriteriaResponseResults(t, new WSItemPK(wsGetItemPKsByCriteria.getWsDataClusterPK(),
+//                        cn, ids), taskId);
+//            }
+//            return new WSItemPKsByCriteriaResponse(res);
+            return null;
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -884,7 +885,7 @@ public abstract class IXtentisWSDelegator implements IBeanDelegator, XtentisPort
             item.append("<id>").append(id).append("</id>"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         item.append("<lastmodifiedtime>").append(iv.getInsertionTime()).append("</lastmodifiedtime>"); //$NON-NLS-1$ //$NON-NLS-2$
-        item.append("<projection>").append(iv.getProjection()).append("</projection>"); //$NON-NLS-1$ //$NON-NLS-2$
+//        item.append("<projection>").append(iv.getProjection()).append("</projection>"); //$NON-NLS-1$ //$NON-NLS-2$
         item.append("</businessconcept>"); //$NON-NLS-1$
         return item.toString();
     }
@@ -2368,7 +2369,7 @@ public abstract class IXtentisWSDelegator implements IBeanDelegator, XtentisPort
             String typeName = DigestHelper.getInstance().getTypeName(type);
             if (typeName != null) {
                 // Get the type definition for query
-                ComplexTypeMetadata storageType = repository.getComplexType(ClassRepository.format(typeName));
+                ComplexTypeMetadata storageType = null;//repository.getComplexType(ClassRepository.format(typeName));
                 // Select instance of type where unique-id equals provided name
                 UserQueryBuilder qb = UserQueryBuilder.from(storageType).where(
                         UserQueryBuilder.eq(storageType.getField("unique-id"), name)); //$NON-NLS-1$
@@ -2404,7 +2405,7 @@ public abstract class IXtentisWSDelegator implements IBeanDelegator, XtentisPort
         if (typeName != null) {
             try {
                 systemStorage.begin(); // Storage needs an active transaction (even for read operations).
-                ComplexTypeMetadata storageType = repository.getComplexType(ClassRepository.format(typeName));
+                ComplexTypeMetadata storageType = null;//repository.getComplexType(ClassRepository.format(typeName));
                 UserQueryBuilder qb = UserQueryBuilder.from(storageType)
                         .where(UserQueryBuilder.eq(storageType.getField("unique-id"), name)) //$NON-NLS-1$
                         .forUpdate(); // <- Important line here!

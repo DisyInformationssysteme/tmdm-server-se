@@ -16,8 +16,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamReader;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +73,7 @@ public class LoadParser {
      * @return The context created during the parsing.
      */
     public static StateContext parse(InputStream inputStream, Configuration config, LoadParserCallback callback) {
-        return parse(inputStream, config, Constants.DEFAULT_PARSER_LIMIT, callback);
+        return null;//parse(inputStream, config, Constants.DEFAULT_PARSER_LIMIT, callback);
     }
 
     /**
@@ -93,60 +93,60 @@ public class LoadParser {
      * @param callback    The callback called when a document is ready to be persisted
      * @return The context created during the parsing.
      */
-    public static StateContext parse(InputStream inputStream, Configuration config, int limit, LoadParserCallback callback) {
-        if (inputStream == null) {
-            throw new IllegalArgumentException("Input stream cannot be null");
-        }
-        if (callback == null) {
-            throw new IllegalArgumentException("LoadParser callback cannot be null");
-        }
-        if (config == null) {
-            throw new IllegalArgumentException("Configuration cannot be null");
-        }
-
-        XMLStreamReader reader = null;
-        try {
-            reader = MDMXMLUtils.createXMLStreamReader(inputStream);
-
-            // Useful to know what implementation of StAX was actually chosen in app server context.
-            if (log.isDebugEnabled()) {
-                ClassLoader classLoader = reader.getClass().getClassLoader();
-                if (classLoader != null) {
-                    URL resource = classLoader.getResource(reader.getClass().getName().replace(".", "/") + ".class");//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    if (resource != null) {
-                        log.debug("XML Stream reader implementation location: " + resource); //$NON-NLS-1$
-                    }
-                }
-            }
-
-            StateContext context = new DefaultStateContext(config.getPayLoadElementName(), config.getIdPaths(),
-                    config.getDataClusterName(), config.getDataModelName(), limit, callback, config.getNormalFieldGenerators());
-            if (config.isAutoGenPK()) {
-                AutoIdGenerator autoIdGenerator = config.getIdGenerator();
-                // Change the context to auto-generate metadata
-                context = AutoGenStateContext
-                        .decorate(context, config.getIdPaths(), autoIdGenerator, config.getNormalFieldGenerators());
-            }
-
-            while (!context.hasFinished()) {
-                context.parse(reader);
-            }
-
-            return context;
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (XMLStreamException e) {
-                log.error("Exception on close reader.", e);
-            }
-        }
-    }
+//    public static StateContext parse(InputStream inputStream, Configuration config, int limit, LoadParserCallback callback) {
+//        if (inputStream == null) {
+//            throw new IllegalArgumentException("Input stream cannot be null");
+//        }
+//        if (callback == null) {
+//            throw new IllegalArgumentException("LoadParser callback cannot be null");
+//        }
+//        if (config == null) {
+//            throw new IllegalArgumentException("Configuration cannot be null");
+//        }
+//
+////        XMLStreamReader reader = null;
+//        try {
+//            reader = MDMXMLUtils.createXMLStreamReader(inputStream);
+//
+//            // Useful to know what implementation of StAX was actually chosen in app server context.
+//            if (log.isDebugEnabled()) {
+//                ClassLoader classLoader = reader.getClass().getClassLoader();
+//                if (classLoader != null) {
+//                    URL resource = classLoader.getResource(reader.getClass().getName().replace(".", "/") + ".class");//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//                    if (resource != null) {
+//                        log.debug("XML Stream reader implementation location: " + resource); //$NON-NLS-1$
+//                    }
+//                }
+//            }
+//
+//            StateContext context = new DefaultStateContext(config.getPayLoadElementName(), config.getIdPaths(),
+//                    config.getDataClusterName(), config.getDataModelName(), limit, callback, config.getNormalFieldGenerators());
+//            if (config.isAutoGenPK()) {
+//                AutoIdGenerator autoIdGenerator = config.getIdGenerator();
+//                // Change the context to auto-generate metadata
+//                context = AutoGenStateContext
+//                        .decorate(context, config.getIdPaths(), autoIdGenerator, config.getNormalFieldGenerators());
+//            }
+//
+//            while (!context.hasFinished()) {
+//                context.parse(reader);
+//            }
+//
+//            return context;
+//        } catch (RuntimeException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        } finally {
+//            try {
+//                if (reader != null) {
+//                    reader.close();
+//                }
+//            } catch (XMLStreamException e) {
+//                log.error("Exception on close reader.", e);
+//            }
+//        }
+//    }
 
     public static class Configuration {
         private final String payLoadElementName;

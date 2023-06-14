@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
-import org.w3c.dom.Document;
+//import org.w3c.dom.Document;
 
 import com.amalto.core.history.Action;
 import com.amalto.core.history.MutableDocument;
@@ -41,13 +41,13 @@ class UpdateReport implements DocumentSaver {
     @Override
     public void save(SaverSession session, DocumentSaverContext context) {
         UpdateReportDocument updateReportDocument;
-        Document updateReportAsDOM = (Document) SaverContextFactory.EMPTY_UPDATE_REPORT.cloneNode(true);
+//        Document updateReportAsDOM = (Document) SaverContextFactory.EMPTY_UPDATE_REPORT.cloneNode(true);
         if (context.isInvokeBeforeSaving()) {
             if (context.getUpdateReportDocument() != null) {
-                updateReportAsDOM = context.getUpdateReportDocument().asDOM();
+//                updateReportAsDOM = context.getUpdateReportDocument().asDOM();
             }
         }       
-        updateReportDocument = new UpdateReportDocument(updateReportAsDOM);
+        updateReportDocument = null;//new UpdateReportDocument(updateReportAsDOM);
         
         StringBuilder key = new StringBuilder();
         String[] ids = context.getId();
@@ -61,27 +61,27 @@ class UpdateReport implements DocumentSaver {
         ComplexTypeMetadata type = context.getUserDocument().getType();
         List<Action> actions = context.getActions();
         boolean hasHeader = false;
-        for (Action action : actions) {
-            if (!hasHeader) {
-                setHeader(updateReportDocument, "UserName", session.getSaverSource().getLegitimateUser()); //$NON-NLS-1$
-                setHeader(updateReportDocument, "Source", String.valueOf(action.getSource())); //$NON-NLS-1$
-                setHeader(updateReportDocument, "TimeInMillis", String.valueOf(action.getDate().getTime())); //$NON-NLS-1$
-                setHeader(updateReportDocument, "UUID", UUID.randomUUID().toString()); //$NON-NLS-1$
-                setHeader(updateReportDocument, "DataCluster", String.valueOf(context.getDataCluster())); //$NON-NLS-1$
-                setHeader(updateReportDocument, "DataModel", String.valueOf(context.getDataModelName())); //$NON-NLS-1$
-                setHeader(updateReportDocument, "Concept", String.valueOf(type.getName())); //$NON-NLS-1$
-                setHeader(updateReportDocument, "Key", key.toString()); //$NON-NLS-1$
-                setHeaderForPrimaryKeyInfo(updateReportDocument, context);
-                hasHeader = true;
-                updateReportDocument.enableRecordFieldChange();
-            }
-            action.perform(updateReportDocument);
-            action.undo(updateReportDocument);
-        }
-        if (!updateReportDocument.isCreated()) {
-            updateReportDocument.setOperationType(UpdateReportPOJO.OPERATION_TYPE_UPDATE);
-        }
-        updateReportDocument.disableRecordFieldChange();
+//        for (Action action : actions) {
+//            if (!hasHeader) {
+//                setHeader(updateReportDocument, "UserName", session.getSaverSource().getLegitimateUser()); //$NON-NLS-1$
+//                setHeader(updateReportDocument, "Source", String.valueOf(action.getSource())); //$NON-NLS-1$
+//                setHeader(updateReportDocument, "TimeInMillis", String.valueOf(action.getDate().getTime())); //$NON-NLS-1$
+//                setHeader(updateReportDocument, "UUID", UUID.randomUUID().toString()); //$NON-NLS-1$
+//                setHeader(updateReportDocument, "DataCluster", String.valueOf(context.getDataCluster())); //$NON-NLS-1$
+//                setHeader(updateReportDocument, "DataModel", String.valueOf(context.getDataModelName())); //$NON-NLS-1$
+//                setHeader(updateReportDocument, "Concept", String.valueOf(type.getName())); //$NON-NLS-1$
+//                setHeader(updateReportDocument, "Key", key.toString()); //$NON-NLS-1$
+//                setHeaderForPrimaryKeyInfo(updateReportDocument, context);
+//                hasHeader = true;
+//                updateReportDocument.enableRecordFieldChange();
+//            }
+//            action.perform(updateReportDocument);
+//            action.undo(updateReportDocument);
+//        }
+//        if (!updateReportDocument.isCreated()) {
+//            updateReportDocument.setOperationType(UpdateReportPOJO.OPERATION_TYPE_UPDATE);
+//        }
+//        updateReportDocument.disableRecordFieldChange();
 
         context.setUpdateReportDocument(updateReportDocument);
         next.save(session, context);

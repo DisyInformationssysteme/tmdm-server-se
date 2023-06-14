@@ -13,8 +13,8 @@ package com.amalto.core.load;
 
 import com.amalto.core.load.context.StateContext;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamReader;
 
 /**
  * Represents a internal state of the {@link LoadParser}.
@@ -27,7 +27,7 @@ public interface State {
      * @param reader  A STAX XML reader.
      * @throws XMLStreamException Thrown by STAX XML reader.
      */
-    void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException;
+//    void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException;
 
     /**
      * Return true if this state is final. A final state indicates to {@link LoadParser} that its job is done.

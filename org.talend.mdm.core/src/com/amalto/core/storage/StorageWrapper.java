@@ -49,9 +49,9 @@ import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.MetadataUtils;
 import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
 import org.talend.mdm.commmon.util.webapp.XSystemObjects;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.w3c.dom.Element;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 import com.amalto.core.load.io.ResettableStringWriter;
 import com.amalto.core.metadata.ClassRepository;
@@ -222,39 +222,39 @@ public class StorageWrapper implements IXmlServerSLWrapper {
         return System.currentTimeMillis() - start;
     }
 
-    @Override
-    public long putDocumentFromDOM(Element root, String uniqueID, String clusterName) throws XmlServerException {
+////    @Override
+//    public long putDocumentFromDOM(Object root, String uniqueID, String clusterName) throws XmlServerException {
+//
+//        String typeName = getTypeName(uniqueID);
+////        long start = System.currentTimeMillis();
+////        {
+////            DataRecordReader<Element> reader = new XmlDOMDataRecordReader();
+////            Storage storage = getStorage(clusterName);
+////            MetadataRepository repository = storage.getMetadataRepository();
+////            DataRecord record = reader.read(repository, repository.getComplexType(typeName), root);
+////            storage.update(record);
+////        }
+//        return System.currentTimeMillis() - 0;
+//    }
 
-        String typeName = getTypeName(uniqueID);
-        long start = System.currentTimeMillis();
-        {
-            DataRecordReader<Element> reader = new XmlDOMDataRecordReader();
-            Storage storage = getStorage(clusterName);
-            MetadataRepository repository = storage.getMetadataRepository();
-            DataRecord record = reader.read(repository, repository.getComplexType(typeName), root);
-            storage.update(record);
-        }
-        return System.currentTimeMillis() - start;
-    }
-
-    @Override
-    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException {
-
-        String typeName = getTypeName(input.getPublicId());
-        long start = System.currentTimeMillis();
-        {
-            Storage storage = getStorage(dataClusterName);
-            if (storage == null) {
-                throw new XmlServerException("Data cluster '" + dataClusterName + "' does not exist."); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            DataRecordReader<XmlSAXDataRecordReader.Input> reader = new XmlSAXDataRecordReader();
-            XmlSAXDataRecordReader.Input readerInput = new XmlSAXDataRecordReader.Input(docReader, input);
-            MetadataRepository repository = storage.getMetadataRepository();
-            DataRecord record = reader.read(repository, repository.getComplexType(typeName), readerInput);
-            storage.update(record);
-        }
-        return System.currentTimeMillis() - start;
-    }
+//    @Override
+//    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException {
+//
+//        String typeName = getTypeName(input.getPublicId());
+//        long start = System.currentTimeMillis();
+//        {
+//            Storage storage = getStorage(dataClusterName);
+//            if (storage == null) {
+//                throw new XmlServerException("Data cluster '" + dataClusterName + "' does not exist."); //$NON-NLS-1$ //$NON-NLS-2$
+//            }
+//            DataRecordReader<XmlSAXDataRecordReader.Input> reader = new XmlSAXDataRecordReader();
+//            XmlSAXDataRecordReader.Input readerInput = new XmlSAXDataRecordReader.Input(docReader, input);
+//            MetadataRepository repository = storage.getMetadataRepository();
+//            DataRecord record = reader.read(repository, repository.getComplexType(typeName), readerInput);
+//            storage.update(record);
+//        }
+//        return System.currentTimeMillis() - start;
+//    }
 
     @Override
     public String getDocumentAsString(String clusterName, String uniqueID) throws XmlServerException {

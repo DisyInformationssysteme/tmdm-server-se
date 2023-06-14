@@ -49,7 +49,7 @@ public class RouteItemListener implements TransactionListener {
                 for (String string : stringObjects) {
                     DOMDocument document = null;
                     try {
-                        document = new DOMDocument(Util.parse(string), type, UpdateReportPOJO.DATA_CLUSTER, UpdateReportPOJO.DATA_MODEL);
+                        document = null;//new DOMDocument(Util.parse(string), type, UpdateReportPOJO.DATA_CLUSTER, UpdateReportPOJO.DATA_MODEL);
                     } catch (Exception e) {
                         throw new RuntimeException("Failed to parse update report from cache.", e); //$NON-NLS-1$
                     }

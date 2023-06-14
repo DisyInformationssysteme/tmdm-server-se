@@ -10,27 +10,27 @@
 
 package com.amalto.core.load.context;
 
-import org.xml.sax.ContentHandler;
-
-import javax.xml.stream.XMLStreamReader;
+//import org.xml.sax.ContentHandler;
+//
+//import javax.xml.stream.XMLStreamReader;
 
 /**
  *
  */
 public interface StateContextWriter {
-    void writeEndDocument() throws Exception;
-
-    void writeEndElement(XMLStreamReader reader) throws Exception;
-
-    void writeCharacters(XMLStreamReader reader) throws Exception;
-
-    void writeStartElement(XMLStreamReader reader) throws Exception;
-
-    void flush(ContentHandler contentHandler) throws Exception;
-
-    void writeStartElement(String elementLocalName) throws Exception;
-
-    void writeCharacters(String characters) throws Exception;
-
-    void writeEndElement(String elementLocalName) throws Exception;
+//    void writeEndDocument() throws Exception;
+//
+//    void writeEndElement(XMLStreamReader reader) throws Exception;
+//
+//    void writeCharacters(XMLStreamReader reader) throws Exception;
+//
+//    void writeStartElement(XMLStreamReader reader) throws Exception;
+//
+//    void flush(ContentHandler contentHandler) throws Exception;
+//
+//    void writeStartElement(String elementLocalName) throws Exception;
+//
+//    void writeCharacters(String characters) throws Exception;
+//
+//    void writeEndElement(String elementLocalName) throws Exception;
 }

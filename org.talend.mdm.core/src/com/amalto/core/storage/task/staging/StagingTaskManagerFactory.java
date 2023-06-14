@@ -48,8 +48,8 @@ public class StagingTaskManagerFactory implements ApplicationContextAware, Dispo
     private void startMessageListener(ConnectionFactory connectionFactory, Topic topic, MessageListener l){
         listener = new DefaultMessageListenerContainer();
         listener.setSessionTransacted(false);
-        listener.setConnectionFactory(connectionFactory);
-        listener.setDestination(topic);
+//        listener.setConnectionFactory(connectionFactory);
+//        listener.setDestination(topic);
         listener.setMessageListener(l);
         listener.setConcurrentConsumers(1);
         listener.setMaxConcurrentConsumers(1);
@@ -61,9 +61,10 @@ public class StagingTaskManagerFactory implements ApplicationContextAware, Dispo
 
     private JmsTemplate createJmsTemplate(ConnectionFactory connectionFactory, Topic topic){
 
-        JmsTemplate template = new JmsTemplate(connectionFactory);
-        template.setDefaultDestination(this.getTopic());
-        return template;
+//        JmsTemplate template = new JmsTemplate(connectionFactory);
+//        template.setDefaultDestination(this.getTopic());
+//        return template;
+        return null;
     }
 
     private ConnectionFactory getNonPooledConnectionFactory() {

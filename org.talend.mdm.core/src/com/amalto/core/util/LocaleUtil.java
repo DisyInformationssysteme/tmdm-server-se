@@ -27,11 +27,12 @@ public class LocaleUtil {
         RequestAttributes requestAttrs = RequestContextHolder.currentRequestAttributes();
         if (requestAttrs instanceof ServletRequestAttributes) {
             ServletRequestAttributes servletRequestAttrs = (ServletRequestAttributes) requestAttrs;
-            request = servletRequestAttrs.getRequest();
+//            request = servletRequestAttrs.getRequest();
         } else {
             request = null;
         }
-        return getLocale(request);
+//        return getLocale(request);
+        return null;
     }
 
     public static Locale getLocale(HttpServletRequest request) {

@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 import com.amalto.core.server.api.XmlServer;
 import com.amalto.core.storage.SQLWrapper;
@@ -88,14 +88,14 @@ public class DefaultXmlServer implements XmlServer {
         }
     }
 
-    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input)
-            throws com.amalto.core.util.XtentisException {
-        try {
-            return server.putDocumentFromSAX(dataClusterName, docReader, input);
-        } catch (XmlServerException e) {
-            throw new XtentisException(e);
-        }
-    }
+//    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input)
+//            throws com.amalto.core.util.XtentisException {
+//        try {
+//            return server.putDocumentFromSAX(dataClusterName, docReader, input);
+//        } catch (XmlServerException e) {
+//            throw new XtentisException(e);
+//        }
+//    }
 
     public String getDocumentAsString(String clusterName, String uniqueID) throws XtentisException {
         try {

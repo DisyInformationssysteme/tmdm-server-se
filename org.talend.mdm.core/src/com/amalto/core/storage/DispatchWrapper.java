@@ -21,9 +21,9 @@ import org.apache.logging.log4j.LogManager;
 import org.talend.mdm.commmon.util.core.MDMConfiguration;
 import org.talend.mdm.commmon.util.webapp.XObjectType;
 import org.talend.mdm.commmon.util.webapp.XSystemObjects;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.w3c.dom.Element;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 import com.amalto.xmlserver.interfaces.IWhereItem;
 import com.amalto.xmlserver.interfaces.IXmlServerSLWrapper;
@@ -229,21 +229,21 @@ public class DispatchWrapper implements IXmlServerSLWrapper {
         }
     }
 
-    public long putDocumentFromDOM(Element root, String uniqueID, String clusterName) throws XmlServerException {
-        if (isMDMInternal(clusterName)) {
-            return mdmInternalWrapper.putDocumentFromDOM(root, uniqueID, clusterName);
-        } else {
-            return userStorageWrapper.putDocumentFromDOM(root, uniqueID, clusterName);
-        }
-    }
+//    public long putDocumentFromDOM(Element root, String uniqueID, String clusterName) throws XmlServerException {
+//        if (isMDMInternal(clusterName)) {
+//            return mdmInternalWrapper.putDocumentFromDOM(root, uniqueID, clusterName);
+//        } else {
+//            return userStorageWrapper.putDocumentFromDOM(root, uniqueID, clusterName);
+//        }
+//    }
 
-    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException {
-        if (isMDMInternal(dataClusterName)) {
-            return mdmInternalWrapper.putDocumentFromSAX(dataClusterName, docReader, input);
-        } else {
-            return userStorageWrapper.putDocumentFromSAX(dataClusterName, docReader, input);
-        }
-    }
+//    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException {
+//        if (isMDMInternal(dataClusterName)) {
+//            return mdmInternalWrapper.putDocumentFromSAX(dataClusterName, docReader, input);
+//        } else {
+//            return userStorageWrapper.putDocumentFromSAX(dataClusterName, docReader, input);
+//        }
+//    }
 
     public String getDocumentAsString(String clusterName, String uniqueID) throws XmlServerException {
         if (isMDMInternal(clusterName)) {

@@ -24,23 +24,23 @@ public class SessionContextHolder {
     private static final Logger LOG = LogManager.getLogger(SessionContextHolder.class);
 
     public static HttpSession currentSession() {
-        HttpSession session;
-        RequestAttributes requestAttrs = RequestContextHolder.currentRequestAttributes();
-        if (requestAttrs instanceof ServletRequestAttributes) {
-            ServletRequestAttributes servletRequestAttrs = (ServletRequestAttributes) requestAttrs;
-            session = servletRequestAttrs.getRequest().getSession(false); // do not create a session
-        } else {
-            // Unknown context
-            session = null;
-        }
-        if (LOG.isTraceEnabled()) {
-            if (session == null) {
-                LOG.trace("Called with null session"); //$NON-NLS-1$
-            } else {
-                LOG.trace("Session id: " + session.getId() + " ;creation: " + new Date(session.getCreationTime()) //$NON-NLS-1$ //$NON-NLS-2$
-                        + " ;last access: " + new Date(session.getLastAccessedTime())); //$NON-NLS-1$
-            }
-        }
+        HttpSession session = null;
+//        RequestAttributes requestAttrs = RequestContextHolder.currentRequestAttributes();
+//        if (requestAttrs instanceof ServletRequestAttributes) {
+//            ServletRequestAttributes servletRequestAttrs = (ServletRequestAttributes) requestAttrs;
+////            session = servletRequestAttrs.getRequest().getSession(false); // do not create a session
+//        } else {
+//            // Unknown context
+//            session = null;
+//        }
+//        if (LOG.isTraceEnabled()) {
+//            if (session == null) {
+//                LOG.trace("Called with null session"); //$NON-NLS-1$
+//            } else {
+//                LOG.trace("Session id: " + session.getId() + " ;creation: " + new Date(session.getCreationTime()) //$NON-NLS-1$ //$NON-NLS-2$
+//                        + " ;last access: " + new Date(session.getLastAccessedTime())); //$NON-NLS-1$
+//            }
+//        }
         return session;
     }
 }

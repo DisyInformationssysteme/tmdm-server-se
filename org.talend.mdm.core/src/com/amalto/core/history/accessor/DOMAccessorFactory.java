@@ -45,9 +45,9 @@ public class DOMAccessorFactory {
                 }
                 String fieldName = element.substring(0, indexStart);
                 int index = Integer.parseInt(element.substring(indexStart + 1, indexEnd)) - 1;
-                current = new ManyFieldAccessor(current, fieldName, index, (DOMMutableDocument) document);
+//                current = new ManyFieldAccessor(current, fieldName, index, (DOMMutableDocument) document);
             } else {
-                current = new UnaryFieldAccessor(current, element, (DOMMutableDocument) document);
+//                current = new UnaryFieldAccessor(current, element, (DOMMutableDocument) document);
             }
         }
 

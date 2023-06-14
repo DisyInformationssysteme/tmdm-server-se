@@ -62,7 +62,7 @@ public class RecordValidationContext implements DocumentSaverContext {
 
     @Override
     public DocumentSaver createSaver() {
-        DocumentSaver saver = SaverContextFactory.invokeSaverExtension(new Save());
+        DocumentSaver saver = null;//SaverContextFactory.invokeSaverExtension(new Save());
         switch (storage.getType()) {
             case MASTER:
                 saver = new Validation(saver);

@@ -12,7 +12,7 @@
 package com.amalto.core.history;
 
 import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.*;
+//import org.w3c.dom.*;
 
 import java.util.Stack;
 
@@ -59,52 +59,58 @@ public class UniqueIdTransformer implements DocumentTransformer {
     public UniqueIdTransformer() {
     }
 
+    @Override
     public Document transform(MutableDocument document) {
-        org.w3c.dom.Document domDocument = document.asDOM();
-        addIds(domDocument);
-        return document;
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public void addIds(org.w3c.dom.Document document) {
-        Stack<Integer> levels = new Stack<Integer>();
-        levels.push(0);
-        {
-            Element documentElement = document.getDocumentElement();
-            if (documentElement != null) {
-                _addIds(document, documentElement, levels);
-            }
-        }
-        levels.pop();
-    }
-
-    private void _addIds(org.w3c.dom.Document document, Element element, Stack<Integer> levels) {
-        NamedNodeMap attributes = element.getAttributes();
-        Attr id = document.createAttribute(ID_ATTRIBUTE_NAME);
-
-        int thisElementId = levels.pop() + 1;
-        StringBuilder builder;
-        {
-            builder = new StringBuilder();
-            for (Integer level : levels) {
-                builder.append(level);
-            }
-        }
-        String prefix = builder.toString().isEmpty() ? StringUtils.EMPTY : builder.toString() + '-';
-        id.setValue(prefix + element.getNodeName() + '-' + thisElementId);
-        attributes.setNamedItem(id);
-
-        levels.push(thisElementId);
-        {
-            levels.push(0);
-            NodeList children = element.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++) {
-                if(children.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                    Element child = (Element) children.item(i);
-                    _addIds(document, child, levels);
-                }
-            }
-            levels.pop();
-        }
-    }
+//    public Document transform(MutableDocument document) {
+//        org.w3c.dom.Document domDocument = document.asDOM();
+//        addIds(domDocument);
+//        return document;
+//    }
+//
+//    public void addIds(org.w3c.dom.Document document) {
+//        Stack<Integer> levels = new Stack<Integer>();
+//        levels.push(0);
+//        {
+//            Element documentElement = document.getDocumentElement();
+//            if (documentElement != null) {
+//                _addIds(document, documentElement, levels);
+//            }
+//        }
+//        levels.pop();
+//    }
+//
+//    private void _addIds(org.w3c.dom.Document document, Element element, Stack<Integer> levels) {
+//        NamedNodeMap attributes = element.getAttributes();
+//        Attr id = document.createAttribute(ID_ATTRIBUTE_NAME);
+//
+//        int thisElementId = levels.pop() + 1;
+//        StringBuilder builder;
+//        {
+//            builder = new StringBuilder();
+//            for (Integer level : levels) {
+//                builder.append(level);
+//            }
+//        }
+//        String prefix = builder.toString().isEmpty() ? StringUtils.EMPTY : builder.toString() + '-';
+//        id.setValue(prefix + element.getNodeName() + '-' + thisElementId);
+//        attributes.setNamedItem(id);
+//
+//        levels.push(thisElementId);
+//        {
+//            levels.push(0);
+//            NodeList children = element.getChildNodes();
+//            for (int i = 0; i < children.getLength(); i++) {
+//                if(children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+//                    Element child = (Element) children.item(i);
+//                    _addIds(document, child, levels);
+//                }
+//            }
+//            levels.pop();
+//        }
+//    }
 
 }

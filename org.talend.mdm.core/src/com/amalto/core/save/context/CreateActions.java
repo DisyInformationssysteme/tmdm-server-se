@@ -36,7 +36,7 @@ import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
 import org.talend.mdm.commmon.metadata.SimpleTypeFieldMetadata;
-import org.w3c.dom.Node;
+//import org.w3c.dom.Node;
 
 /**
  * Generate actions on creation (like setting UUID and AUTO_INCREMENT fields that <b>are not</b> part of the saved
@@ -224,15 +224,15 @@ class CreateActions extends DefaultMetadataVisitor<List<Action>> {
                     boolean isParentOptional = !parentField.isMandatory();
                     boolean isEmpty = false;
                     Accessor accessor = document.createAccessor(getRealPath());
-                    Node parentNode = null;
-                    if (accessor instanceof DOMAccessor) {
-                        parentNode = ((DOMAccessor) accessor).getNode();
-                    }
-                    if (parentNode == null) {
-                        isEmpty = true;
-                    } else if (parentNode.getTextContent() == null || parentNode.getTextContent().isEmpty()) {
-                        isEmpty = true;
-                    }
+//                    Node parentNode = null;
+//                    if (accessor instanceof DOMAccessor) {
+//                        parentNode = ((DOMAccessor) accessor).getNode();
+//                    }
+//                    if (parentNode == null) {
+//                        isEmpty = true;
+//                    } else if (parentNode.getTextContent() == null || parentNode.getTextContent().isEmpty()) {
+//                        isEmpty = true;
+//                    }
                     if (isParentOptional && isEmpty) {
                         doCreate = false;
                     }

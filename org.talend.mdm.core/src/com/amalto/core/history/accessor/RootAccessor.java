@@ -13,7 +13,7 @@ package com.amalto.core.history.accessor;
 
 import com.amalto.core.history.MutableDocument;
 import org.apache.commons.lang.NotImplementedException;
-import org.w3c.dom.Node;
+//import org.w3c.dom.Node;
 
 /**
  *
@@ -38,9 +38,9 @@ class RootAccessor implements DOMAccessor {
         // Nothing to do.
     }
 
-    public Node getNode() {
-        return document.asDOM();
-    }
+//    public Node getNode() {
+//        return document.asDOM();
+//    }
 
     public void create() {
         // Nothing to do (won't recreate the document).
@@ -58,9 +58,9 @@ class RootAccessor implements DOMAccessor {
         // Nothing to do (won't delete the document).
     }
 
-    public boolean exist() {
-        return getNode() != null;
-    }
+//    public boolean exist() {
+//        return getNode() != null;
+//    }
 
     public void markModified(Marker marker) {
         throw new IllegalStateException("Cannot mark this as modified. No value to be set in this accessor");
@@ -70,25 +70,43 @@ class RootAccessor implements DOMAccessor {
         throw new IllegalStateException("Cannot mark this as unmodified. No value to be set in this accessor");
     }
 
-    public int size() {
-        if (!exist()) {
-            return 0;
-        }
-        return getNode().getChildNodes().getLength();
-    }
+//    public int size() {
+//        if (!exist()) {
+//            return 0;
+//        }
+//        return getNode().getChildNodes().getLength();
+//    }
 
     public String getActualType() {
         throw new NotImplementedException("Override document type at root element.");
     }
 
     @Override
-    public int compareTo(Accessor accessor) {
-        if (exist() != accessor.exist()) {
-            return -1;
-        }
-        if (exist() && (accessor instanceof RootAccessor)) {
-            return getNode().equals(((RootAccessor) accessor).getNode()) ? 0 : -1;
-        }
-        return -1;
+    public boolean exist() {
+        // TODO Auto-generated method stub
+        return false;
     }
+
+    @Override
+    public int size() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int compareTo(Accessor o) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+//    @Override
+//    public int compareTo(Accessor accessor) {
+//        if (exist() != accessor.exist()) {
+//            return -1;
+//        }
+//        if (exist() && (accessor instanceof RootAccessor)) {
+//            return getNode().equals(((RootAccessor) accessor).getNode()) ? 0 : -1;
+//        }
+//        return -1;
+//    }
 }

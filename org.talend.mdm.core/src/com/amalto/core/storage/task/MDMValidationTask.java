@@ -205,15 +205,7 @@ public class MDMValidationTask extends MetadataRepositoryTask {
             StorageDocument document = new StorageDocument(destinationStorage.getName(),
                     destinationStorage.getMetadataRepository(),
                     stagingRecord);
-            DocumentSaverContext context = session.getContextFactory().create(destinationStorage.getName(),
-                    destinationStorage.getName(),
-                    "Staging", //$NON-NLS-1$
-                    document,
-                    true,
-                    true,
-                    GENERATE_UPDATE_REPORT,
-                    false,
-                    false);
+            DocumentSaverContext context = null;
             context.setTaskId(stagingRecord.getRecordMetadata().getTaskId());
             context.setUserAction(UserAction.AUTO_STRICT);
             DocumentSaver saver = context.createSaver();

@@ -79,7 +79,7 @@ public class StorageSaver implements DocumentSaverContext {
 
     @Override
     public DocumentSaver createSaver() {
-        DocumentSaver saver = SaverContextFactory.invokeSaverExtension(new Save());
+        DocumentSaver saver = null;//SaverContextFactory.invokeSaverExtension(new Save());
         switch (storage.getType()) {
             case MASTER:
                 if (validate) {

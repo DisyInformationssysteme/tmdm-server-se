@@ -11,7 +11,7 @@
 
 package com.amalto.core.history;
 
-import org.w3c.dom.Node;
+//import org.w3c.dom.Node;
 
 /**
  *
@@ -22,7 +22,7 @@ public interface DOMMutableDocument extends MutableDocument {
      * @return Returns the last node accessed on this document.
      * @see {@link com.amalto.core.history.accessor.Accessor#touch()}
      */
-    Node getLastAccessedNode();
+//    Node getLastAccessedNode();
 
     /**
      * Sets a new accessed node in the document.
@@ -30,6 +30,6 @@ public interface DOMMutableDocument extends MutableDocument {
      * @param lastAccessedNode A {@link Node} in the underlying DOM document.
      * @see {@link com.amalto.core.history.accessor.Accessor#touch()}
      */
-    void setLastAccessedNode(Node lastAccessedNode);
+//    void setLastAccessedNode(Node lastAccessedNode);
 
 }

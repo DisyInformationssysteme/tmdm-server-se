@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.talend.mdm.commmon.metadata.*;
 
-import javax.xml.XMLConstants;
+//import javax.xml.XMLConstants;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -34,7 +34,7 @@ public class ClassRepository extends MetadataRepository {
 
     public static final String EMBEDDED_XML = "embeddedXml"; //$NON-NLS-1$
 
-    private static final SimpleTypeMetadata STRING = new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, Types.STRING);
+    private static final SimpleTypeMetadata STRING = null;//new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, Types.STRING);
 
     private static final Logger LOGGER = LogManager.getLogger(ClassRepository.class);
 
@@ -187,27 +187,27 @@ public class ClassRepository extends MetadataRepository {
                             fieldTypeName = StringUtils.substringAfter(fieldTypeName, JAVA_LANG_PREFIX);
                         }
                         TypeMetadata fieldType;
-                        if (Types.BYTE.equals(fieldTypeName) && isMany) {
-                            fieldType = new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, Types.BASE64_BINARY);
-                        } else {
-                            fieldType = new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, fieldTypeName);
-                        }
-                        newField = new SimpleTypeFieldMetadata(typeStack.peek(),
-                                isKey,
-                                isMany,
-                                isKey,
-                                fieldName,
-                                fieldType,
-                                Collections.<String>emptyList(),
-                                Collections.<String>emptyList(),
-                                StringUtils.EMPTY);
-                        LongString annotation = declaredMethod.getAnnotation(LongString.class);
-                        if (Types.STRING.equals(fieldTypeName) && annotation != null) {
-                            fieldType.setData(MetadataRepository.DATA_MAX_LENGTH, String.valueOf(Integer.MAX_VALUE));
-                            if (annotation.preferLongVarchar()) {
-                                fieldType.setData(LongString.PREFER_LONGVARCHAR, Boolean.TRUE);
-                            }
-                        }
+//                        if (Types.BYTE.equals(fieldTypeName) && isMany) {
+//                            fieldType = new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, Types.BASE64_BINARY);
+//                        } else {
+//                            fieldType = new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, fieldTypeName);
+//                        }
+//                        newField = new SimpleTypeFieldMetadata(typeStack.peek(),
+//                                isKey,
+//                                isMany,
+//                                isKey,
+//                                fieldName,
+//                                fieldType,
+//                                Collections.<String>emptyList(),
+//                                Collections.<String>emptyList(),
+//                                StringUtils.EMPTY);
+//                        LongString annotation = declaredMethod.getAnnotation(LongString.class);
+//                        if (Types.STRING.equals(fieldTypeName) && annotation != null) {
+//                            fieldType.setData(MetadataRepository.DATA_MAX_LENGTH, String.valueOf(Integer.MAX_VALUE));
+//                            if (annotation.preferLongVarchar()) {
+//                                fieldType.setData(LongString.PREFER_LONGVARCHAR, Boolean.TRUE);
+//                            }
+//                        }
                     } else {
                         ComplexTypeMetadata fieldType;
                         if (Map.class.isAssignableFrom(returnType)) {
@@ -247,7 +247,7 @@ public class ClassRepository extends MetadataRepository {
                                     StringUtils.EMPTY);
                         }
                     }
-                    typeStack.peek().addField(newField);
+//                    typeStack.peek().addField(newField);
                 }
             }
         }
@@ -257,7 +257,8 @@ public class ClassRepository extends MetadataRepository {
                 false,
                 false,
                 "digest", //$NON-NLS-1$
-                new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, Types.STRING),
+                null,
+//                new SimpleTypeMetadata(XMLConstants.W3C_XML_SCHEMA_NS_URI, Types.STRING),
                 Collections.<String>emptyList(),
                 Collections.<String>emptyList(),
                 StringUtils.EMPTY));

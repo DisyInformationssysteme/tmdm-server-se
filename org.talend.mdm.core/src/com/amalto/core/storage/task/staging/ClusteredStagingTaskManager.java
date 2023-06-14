@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.transform.stream.StreamSource;
+//import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -76,20 +76,20 @@ public class ClusteredStagingTaskManager extends LocalStagingTaskManager impleme
     }
 
     protected void sendCancellationMessage(final String dataContainer, final String taskId){
-        jmsTemplate.send(new MessageCreator() {
-            @Override
-            public Message createMessage(Session session) throws JMSException {
-                TextMessage message = session.createTextMessage();
-                try {
-                    String msg = StagingJobCancellationMessage.toString(new StagingJobCancellationMessage(dataContainer, taskId));
-                    message.setText(msg);
-                    return message;
-                } catch (JAXBException e) {
-                    LOGGER.error("Cannot unmarshall message", e);
-                    throw new JMSException("Cannot unmarshall message");
-                }
-            }
-        });
+//        jmsTemplate.send(new MessageCreator() {
+//            @Override
+//            public Message createMessage(Session session) throws JMSException {
+//                TextMessage message = session.createTextMessage();
+//                try {
+//                    String msg = StagingJobCancellationMessage.toString(new StagingJobCancellationMessage(dataContainer, taskId));
+//                    message.setText(msg);
+//                    return message;
+//                } catch (JAXBException e) {
+//                    LOGGER.error("Cannot unmarshall message", e);
+//                    throw new JMSException("Cannot unmarshall message");
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -179,8 +179,9 @@ public class ClusteredStagingTaskManager extends LocalStagingTaskManager impleme
         }
 
         public static StagingJobCancellationMessage fromString(final String content) throws JAXBException{
-            JAXBElement<StagingJobCancellationMessage> element = JAXBCONTEXT.createUnmarshaller().unmarshal(new StreamSource(new StringReader(content)), StagingJobCancellationMessage.class);
-            return element.getValue();
+//            JAXBElement<StagingJobCancellationMessage> element = JAXBCONTEXT.createUnmarshaller().unmarshal(new StreamSource(new StringReader(content)), StagingJobCancellationMessage.class);
+//            return element.getValue();
+            return null;
         }
 
         public static String toString(StagingJobCancellationMessage message) throws JAXBException{

@@ -69,10 +69,10 @@ public class DefaultLoadAction implements LoadAction {
                 if (xmlData != null && xmlData.trim().length() > 0) {
                     // Note: in case you wish to change the "replace" behavior, also check
                     // com.amalto.core.save.context.BulkLoadContext.isReplace()
-                    DocumentSaverContext context = contextFactory.create(dataClusterName, dataModelName, source,
-                            new ByteArrayInputStream(xmlData.getBytes(StandardCharsets.UTF_8)),
-                            true, // Always replace in this case (bulk load).
-                            needValidate, updateReport, false, XSystemObjects.DC_PROVISIONING.getName().equals(dataClusterName)); // Enforce
+//                    DocumentSaverContext context = contextFactory.create(dataClusterName, dataModelName, source,
+//                            new ByteArrayInputStream(xmlData.getBytes(StandardCharsets.UTF_8)),
+//                            true, // Always replace in this case (bulk load).
+//                            needValidate, updateReport, false, XSystemObjects.DC_PROVISIONING.getName().equals(dataClusterName)); // Enforce
                                                                                                                            // auto
                                                                                                                            // commit
                                                                                                                            // for
@@ -80,7 +80,7 @@ public class DefaultLoadAction implements LoadAction {
                                                                                                                            // (for
                                                                                                                            // license
                                                                                                                            // checks).
-                    context.createSaver().save(session, context);
+//                    context.createSaver().save(session, context);
                 }
             }
         } catch (Exception e) {

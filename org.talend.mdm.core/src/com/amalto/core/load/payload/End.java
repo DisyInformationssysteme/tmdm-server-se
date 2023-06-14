@@ -14,8 +14,8 @@ import com.amalto.core.load.Constants;
 import com.amalto.core.load.State;
 import com.amalto.core.load.context.StateContext;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamReader;
 
 /**
  *
@@ -26,13 +26,13 @@ public class End implements State {
     private End() {
     }
 
-    public void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException {
-        try {
-            context.getWriter().writeEndDocument();
-        } catch (Exception e) {
-            throw new XMLStreamException(e);
-        }
-    }
+//    public void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException {
+//        try {
+//            context.getWriter().writeEndDocument();
+//        } catch (Exception e) {
+//            throw new XMLStreamException(e);
+//        }
+//    }
 
     public boolean isFinal() {
         return Constants.FINAL_STATE;

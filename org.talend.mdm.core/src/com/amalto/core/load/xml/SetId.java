@@ -18,9 +18,9 @@ import com.amalto.core.util.Util;
 
 import org.apache.commons.lang.StringUtils;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
+//import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.events.XMLEvent;
 
 /**
  *
@@ -28,30 +28,30 @@ import javax.xml.stream.events.XMLEvent;
 public class SetId extends Characters {
     public static final State INSTANCE = new SetId();
 
-    public void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException {
-        int next = reader.next();
-        if (next == XMLEvent.END_ELEMENT) {
-            // Means we started an ID but got no text in it, so set it to empty string
-            context.getMetadata().setId(context.getCurrentIdElement(), StringUtils.EMPTY);
-            // ... and move to EndElement state
-            context.setCurrent(EndElement.INSTANCE);
-            return;
-        } else if (next != XMLEvent.CHARACTERS) {
-            // Everything else (not END_ELEMENT and not CHARACTERS is error).
-            throw new IllegalStateException("Expected characters but got XML event id #" + next);
-        }
-
-        // We're parsing characters so call super.parse(context, reader)...
-        super.parse(context, reader);
-        Util.checkIdValidation(reader.getText());
-
-        // ...and we're also setting id for metadata
-        context.getMetadata().setId(context.getCurrentIdElement(), reader.getText());
-        // If we're ready, flush document
-        if (doFlush(context)) {
-            Utils.doParserCallback(context, reader, context.getMetadata());
-        }
-    }
+//    public void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException {
+//        int next = reader.next();
+//        if (next == XMLEvent.END_ELEMENT) {
+//            // Means we started an ID but got no text in it, so set it to empty string
+//            context.getMetadata().setId(context.getCurrentIdElement(), StringUtils.EMPTY);
+//            // ... and move to EndElement state
+//            context.setCurrent(EndElement.INSTANCE);
+//            return;
+//        } else if (next != XMLEvent.CHARACTERS) {
+//            // Everything else (not END_ELEMENT and not CHARACTERS is error).
+//            throw new IllegalStateException("Expected characters but got XML event id #" + next);
+//        }
+//
+//        // We're parsing characters so call super.parse(context, reader)...
+//        super.parse(context, reader);
+//        Util.checkIdValidation(reader.getText());
+//
+//        // ...and we're also setting id for metadata
+//        context.getMetadata().setId(context.getCurrentIdElement(), reader.getText());
+//        // If we're ready, flush document
+//        if (doFlush(context)) {
+//            Utils.doParserCallback(context, reader, context.getMetadata());
+//        }
+//    }
 
     private static boolean doFlush(StateContext context) {
         return !context.isFlushDone() && context.isMetadataReady();

@@ -42,7 +42,7 @@ public class MDMContextListener implements ServletContextListener {
         System.setProperty(WEB_SESSION_TIMEOUT_IN_SECONDS, webSessionTimeoutInSeconds + ""); //$NON-NLS-1$
 
         String location = servletContext.getInitParameter(ROOT_LOCATION_PARAM);
-        String resolvedLocation = ServletContextPropertyUtils.resolvePlaceholders(location, servletContext);
+        String resolvedLocation = null;//ServletContextPropertyUtils.resolvePlaceholders(location, servletContext);
         servletContext.log("Initializing MDM root folder from [" + resolvedLocation + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
             File file;

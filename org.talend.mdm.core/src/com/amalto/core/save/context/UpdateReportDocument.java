@@ -13,10 +13,10 @@ import com.amalto.core.history.accessor.NoOpAccessor;
 import org.apache.commons.lang.StringUtils;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.util.webapp.XSystemObjects;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+//import org.w3c.dom.Document;
+//import org.w3c.dom.Element;
+//import org.w3c.dom.Node;
+//import org.w3c.dom.NodeList;
 
 import com.amalto.core.objects.UpdateReportPOJO;
 import com.amalto.core.history.DeleteType;
@@ -28,7 +28,7 @@ import com.amalto.core.server.ServerContext;
 
 class UpdateReportDocument extends DOMDocument {
 
-    private final Document updateReportDocument;
+//    private final Document updateReportDocument;
 
     private boolean isRecordingFieldChange;
 
@@ -38,113 +38,113 @@ class UpdateReportDocument extends DOMDocument {
 
     private boolean isCreated = false;
 
-    public UpdateReportDocument(Document updateReportDocument) {
-        super(updateReportDocument,
-                internalGetType(),
-                XSystemObjects.DC_UPDATE_PREPORT.getName(),
-                UpdateReport.UPDATE_REPORT_DATA_MODEL);
-        this.updateReportDocument = updateReportDocument;
-    }
-
-    private MutableDocument setField(String field, String value) {
-        if (index++ % 2 == 0) {
-            currentNewValue = value;
-        } else {
-            NodeList itemElements = updateReportDocument.getElementsByTagName("Item");
-            for (int i = 0; i < itemElements.getLength(); i++) {
-                Node itemElement = itemElements.item(i);
-                NodeList itemChildNodes = itemElement.getChildNodes();
-                Node itemChildNode = itemChildNodes.item(0);
-                if ("path".equalsIgnoreCase(itemChildNode.getNodeName())
-                        && field.equalsIgnoreCase(itemChildNode.getTextContent())) {
-                    if (currentNewValue != null && itemChildNodes.getLength() > 2) {
-                        // Change newValue node content
-                        itemChildNodes.item(2).setTextContent(currentNewValue);
-                        currentNewValue = null;
-                        return this;
-                    }
-                }
-            }
-
-            Element item = updateReportDocument.createElement("Item"); //$NON-NLS-1$
-            // Path
-            Node pathNode = updateReportDocument.createElement("path"); //$NON-NLS-1$
-            pathNode.appendChild(updateReportDocument.createTextNode(field));
-            item.appendChild(pathNode);
-            // Old value
-            Node oldValueNode = updateReportDocument.createElement("oldValue"); //$NON-NLS-1$
-            if (value != null) {
-                oldValueNode.appendChild(updateReportDocument.createTextNode(value));
-            }
-            item.appendChild(oldValueNode);
-            // New value
-            Node newValueNode = updateReportDocument.createElement("newValue"); //$NON-NLS-1$
-            if (currentNewValue != null) {
-                newValueNode.appendChild(updateReportDocument.createTextNode(currentNewValue));
-            }
-            item.appendChild(newValueNode);
-            updateReportDocument.getDocumentElement().appendChild(item);
-            currentNewValue = null;
-        }
-        return this;
-    }
-
-    @Override
-    public MutableDocument create(MutableDocument content) {
-        isCreated = true;
-        setOperationType(UpdateReportPOJO.OPERATION_TYPE_CREATE);
-        return this;
-    }
-
-    @Override
-    public MutableDocument setContent(MutableDocument content) {
-        return this;
-    }
-
-    @Override
-    public MutableDocument delete(DeleteType deleteType) {
-        // Nothing to do
-        // TODO Could extend saver to handle deletes?
-        return this;
-    }
-
-    public void enableRecordFieldChange() {
-        isRecordingFieldChange = true;
-    }
-
-    public void disableRecordFieldChange() {
-        isRecordingFieldChange = false;
-    }
-
-    public boolean isCreated() {
-        return isCreated;
-    }
-
-    public void setOperationType(String operationType) {
-        Element item = null;
-        NodeList operationTypeNodeList = updateReportDocument.getElementsByTagName("OperationType"); //$NON-NLS-1$
-        for (int i = 0; i < operationTypeNodeList.getLength(); i++) {
-            Node operationTypeNode = operationTypeNodeList.item(i);
-            if (Node.ELEMENT_NODE == operationTypeNode.getNodeType()) {
-                item = (Element) operationTypeNode;
-                break;
-            }
-        }
-        if (item == null) {
-            item = updateReportDocument.createElement("OperationType"); //$NON-NLS-1$
-        }
-        if (operationType.equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_CREATE)) {
-            if (!item.getTextContent().equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_CREATE)) {
-                item.appendChild(updateReportDocument.createTextNode(UpdateReportPOJO.OPERATION_TYPE_CREATE));
-                updateReportDocument.getDocumentElement().appendChild(item);
-            }
-        } else if (operationType.equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_UPDATE)) {
-            if (!isCreated && !item.getTextContent().equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_UPDATE)) {
-                item.appendChild(updateReportDocument.createTextNode(UpdateReportPOJO.OPERATION_TYPE_UPDATE));
-                updateReportDocument.getDocumentElement().appendChild(item);
-            }
-        }
-    }
+//    public UpdateReportDocument(Document updateReportDocument) {
+//        super(updateReportDocument,
+//                internalGetType(),
+//                XSystemObjects.DC_UPDATE_PREPORT.getName(),
+//                UpdateReport.UPDATE_REPORT_DATA_MODEL);
+//        this.updateReportDocument = updateReportDocument;
+//    }
+//
+//    private MutableDocument setField(String field, String value) {
+//        if (index++ % 2 == 0) {
+//            currentNewValue = value;
+//        } else {
+//            NodeList itemElements = updateReportDocument.getElementsByTagName("Item");
+//            for (int i = 0; i < itemElements.getLength(); i++) {
+//                Node itemElement = itemElements.item(i);
+//                NodeList itemChildNodes = itemElement.getChildNodes();
+//                Node itemChildNode = itemChildNodes.item(0);
+//                if ("path".equalsIgnoreCase(itemChildNode.getNodeName())
+//                        && field.equalsIgnoreCase(itemChildNode.getTextContent())) {
+//                    if (currentNewValue != null && itemChildNodes.getLength() > 2) {
+//                        // Change newValue node content
+//                        itemChildNodes.item(2).setTextContent(currentNewValue);
+//                        currentNewValue = null;
+//                        return this;
+//                    }
+//                }
+//            }
+//
+//            Element item = updateReportDocument.createElement("Item"); //$NON-NLS-1$
+//            // Path
+//            Node pathNode = updateReportDocument.createElement("path"); //$NON-NLS-1$
+//            pathNode.appendChild(updateReportDocument.createTextNode(field));
+//            item.appendChild(pathNode);
+//            // Old value
+//            Node oldValueNode = updateReportDocument.createElement("oldValue"); //$NON-NLS-1$
+//            if (value != null) {
+//                oldValueNode.appendChild(updateReportDocument.createTextNode(value));
+//            }
+//            item.appendChild(oldValueNode);
+//            // New value
+//            Node newValueNode = updateReportDocument.createElement("newValue"); //$NON-NLS-1$
+//            if (currentNewValue != null) {
+//                newValueNode.appendChild(updateReportDocument.createTextNode(currentNewValue));
+//            }
+//            item.appendChild(newValueNode);
+//            updateReportDocument.getDocumentElement().appendChild(item);
+//            currentNewValue = null;
+//        }
+//        return this;
+//    }
+//
+//    @Override
+//    public MutableDocument create(MutableDocument content) {
+//        isCreated = true;
+//        setOperationType(UpdateReportPOJO.OPERATION_TYPE_CREATE);
+//        return this;
+//    }
+//
+//    @Override
+//    public MutableDocument setContent(MutableDocument content) {
+//        return this;
+//    }
+//
+//    @Override
+//    public MutableDocument delete(DeleteType deleteType) {
+//        // Nothing to do
+//        // TODO Could extend saver to handle deletes?
+//        return this;
+//    }
+//
+//    public void enableRecordFieldChange() {
+//        isRecordingFieldChange = true;
+//    }
+//
+//    public void disableRecordFieldChange() {
+//        isRecordingFieldChange = false;
+//    }
+//
+//    public boolean isCreated() {
+//        return isCreated;
+//    }
+//
+//    public void setOperationType(String operationType) {
+//        Element item = null;
+//        NodeList operationTypeNodeList = updateReportDocument.getElementsByTagName("OperationType"); //$NON-NLS-1$
+//        for (int i = 0; i < operationTypeNodeList.getLength(); i++) {
+//            Node operationTypeNode = operationTypeNodeList.item(i);
+//            if (Node.ELEMENT_NODE == operationTypeNode.getNodeType()) {
+//                item = (Element) operationTypeNode;
+//                break;
+//            }
+//        }
+//        if (item == null) {
+//            item = updateReportDocument.createElement("OperationType"); //$NON-NLS-1$
+//        }
+//        if (operationType.equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_CREATE)) {
+//            if (!item.getTextContent().equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_CREATE)) {
+//                item.appendChild(updateReportDocument.createTextNode(UpdateReportPOJO.OPERATION_TYPE_CREATE));
+//                updateReportDocument.getDocumentElement().appendChild(item);
+//            }
+//        } else if (operationType.equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_UPDATE)) {
+//            if (!isCreated && !item.getTextContent().equalsIgnoreCase(UpdateReportPOJO.OPERATION_TYPE_UPDATE)) {
+//                item.appendChild(updateReportDocument.createTextNode(UpdateReportPOJO.OPERATION_TYPE_UPDATE));
+//                updateReportDocument.getDocumentElement().appendChild(item);
+//            }
+//        }
+//    }
 
     @Override
     public Accessor createAccessor(String path) {
@@ -186,7 +186,7 @@ class UpdateReportDocument extends DOMDocument {
         }
 
         public void set(String value) {
-            updateReportDocument.setField(path, value);
+//            updateReportDocument.setField(path, value);
         }
 
         public String get() {
@@ -210,7 +210,7 @@ class UpdateReportDocument extends DOMDocument {
         }
 
         public void delete() {
-            updateReportDocument.setField(path, null);
+//            updateReportDocument.setField(path, null);
         }
 
         public boolean exist() {

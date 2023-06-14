@@ -26,11 +26,11 @@ public class EmptyDocument implements MutableDocument {
 
     public static final MutableDocument INSTANCE = new EmptyDocument();
 
-    public static final org.w3c.dom.Document EMPTY_DOCUMENT;
+//    public static final org.w3c.dom.Document EMPTY_DOCUMENT;
 
     static {
         try {
-            EMPTY_DOCUMENT = MDMXMLUtils.getDocumentBuilder().get().newDocument();
+//            EMPTY_DOCUMENT = MDMXMLUtils.getDocumentBuilder().get().newDocument();
         } catch (XmlBeanDefinitionException e) {
             throw new RuntimeException(e);
         }
@@ -54,14 +54,14 @@ public class EmptyDocument implements MutableDocument {
         return NoOpAccessor.INSTANCE;
     }
 
-    public org.w3c.dom.Document asDOM() {
-        return EMPTY_DOCUMENT;
-    }
-
-    @Override
-    public org.w3c.dom.Document asValidationDOM() {
-        return EMPTY_DOCUMENT;
-    }
+//    public org.w3c.dom.Document asDOM() {
+//        return EMPTY_DOCUMENT;
+//    }
+//
+//    @Override
+//    public org.w3c.dom.Document asValidationDOM() {
+//        return EMPTY_DOCUMENT;
+//    }
 
     public Document transform(DocumentTransformer transformer) {
         if (transformer == null) {

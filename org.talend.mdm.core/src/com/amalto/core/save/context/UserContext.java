@@ -63,7 +63,7 @@ class UserContext implements DocumentSaverContext {
 
     @Override
     public DocumentSaver createSaver() {
-        DocumentSaver saver = SaverContextFactory.invokeSaverExtension(new Save());
+        DocumentSaver saver = null;//SaverContextFactory.invokeSaverExtension(new Save());
         if (!dataCluster.endsWith(StorageAdmin.STAGING_SUFFIX)) {
             if (validate) {
                 saver = new Validation(saver);

@@ -200,7 +200,7 @@ public class StorageSaverSource implements SaverSource {
     }
 
     public void invalidateTypeCache(String dataModelName) {
-        XmlSchemaValidator.invalidateCache(dataModelName);
+//        XmlSchemaValidator.invalidateCache(dataModelName);
         synchronized (schemasAsString) {
             schemasAsString.remove(dataModelName);
         }

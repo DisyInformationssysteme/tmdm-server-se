@@ -26,5 +26,5 @@ public interface DOMAccessor extends Accessor {
      * @return The node that corresponds to this accessor or <code>null</code> if does not exist.
      * @see {@link #create()}
      */
-    org.w3c.dom.Node getNode();
+//    org.w3c.dom.Node getNode();
 }

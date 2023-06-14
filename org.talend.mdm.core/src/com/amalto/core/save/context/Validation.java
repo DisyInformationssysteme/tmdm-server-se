@@ -13,7 +13,7 @@ package com.amalto.core.save.context;
 
 import java.lang.reflect.Constructor;
 
-import org.w3c.dom.Element;
+//import org.w3c.dom.Element;
 
 import com.amalto.core.save.DocumentSaverContext;
 import com.amalto.core.save.SaverSession;
@@ -44,9 +44,7 @@ class Validation implements DocumentSaver {
 
     public void save(SaverSession session, DocumentSaverContext context) {
         try {
-            Validator validator = new XmlSchemaValidator(context.getDataModelName(),
-                    session.getSaverSource().getSchema(context.getDataModelName()),
-                    Validator.NO_OP_VALIDATOR);
+            Validator validator = null;
             if (useSchematron) {
                 String schematron = context.getUserDocument().getType().getSchematron();
                 if (!schematron.isEmpty()) {
@@ -54,8 +52,8 @@ class Validation implements DocumentSaver {
                     validator = (Validator) constructor.newInstance(validator, schematron);
                 }
             }
-            Element element = context.getDatabaseDocument().asValidationDOM().getDocumentElement();
-            validator.validate(element);
+//            Element element = context.getDatabaseDocument().asValidationDOM().getDocumentElement();
+//            validator.validate(element);
             next.save(session, context);
         } catch (ValidateException e) {
             throw e;

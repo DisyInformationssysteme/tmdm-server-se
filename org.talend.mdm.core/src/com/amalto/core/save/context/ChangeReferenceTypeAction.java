@@ -14,11 +14,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
+//import javax.xml.XMLConstants;
 
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
-import org.w3c.dom.Document;
+//import org.w3c.dom.Document;
 
 import com.amalto.core.history.Action;
 import com.amalto.core.history.MutableDocument;
@@ -50,11 +50,11 @@ class ChangeReferenceTypeAction extends AbstractChangeTypeAction {
             return document;
         }
         // Ensure tmdm prefix is declared
-        Document domDocument = document.asDOM();
-        String xsi = domDocument.lookupNamespaceURI(SkipAttributeDocumentBuilder.TALEND_NAMESPACE); //$NON-NLS-1$
-        if (xsi == null) {
-            domDocument.getDocumentElement().setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:tmdm", SkipAttributeDocumentBuilder.TALEND_NAMESPACE); //$NON-NLS-1$
-        }
+//        Document domDocument = document.asDOM();
+//        String xsi = domDocument.lookupNamespaceURI(SkipAttributeDocumentBuilder.TALEND_NAMESPACE); //$NON-NLS-1$
+//        if (xsi == null) {
+//            domDocument.getDocumentElement().setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:tmdm", SkipAttributeDocumentBuilder.TALEND_NAMESPACE); //$NON-NLS-1$
+//        }
         Accessor typeAccessor = document.createAccessor(path + "/@tmdm:type"); //$NON-NLS-1$
         String typeName = newType.getName();
         typeAccessor.createAndSet(typeName);

@@ -24,7 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.xml.transform.TransformerException;
+//import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -136,7 +136,7 @@ public class DefaultRoutingEngine implements RoutingEngine {
             expXpath = StringUtils.substringAfter(expXpath, itemPOJO.getConceptName() + '/');
         }
         try {
-            String[] contents = Util.getTextNodes(itemPOJO.getProjection(), expXpath);
+            String[] contents = null;//Util.getTextNodes(itemPOJO.getProjection(), expXpath);
             if (contents.length == 0 && exp.getOperator() == RoutingRuleExpressionPOJO.IS_NULL) {
                 return true;
             }
@@ -209,7 +209,7 @@ public class DefaultRoutingEngine implements RoutingEngine {
                 }
             }
             return match;
-        } catch (TransformerException e) {
+        } catch (Exception e) {
             String err = "Subscription rule expression match: unable extract xpath '" + exp.getXpath() + "' from Item '"
                     + itemPOJO.getItemPOJOPK().getUniqueID() + "': " + e.getLocalizedMessage();
             LOGGER.error(err, e);
@@ -229,19 +229,19 @@ public class DefaultRoutingEngine implements RoutingEngine {
             i++;
         }
 
-        jmsTemplate.send(new MessageCreator() {
-
-            @Override
-            public Message createMessage(Session session) throws JMSException {
-                Message message = session.createMessage();
-                setRulesList(message, ruleNames);
-                message.setStringProperty(JMS_CONTAINER_PROPERTY, itemPOJOPK.getDataClusterPOJOPK().getUniqueId());
-                message.setStringProperty(JMS_TYPE_PROPERTY, itemPOJOPK.getConceptName());
-                message.setStringProperty(JMS_PK_PROPERTY, Util.joinStrings(itemPOJOPK.getIds(), "."));
-                message.setLongProperty(JMS_SCHEDULED, System.currentTimeMillis());
-                return message;
-            }
-        });
+//        jmsTemplate.send(new MessageCreator() {
+//
+//            @Override
+//            public Message createMessage(Session session) throws JMSException {
+//                Message message = session.createMessage();
+//                setRulesList(message, ruleNames);
+//                message.setStringProperty(JMS_CONTAINER_PROPERTY, itemPOJOPK.getDataClusterPOJOPK().getUniqueId());
+//                message.setStringProperty(JMS_TYPE_PROPERTY, itemPOJOPK.getConceptName());
+//                message.setStringProperty(JMS_PK_PROPERTY, Util.joinStrings(itemPOJOPK.getIds(), "."));
+//                message.setLongProperty(JMS_SCHEDULED, System.currentTimeMillis());
+//                return message;
+//            }
+//        });
 
     }
 

@@ -14,9 +14,9 @@ import com.amalto.core.load.Constants;
 import com.amalto.core.load.State;
 import com.amalto.core.load.context.StateContext;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
+//import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.events.XMLEvent;
 
 /**
  *
@@ -27,29 +27,29 @@ public class StartElement implements State {
     private StartElement() {
     }
 
-    public void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException {
-        String elementLocalName = reader.getName().getLocalPart();
-        context.enterElement(elementLocalName);
-
-        if (context.skipElement()) {
-            while (reader.next() != XMLEvent.END_ELEMENT) {
-                // Skip element's content until we meet end element
-            }
-            context.leaveElement();
-            context.setCurrent(Selector.INSTANCE);
-        } else {
-            try {
-                context.getWriter().writeStartElement(reader);
-            } catch (Exception e) {
-                throw new XMLStreamException(e);
-            }
-            if (!context.getPayLoadElementName().equals(elementLocalName) && context.isIdElement()) {
-                context.setCurrent(SetId.INSTANCE);
-            } else {
-                context.setCurrent(Selector.INSTANCE);
-            }
-        }
-    }
+//    public void parse(StateContext context, XMLStreamReader reader) throws XMLStreamException {
+//        String elementLocalName = reader.getName().getLocalPart();
+//        context.enterElement(elementLocalName);
+//
+//        if (context.skipElement()) {
+//            while (reader.next() != XMLEvent.END_ELEMENT) {
+//                // Skip element's content until we meet end element
+//            }
+//            context.leaveElement();
+//            context.setCurrent(Selector.INSTANCE);
+//        } else {
+//            try {
+//                context.getWriter().writeStartElement(reader);
+//            } catch (Exception e) {
+//                throw new XMLStreamException(e);
+//            }
+//            if (!context.getPayLoadElementName().equals(elementLocalName) && context.isIdElement()) {
+//                context.setCurrent(SetId.INSTANCE);
+//            } else {
+//                context.setCurrent(Selector.INSTANCE);
+//            }
+//        }
+//    }
 
     public boolean isFinal() {
         return Constants.NON_FINAL_STATE;

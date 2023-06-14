@@ -29,7 +29,7 @@ import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
 import org.talend.mdm.commmon.metadata.Types;
-import org.w3c.dom.Node;
+//import org.w3c.dom.Node;
 
 import com.amalto.core.history.Action;
 import com.amalto.core.history.DOMMutableDocument;
@@ -166,21 +166,21 @@ public class PartialUpdateActionCreator extends UpdateActionCreator {
                  * behavior of a overwrite=false).
                  */
                 // TODO these code will be replaced by fhuaulme's new API
-                List<Node> nodes = new ArrayList<Node>();
-                for (String usedPath : usedPaths) {
-                    Accessor accessor = newDocument.createAccessor(usedPath);
-                    if (accessor.exist()){
-                        accessor.touch();
-                        if (newDocument instanceof DOMMutableDocument) {
-                            nodes.add(((DOMMutableDocument) newDocument).getLastAccessedNode());
-                        }
-                    }
-                }
-                for (Node node : nodes) {
-                    if (node != null && node.getParentNode() != null){
-                        node.getParentNode().removeChild(node);
-                    }
-                }
+//                List<Node> nodes = new ArrayList<Node>();
+//                for (String usedPath : usedPaths) {
+//                    Accessor accessor = newDocument.createAccessor(usedPath);
+//                    if (accessor.exist()){
+//                        accessor.touch();
+//                        if (newDocument instanceof DOMMutableDocument) {
+//                            nodes.add(((DOMMutableDocument) newDocument).getLastAccessedNode());
+//                        }
+//                    }
+//                }
+//                for (Node node : nodes) {
+//                    if (node != null && node.getParentNode() != null){
+//                        node.getParentNode().removeChild(node);
+//                    }
+//                }
                 // Since this a costly operation do this only if there are still elements under the pivot.
                 int leftElementCount = newDocument.createAccessor(StringUtils.substringBeforeLast(partialUpdatePivot, "/")).size(); //$NON-NLS-1$
                 if (leftElementCount > 0) {

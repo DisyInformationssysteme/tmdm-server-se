@@ -13,7 +13,7 @@
 
 package com.amalto.core.util;
 
-import org.springframework.cache.ehcache.EhCacheCacheManager;
+//import org.springframework.cache.ehcache.EhCacheCacheManager;
 
 import com.amalto.core.server.MDMContextAccessor;
 
@@ -37,30 +37,31 @@ public class MDMEhCacheUtil {
 
     @SuppressWarnings("unchecked")
     public static <K, V> V getCache(String cacheName, K key) {
-        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
-                EhCacheCacheManager.class);
-        Element element = mdmEhcache.getCacheManager().getCache(cacheName).get(key);
-        if (element == null) {
-            return null;
-        }
-        return (V) element.getObjectValue();
+//        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
+//                EhCacheCacheManager.class);
+//        Element element = mdmEhcache.getCacheManager().getCache(cacheName).get(key);
+//        if (element == null) {
+//            return null;
+//        }
+//        return (V) element.getObjectValue();
+        return null;
     }
 
     public static void clearCache(String cacheName) {
-        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
-                EhCacheCacheManager.class);
-        mdmEhcache.getCache(cacheName).clear();
+//        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
+//                EhCacheCacheManager.class);
+//        mdmEhcache.getCache(cacheName).clear();
     }
 
     public static <K, V> void addCache(String cacheName, K key, V value) {
-        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
-                EhCacheCacheManager.class);
-        mdmEhcache.getCache(cacheName).put(key, value);
+//        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
+//                EhCacheCacheManager.class);
+//        mdmEhcache.getCache(cacheName).put(key, value);
     }
 
     public static <K, V> void removeCache(String cacheName, K key) {
-        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
-                EhCacheCacheManager.class);
-        mdmEhcache.getCache(cacheName).evict(key);
+//        EhCacheCacheManager mdmEhcache = MDMContextAccessor.getApplicationContext().getBean(MDM_CACHE_MANAGER,
+//                EhCacheCacheManager.class);
+//        mdmEhcache.getCache(cacheName).evict(key);
     }
 }

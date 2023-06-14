@@ -14,9 +14,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.w3c.dom.Element;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 /**
  * Xtentis performs all calls to the DataBase via this interface<br>
@@ -156,17 +156,17 @@ public interface IXmlServerSLWrapper {
      * @return the time to store the document
      * @throws XmlServerException
      */
-    public long putDocumentFromDOM(Element root, String uniqueID, String clusterName) throws XmlServerException;
-
-    /**
-     * Load a document using a SAX parser.
-     *
-     * @param dataClusterName The unique ID of the cluster
-     * @param docReader A SAX reader
-     * @param input A SAX input
-     * @throws XmlServerException If anything goes wrong in underlying storage
-     */
-    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException;
+//    public long putDocumentFromDOM(Element root, String uniqueID, String clusterName) throws XmlServerException;
+//
+//    /**
+//     * Load a document using a SAX parser.
+//     *
+//     * @param dataClusterName The unique ID of the cluster
+//     * @param docReader A SAX reader
+//     * @param input A SAX input
+//     * @throws XmlServerException If anything goes wrong in underlying storage
+//     */
+//    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException;
 
     /**
      * Gets an XML document from the DB<br>

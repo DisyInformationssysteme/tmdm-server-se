@@ -14,8 +14,8 @@ package com.amalto.core.server.api;
 import com.amalto.core.util.XtentisException;
 import com.amalto.xmlserver.interfaces.IWhereItem;
 import com.amalto.xmlserver.interfaces.ItemPKCriteria;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 import java.io.OutputStream;
 import java.util.*;
@@ -94,8 +94,8 @@ public interface XmlServer {
      * @param input           A SAX input
      * @throws XtentisException If anything goes wrong in underlying storage
      */
-    long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input)
-            throws XtentisException;
+//    long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input)
+//            throws XtentisException;
 
     /**
      * Gets an XML document from the DB<br>

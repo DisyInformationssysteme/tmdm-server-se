@@ -14,11 +14,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
+//import javax.xml.XMLConstants;
 
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
-import org.w3c.dom.Document;
+//import org.w3c.dom.Document;
 
 import com.amalto.core.history.Action;
 import com.amalto.core.history.MutableDocument;
@@ -48,11 +48,11 @@ class ChangeTypeAction extends AbstractChangeTypeAction {
             return document;
         }
         // Ensure xsi prefix is declared
-        Document domDocument = document.asDOM();
-        String xsi = domDocument.lookupNamespaceURI("xsi"); //$NON-NLS-1$
-        if (xsi == null) {
-            domDocument.getDocumentElement().setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);  //$NON-NLS-1$
-        }
+//        Document domDocument = document.asDOM();
+//        String xsi = domDocument.lookupNamespaceURI("xsi"); //$NON-NLS-1$
+//        if (xsi == null) {
+//            domDocument.getDocumentElement().setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);  //$NON-NLS-1$
+//        }
 
         Accessor typeAccessor = document.createAccessor(path + "/@xsi:type"); //$NON-NLS-1$
         String typeName = newType == null ? null : newType.getName();

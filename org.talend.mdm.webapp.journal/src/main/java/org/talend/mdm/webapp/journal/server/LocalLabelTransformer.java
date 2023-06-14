@@ -20,7 +20,7 @@ import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.util.core.MDMXMLUtils;
-import org.xml.sax.InputSource;
+//import org.xml.sax.InputSource;
 
 import com.amalto.core.history.Document;
 import com.amalto.core.history.DocumentTransformer;
@@ -63,10 +63,10 @@ public class LocalLabelTransformer implements DocumentTransformer {
                     }
                 }
             }
-            org.w3c.dom.Document newW3cDocument = MDMXMLUtils.getDocumentBuilderWithNamespace().get().parse(
-                    new InputSource(new StringReader(newDcoument.asXML())));
-            MutableDocument newDocument = new DOMDocument(newW3cDocument, typeMetadata, document.getDataCluster(),
-                    document.getDataModel());
+//            org.w3c.dom.Document newW3cDocument = MDMXMLUtils.getDocumentBuilderWithNamespace().get().parse(
+//                    new InputSource(new StringReader(newDcoument.asXML())));
+            MutableDocument newDocument = null;//new DOMDocument(newW3cDocument, typeMetadata, document.getDataCluster(),
+//                    document.getDataModel());
             return newDocument;
         } catch (Exception e) {
             return document;

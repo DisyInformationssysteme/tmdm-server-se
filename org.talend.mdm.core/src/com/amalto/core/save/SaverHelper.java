@@ -35,13 +35,14 @@ public class SaverHelper {
                                          String dataClusterName,
                                          String dataModelName) throws UnsupportedEncodingException {
         SaverContextFactory contextFactory = session.getContextFactory();
-        DocumentSaverContext context = contextFactory.create(dataClusterName,
-                dataModelName,
-                isReplace,
-                new ByteArrayInputStream(xmlString.getBytes("UTF-8"))); //$NON-NLS-1$
-        DocumentSaver saver = context.createSaver();
-        saver.save(session, context);
-        return saver;
+//        DocumentSaverContext context = contextFactory.create(dataClusterName,
+//                dataModelName,
+//                isReplace,
+//                new ByteArrayInputStream(xmlString.getBytes("UTF-8"))); //$NON-NLS-1$
+//        DocumentSaver saver = context.createSaver();
+//        saver.save(session, context);
+//        return saver;
+        return null;
     }
 
     public static DocumentSaver saveItemWithReport(WSPutItem wsPutItem,
@@ -61,34 +62,35 @@ public class SaverHelper {
                                                    String changeSource,
                                                    boolean beforeSaving) throws UnsupportedEncodingException {
         SaverContextFactory contextFactory = session.getContextFactory();
-        DocumentSaverContext context = contextFactory.create(dataClusterName,
-                dataModelName,
-                changeSource,
-                new ByteArrayInputStream(xmlString.getBytes("UTF-8")), //$NON-NLS-1$
-                isReplace,
-                true, // Always validate
-                true, // Always generate an update report
-                beforeSaving, XSystemObjects.DC_PROVISIONING.getName().equals(dataClusterName));
-        DocumentSaver saver = context.createSaver();
-        saver.save(session, context);
-        return saver;
+//        DocumentSaverContext context = contextFactory.create(dataClusterName,
+//                dataModelName,
+//                changeSource,
+//                new ByteArrayInputStream(xmlString.getBytes("UTF-8")), //$NON-NLS-1$
+//                isReplace,
+//                true, // Always validate
+//                true, // Always generate an update report
+//                beforeSaving, XSystemObjects.DC_PROVISIONING.getName().equals(dataClusterName));
+//        DocumentSaver saver = context.createSaver();
+//        saver.save(session, context);
+        return null;
     }
 
     public static DocumentSaver saveItem(WSPartialPutItem partialPutItem,
                                          SaverSession session) throws UnsupportedEncodingException {
         SaverContextFactory contextFactory = session.getContextFactory();
-        DocumentSaverContext context = contextFactory.createPartialUpdate(partialPutItem.getDatacluster(),
-                partialPutItem.getDatamodel(),
-                partialPutItem.getSource(),
-                new ByteArrayInputStream(partialPutItem.getXml().getBytes("UTF-8")), //$NON-NLS-1$
-                true, // Always validate
-                partialPutItem.isReport(),
-                false,
-                partialPutItem.getPivot(),
-                partialPutItem.getKeyXPath(),
-                partialPutItem.getStartingPosition() != null ? partialPutItem.getStartingPosition() : -1,
-                partialPutItem.getOverwrite(),
-                partialPutItem.isDelete());
+        DocumentSaverContext context = null;
+//        contextFactory.createPartialUpdate(partialPutItem.getDatacluster(),
+//                partialPutItem.getDatamodel(),
+//                partialPutItem.getSource(),
+//                new ByteArrayInputStream(partialPutItem.getXml().getBytes("UTF-8")), //$NON-NLS-1$
+//                true, // Always validate
+//                partialPutItem.isReport(),
+//                false,
+//                partialPutItem.getPivot(),
+//                partialPutItem.getKeyXPath(),
+//                partialPutItem.getStartingPosition() != null ? partialPutItem.getStartingPosition() : -1,
+//                partialPutItem.getOverwrite(),
+//                partialPutItem.isDelete());
         DocumentSaver saver = context.createSaver();
         saver.save(session, context);
         return saver;

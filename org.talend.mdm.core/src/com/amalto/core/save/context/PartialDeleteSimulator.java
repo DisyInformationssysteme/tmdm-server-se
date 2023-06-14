@@ -50,8 +50,7 @@ public class PartialDeleteSimulator {
      */
     public DOMDocument simulateDelete() {
         List<String> toDeleteKeyValues = getToDeleteKeyValues();
-        DOMDocument copyDocument = new DOMDocument(originalDocument.asDOM(), originalDocument.getType(),
-                originalDocument.getDataCluster(), originalDocument.getDataModel());
+        DOMDocument copyDocument = null;
         Accessor pivotAccessor = copyDocument.createAccessor(toDeletePivot);
         for (int i = pivotAccessor.size(); i >= 1; i--) {
             String path = toDeletePivot + '[' + i + ']';

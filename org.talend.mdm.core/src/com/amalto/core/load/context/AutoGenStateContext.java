@@ -21,8 +21,8 @@ import com.amalto.core.load.xml.Selector;
 import com.amalto.core.save.generator.AutoIdGenerator;
 import com.amalto.core.server.api.XmlServer;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamReader;
 import java.util.Map;
 import java.util.Stack;
 
@@ -80,16 +80,16 @@ public class AutoGenStateContext implements StateContext {
         return hasGeneratedAutomaticId;
     }
 
-    public void parse(XMLStreamReader reader) {
-        try {
-            currentState.parse(this, reader);
-        } catch (ParserCallbackException e) {
-            throw new RuntimeException(e);
-        } catch (XMLStreamException e) {
-            // Parsing exceptions should not happen, interrupt parsing
-            throw new RuntimeException(e);
-        }
-    }
+//    public void parse(XMLStreamReader reader) {
+//        try {
+//            currentState.parse(this, reader);
+//        } catch (ParserCallbackException e) {
+//            throw new RuntimeException(e);
+//        } catch (XMLStreamException e) {
+//            // Parsing exceptions should not happen, interrupt parsing
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public String getPayLoadElementName() {
         return delegate.getPayLoadElementName();

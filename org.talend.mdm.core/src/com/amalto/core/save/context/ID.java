@@ -93,7 +93,7 @@ class ID implements DocumentSaver {
             context.setDatabaseDocument(database.get(dataCluster, dataModelName, typeName, xmlDocumentIds));
         } else if (isAutomaticId && !isExistRecord && isValidSubmittedIds(xmlDocumentIds, context)) {
             context.setUserAction(UserAction.CREATE_STRICT);
-            context.setDatabaseDocument(new DOMDocument(SaverContextFactory.DOCUMENT_BUILDER.newDocument(), type, dataCluster, context.getDataModelName()));
+//            context.setDatabaseDocument(new DOMDocument(SaverContextFactory.DOCUMENT_BUILDER.newDocument(), type, dataCluster, context.getDataModelName()));
         } else {
             // Throw an exception if trying to update a document that does not exist.
             switch (context.getUserAction()) {
@@ -120,7 +120,7 @@ class ID implements DocumentSaver {
                 default:
                     context.setUserAction(UserAction.CREATE);
             }
-            context.setDatabaseDocument(new DOMDocument(SaverContextFactory.DOCUMENT_BUILDER.newDocument(), type, dataCluster, context.getDataModelName()));
+//            context.setDatabaseDocument(new DOMDocument(SaverContextFactory.DOCUMENT_BUILDER.newDocument(), type, dataCluster, context.getDataModelName()));
         }
         // Continue save
         savedTypeName = type.getName();

@@ -23,8 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+//import javax.xml.parsers.DocumentBuilderFactory;
+//import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -38,10 +38,10 @@ import org.talend.mdm.commmon.metadata.MetadataVisitor;
 import org.talend.mdm.commmon.metadata.TypeMetadata;
 import org.talend.mdm.commmon.util.core.MDMXMLUtils;
 import org.talend.mdm.commmon.util.webapp.XSystemObjects;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.w3c.dom.Document;
+//import org.w3c.dom.Element;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 import com.amalto.core.metadata.ClassRepository;
 import com.amalto.core.objects.ObjectPOJO;
@@ -57,7 +57,7 @@ import com.amalto.xmlserver.interfaces.XmlServerException;
 
 public class SystemStorageWrapper extends StorageWrapper {
 
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+//    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
     private static final String SYSTEM_PREFIX = "amaltoOBJECTS"; //$NON-NLS-1$
 
@@ -76,12 +76,12 @@ public class SystemStorageWrapper extends StorageWrapper {
     private static final Logger LOGGER = LogManager.getLogger(SystemStorageWrapper.class);
 
     public SystemStorageWrapper() {
-        try {
-            DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
-            DOCUMENT_BUILDER_FACTORY.setFeature(MDMXMLUtils.FEATURE_DISALLOW_DOCTYPE, true);
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException("Unable to initialize document builder.", e);
-        }
+//        try {
+//            DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
+//            DOCUMENT_BUILDER_FACTORY.setFeature(MDMXMLUtils.FEATURE_DISALLOW_DOCTYPE, true);
+//        } catch (ParserConfigurationException e) {
+//            throw new RuntimeException("Unable to initialize document builder.", e);
+//        }
         // Create "system" storage
         StorageAdmin admin = getStorageAdmin();
         if (!admin.exist(StorageAdmin.SYSTEM_STORAGE, StorageType.SYSTEM)) {
@@ -296,62 +296,62 @@ public class SystemStorageWrapper extends StorageWrapper {
         return getAllDocumentsUniqueID(clusterName, includeClusterAndTypeName, ignoreChild);
     }
 
-    @Override
-    public long putDocumentFromDOM(Element root, String uniqueID, String clusterName) throws XmlServerException {
-        long start = System.currentTimeMillis();
-        {
-            DataRecordReader<Element> reader = new XmlDOMDataRecordReader();
-            Storage storage = getStorage(clusterName);
-            ComplexTypeMetadata type = getType(clusterName, storage, uniqueID);
-            if (type == null) {
-                return -1; // TODO
-            }
-            MetadataRepository repository = storage.getMetadataRepository();
-            DataRecord record = reader.read(repository, type, root);
-            for (FieldMetadata keyField : type.getKeyFields()) {
-                if (record.get(keyField) == null) {
-                    LOGGER.warn("Ignoring update for record '" + uniqueID + "' (does not provide key information)."); //$NON-NLS-1$ //$NON-NLS-2$
-                    return 0;
-                }
-            }
-            storage.update(record);
-        }
-        return System.currentTimeMillis() - start;
-    }
+//    @Override
+//    public long putDocumentFromDOM(Element root, String uniqueID, String clusterName) throws XmlServerException {
+//        long start = System.currentTimeMillis();
+//        {
+//            DataRecordReader<Element> reader = new XmlDOMDataRecordReader();
+//            Storage storage = getStorage(clusterName);
+//            ComplexTypeMetadata type = getType(clusterName, storage, uniqueID);
+//            if (type == null) {
+//                return -1; // TODO
+//            }
+//            MetadataRepository repository = storage.getMetadataRepository();
+//            DataRecord record = reader.read(repository, type, root);
+//            for (FieldMetadata keyField : type.getKeyFields()) {
+//                if (record.get(keyField) == null) {
+//                    LOGGER.warn("Ignoring update for record '" + uniqueID + "' (does not provide key information)."); //$NON-NLS-1$ //$NON-NLS-2$
+//                    return 0;
+//                }
+//            }
+//            storage.update(record);
+//        }
+//        return System.currentTimeMillis() - start;
+//    }
 
-    @Override
-    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException {
-        long start = System.currentTimeMillis();
-        {
-            Storage storage = getStorage(dataClusterName);
-            ComplexTypeMetadata type = getType(dataClusterName, storage, input.getPublicId());
-            if (type == null) {
-                return -1; // TODO
-            }
-            DataRecordReader<XmlSAXDataRecordReader.Input> reader = new XmlSAXDataRecordReader();
-            XmlSAXDataRecordReader.Input readerInput = new XmlSAXDataRecordReader.Input(docReader, input);
-            DataRecord record = reader.read(storage.getMetadataRepository(), type, readerInput);
-            storage.update(record);
-        }
-        return System.currentTimeMillis() - start;
-    }
+//    @Override
+//    public long putDocumentFromSAX(String dataClusterName, XMLReader docReader, InputSource input) throws XmlServerException {
+//        long start = System.currentTimeMillis();
+//        {
+//            Storage storage = getStorage(dataClusterName);
+//            ComplexTypeMetadata type = getType(dataClusterName, storage, input.getPublicId());
+//            if (type == null) {
+//                return -1; // TODO
+//            }
+//            DataRecordReader<XmlSAXDataRecordReader.Input> reader = new XmlSAXDataRecordReader();
+//            XmlSAXDataRecordReader.Input readerInput = new XmlSAXDataRecordReader.Input(docReader, input);
+//            DataRecord record = reader.read(storage.getMetadataRepository(), type, readerInput);
+//            storage.update(record);
+//        }
+//        return System.currentTimeMillis() - start;
+//    }
 
     @Override
     public long putDocumentFromString(String xmlString, String uniqueID, String clusterName) throws XmlServerException {
         return putDocumentFromString(xmlString, uniqueID, clusterName, null);
     }
 
-    @Override
-    public long putDocumentFromString(String xmlString, String uniqueID, String clusterName, String documentType)
-            throws XmlServerException {
-        try {
-            InputSource source = new InputSource(new StringReader(xmlString));
-            Document document = MDMXMLUtils.getDocumentBuilderWithNamespace().get().parse(source);
-            return putDocumentFromDOM(document.getDocumentElement(), uniqueID, clusterName);
-        } catch (Exception e) {
-            throw new XmlServerException(e);
-        }
-    }
+//    @Override
+//    public long putDocumentFromString(String xmlString, String uniqueID, String clusterName, String documentType)
+//            throws XmlServerException {
+//        try {
+//            InputSource source = new InputSource(new StringReader(xmlString));
+//            Document document = MDMXMLUtils.getDocumentBuilderWithNamespace().get().parse(source);
+//            return putDocumentFromDOM(document.getDocumentElement(), uniqueID, clusterName);
+//        } catch (Exception e) {
+//            throw new XmlServerException(e);
+//        }
+//    }
 
     @Override
     public String getDocumentAsString(String clusterName, String uniqueID) throws XmlServerException {

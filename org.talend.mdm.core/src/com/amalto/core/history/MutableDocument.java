@@ -28,12 +28,12 @@ public interface MutableDocument extends Document {
      * @return Returns this document as a DOM tree. This method must be used with extra caution: it <b>might</b> give
      * direct access to the underlying representation of the {@link MutableDocument}.
      */
-    org.w3c.dom.Document asDOM();
-
-    /**
-     * @return A DOM document similar to {@link #asDOM()} but without Talend MDM specific attributes.
-     */
-    org.w3c.dom.Document asValidationDOM();
+//    org.w3c.dom.Document asDOM();
+//
+//    /**
+//     * @return A DOM document similar to {@link #asDOM()} but without Talend MDM specific attributes.
+//     */
+//    org.w3c.dom.Document asValidationDOM();
 
     /**
      * @return Returns a document with created status.

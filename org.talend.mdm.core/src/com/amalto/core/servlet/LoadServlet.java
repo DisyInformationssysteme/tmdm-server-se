@@ -158,8 +158,7 @@ public class LoadServlet extends HttpServlet {
 
         SaverSession session = SaverSession.newSession();
         SaverContextFactory contextFactory = session.getContextFactory();
-        DocumentSaverContext context = contextFactory
-                .createBulkLoad(dataClusterName, dataModelName, keyMetadata, autoFieldTypeMap, inputStream, loadAction, server);
+        DocumentSaverContext context = null;
         DocumentSaver saver = context.createSaver();
 
         // Wait until less that MAX_THREADS running

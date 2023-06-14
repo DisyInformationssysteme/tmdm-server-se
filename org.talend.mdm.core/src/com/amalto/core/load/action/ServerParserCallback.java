@@ -15,8 +15,8 @@ import com.amalto.core.load.LoadParserCallback;
 import com.amalto.core.server.api.XmlServer;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 /**
  *
@@ -37,20 +37,20 @@ class ServerParserCallback implements LoadParserCallback {
         currentCount = 0;
     }
 
-    public void flushDocument(XMLReader docReader, InputSource input) {
-        try {
-            server.putDocumentFromSAX(dataClusterName, docReader, input);
-            currentCount++;
-
-            if (currentCount % 1000 == 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Loaded documents: " + (currentCount / 1000) + "K."); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public void flushDocument(XMLReader docReader, InputSource input) {
+//        try {
+//            server.putDocumentFromSAX(dataClusterName, docReader, input);
+//            currentCount++;
+//
+//            if (currentCount % 1000 == 0) {
+//                if (log.isDebugEnabled()) {
+//                    log.debug("Loaded documents: " + (currentCount / 1000) + "K."); //$NON-NLS-1$ //$NON-NLS-2$
+//                }
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public int getCount() {
         return currentCount;

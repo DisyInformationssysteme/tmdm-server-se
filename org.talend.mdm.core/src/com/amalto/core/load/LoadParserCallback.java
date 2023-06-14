@@ -11,8 +11,8 @@
 
 package com.amalto.core.load;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.XMLReader;
 
 /**
  * Implement this interface to receive callback from {@link LoadParser} during parsing.
@@ -34,5 +34,5 @@ public interface LoadParserCallback {
      * @param docReader A SAX XML reader.
      * @param input     An SAX input source.
      */
-    void flushDocument(XMLReader docReader, InputSource input);
+//    void flushDocument(XMLReader docReader, InputSource input);
 }

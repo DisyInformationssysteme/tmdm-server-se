@@ -24,8 +24,8 @@ import com.amalto.core.save.generator.AutoIncrementUtil;
 import com.amalto.core.save.generator.UUIDIdGenerator;
 import com.amalto.core.server.api.XmlServer;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.XMLStreamException;
+//import javax.xml.stream.XMLStreamReader;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -137,16 +137,16 @@ public class DefaultStateContext implements StateContext {
         return currentState;
     }
 
-    public void parse(XMLStreamReader reader) {
-        try {
-            currentState.parse(this, reader);
-        } catch (ParserCallbackException e) {
-            throw new RuntimeException(e);
-        } catch (XMLStreamException e) {
-            // Parsing exceptions should not happen, interrupt parsing
-            throw new RuntimeException(e);
-        }
-    }
+//    public void parse(XMLStreamReader reader) {
+//        try {
+//            currentState.parse(this, reader);
+//        } catch (ParserCallbackException e) {
+//            throw new RuntimeException(e);
+//        } catch (XMLStreamException e) {
+//            // Parsing exceptions should not happen, interrupt parsing
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public LoadParserCallback getCallback() {
         return callback;
@@ -179,7 +179,7 @@ public class DefaultStateContext implements StateContext {
                 if (!AutoIncrementUtil.getNormalAutoIncrementFields(currentPath, normalFieldGenerators.keySet()).isEmpty()) {
                     AutoFieldGeneration normalFieldGenerators = new AutoFieldGeneration();
                     try {
-                        normalFieldGenerators.parse(this, null);
+//                        normalFieldGenerators.parse(this, null);
                     } catch (Exception e) {
                         throw new UnsupportedOperationException("Failed to generate the normal autoincrement field value", e);
                     }

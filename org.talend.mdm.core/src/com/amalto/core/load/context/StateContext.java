@@ -15,13 +15,13 @@ import com.amalto.core.load.State;
 import com.amalto.core.save.generator.AutoIdGenerator;
 import com.amalto.core.server.api.XmlServer;
 
-import javax.xml.stream.XMLStreamReader;
+//import javax.xml.stream.XMLStreamReader;
 import java.util.Map;
 import java.util.Stack;
 
 public interface StateContext {
 
-    void parse(XMLStreamReader reader);
+//    void parse(XMLStreamReader reader);
 
     String getPayLoadElementName();
 

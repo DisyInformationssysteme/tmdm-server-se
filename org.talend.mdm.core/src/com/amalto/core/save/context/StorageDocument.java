@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
+//import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
@@ -28,7 +28,7 @@ import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
-import org.w3c.dom.Document;
+//import org.w3c.dom.Document;
 
 import com.amalto.core.history.DeleteType;
 import com.amalto.core.history.DocumentTransformer;
@@ -79,29 +79,29 @@ public class StorageDocument implements MutableDocument {
         return accessor;
     }
 
-    @Override
-    public Document asDOM() {
-        synchronized (SaverContextFactory.DOCUMENT_BUILDER) {
-            try {
-                DocumentBuilder documentBuilder = SaverContextFactory.DOCUMENT_BUILDER;
-                return documentBuilder.parse(new ByteArrayInputStream(exportToString().getBytes("UTF-8")));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    public Document asValidationDOM() {
-        synchronized (SaverContextFactory.DOCUMENT_BUILDER) {
-            try {
-                SkipAttributeDocumentBuilder builder = new SkipAttributeDocumentBuilder(SaverContextFactory.DOCUMENT_BUILDER, true);
-                return builder.parse(new ByteArrayInputStream(exportToString().getBytes("UTF-8")));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+//    @Override
+//    public Document asDOM() {
+//        synchronized (SaverContextFactory.DOCUMENT_BUILDER) {
+//            try {
+//                DocumentBuilder documentBuilder = SaverContextFactory.DOCUMENT_BUILDER;
+//                return documentBuilder.parse(new ByteArrayInputStream(exportToString().getBytes("UTF-8")));
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public Document asValidationDOM() {
+//        synchronized (SaverContextFactory.DOCUMENT_BUILDER) {
+//            try {
+//                SkipAttributeDocumentBuilder builder = new SkipAttributeDocumentBuilder(SaverContextFactory.DOCUMENT_BUILDER, true);
+//                return builder.parse(new ByteArrayInputStream(exportToString().getBytes("UTF-8")));
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//    }
 
     @Override
     public MutableDocument create(MutableDocument content) {
