@@ -441,6 +441,7 @@ public class StorageWrapper implements IXmlServerSLWrapper {
             for (ComplexTypeMetadata type : types) {
                 UserQueryBuilder qb = from(type);
                 qb.where(UserQueryHelper.buildCondition(qb, whereItem, repository));
+                qb.select(alias(UserQueryBuilder.count(), "count"));
                 StorageResults results = storage.fetch(qb.getSelect());
                 try {
                     count += results.getCount();

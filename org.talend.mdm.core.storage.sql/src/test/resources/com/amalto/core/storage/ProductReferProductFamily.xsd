@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.w3.org/2001/XMLSchema" />
+    <xsd:element name="Entity_A1_1" type="Type_A1_1">
+        <xsd:annotation>
+            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:unique name="Entity_A1_1">
+            <xsd:selector xpath="." />
+            <xsd:field xpath="A1_Id" />
+        </xsd:unique>
+    </xsd:element>
+    <xsd:element name="Entity_A2_1" type="Type_A2_1">
+        <xsd:annotation>
+            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:unique name="Entity_A2_1">
+            <xsd:selector xpath="." />
+            <xsd:field xpath="A2_Id" />
+        </xsd:unique>
+    </xsd:element>
+    <xsd:element name="Entity_C_1" type="Type_C_1">
+        <xsd:annotation>
+            <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+        </xsd:annotation>
+        <xsd:unique name="Entity_C_1">
+            <xsd:selector xpath="." />
+            <xsd:field xpath="C_Id" />
+        </xsd:unique>
+    </xsd:element>
+    <xsd:complexType name="Type_A1_1">
+        <xsd:sequence maxOccurs="1" minOccurs="1">
+            <xsd:element minOccurs="1" name="A1_Id" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="1" name="A1_Name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="1" name="B1" type="Type_B1_1">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Type_A2_1">
+        <xsd:sequence maxOccurs="1" minOccurs="1">
+            <xsd:element minOccurs="1" name="A2_Id" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="1" name="A2_Name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="1" name="B2_1" type="Type_B2_1">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="1" minOccurs="1" name="B2_2" type="Type_B2_1">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Type_B1_1">
+        <xsd:sequence maxOccurs="1" minOccurs="1">
+            <xsd:element minOccurs="1" name="B1_Name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="C_Id" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_ForeignKey">Entity_C_1</xsd:appinfo>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Type_B2_1">
+        <xsd:sequence maxOccurs="1" minOccurs="1">
+            <xsd:element minOccurs="1" name="B2_Name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="C_Id" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_ForeignKey">Entity_C_1</xsd:appinfo>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Type_C_1">
+        <xsd:sequence>
+            <xsd:element minOccurs="1" name="C_Id" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="1" name="C_Name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo source="X_Write">Demo_Manager</xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
