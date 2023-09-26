@@ -9,6 +9,7 @@
  */
 package com.amalto.core.storage;
 
+import static com.amalto.core.query.user.UserQueryBuilder.eq;
 import static com.amalto.core.query.user.UserQueryBuilder.from;
 
 import java.io.ByteArrayOutputStream;
@@ -44,6 +45,7 @@ import com.amalto.core.query.StorageTestCase;
 import com.amalto.core.query.user.UserQueryBuilder;
 import com.amalto.core.server.MockServerLifecycle;
 import com.amalto.core.server.ServerContext;
+import com.amalto.core.storage.exception.ConstraintViolationException;
 import com.amalto.core.storage.hibernate.HibernateStorage;
 import com.amalto.core.storage.record.DataRecord;
 import com.amalto.core.storage.record.DataRecordReader;
@@ -71,6 +73,16 @@ public class StorageWrapperTest extends TestCase {
     public static String[] XMLS_INHERIT = { "<ii><c>InheritTest</c><n>InheritEntity</n><dmn>InheritTest</dmn><i>123</i><t>1372654669313</t><taskId></taskId><p><InheritEntity><id>123</id><field1>a</field1><field2>b</field2></InheritEntity></p></ii>" }; //$NON-NLS-1$
 
     public static String[] IDS_INHERIT = { "InheritTest.InheritEntity.1" }; //$NON-NLS-1$
+
+    private static String ENTITY_A1_1_EMPTY = "<Entity_A1_1><A1_Id>A1</A1_Id><A1_Name>A1 Name</A1_Name><B1><B1_Name>B1 Name</B1_Name></B1></Entity_A1_1>";
+
+    private static String ENTITY_A2_1 = "<Entity_A2_1><A2_Id>A2</A2_Id><A2_Name>A2 Name</A2_Name><B2_1><B2_Name>B2_1</B2_Name><C_Id>[C1]</C_Id></B2_1><B2_2><B2_Name>B2_2</B2_Name><C_Id>[C2]</C_Id></B2_2></Entity_A2_1>";
+
+    private static String ENTITY_C1_1 = "<Entity_C_1><C_Id>C1</C_Id><C_Name>C1 Name</C_Name></Entity_C_1>";
+
+    private static String ENTITY_C2_1 = "<Entity_C_1><C_Id>C2</C_Id><C_Name>C2 Name</C_Name></Entity_C_1>";
+
+    private static String ENTITY_C3_1 = "<Entity_C_1><C_Id>C3</C_Id><C_Name>C3 Name</C_Name></Entity_C_1>";
 
     public StorageWrapperTest() {
         ServerContext.INSTANCE.get(new MockServerLifecycle());
@@ -289,6 +301,93 @@ public class StorageWrapperTest extends TestCase {
         List<String> result = wrapper.getItemPKsByCriteria(criteria);
         assertEquals("<totalCount>1</totalCount>", result.get(0)); //$NON-NLS-1$
         assertTrue(result.get(1).contains("<n>Feature</n><ids><i>1111</i>")); //$NON-NLS-1$
+    }
+
+    // TMDM-15481 Error "The statement failed due to arithmetic overflow
+    // when sending data stream." when try to delete an item
+    public void testDeleteMainEntityTable() {
+        ServerContext.INSTANCE.get(new MockServerLifecycle());
+
+        Storage storage = new HibernateStorage("MDM", StorageType.MASTER);
+        MetadataRepository repository = new MetadataRepository();
+        repository.load(FKConstraintTest.class.getResourceAsStream("ProductReferProductFamily.xsd"));
+        storage.init(ServerContext.INSTANCE.get().getDefinition("H2-DS1", "MDM"));
+        storage.prepare(repository, true);
+
+        DataRecordReader<String> factory = new XmlStringDataRecordReader();
+        ComplexTypeMetadata entityA1 = repository.getComplexType("Entity_A1_1");
+        ComplexTypeMetadata entityA2 = repository.getComplexType("Entity_A2_1");
+        ComplexTypeMetadata entityC = repository.getComplexType("Entity_C_1");
+
+        List<DataRecord> recordCs = new LinkedList<DataRecord>();
+        recordCs.add(factory.read(repository, entityC, ENTITY_C1_1));
+        recordCs.add(factory.read(repository, entityC, ENTITY_C2_1));
+        recordCs.add(factory.read(repository, entityC, ENTITY_C3_1));
+        try {
+            storage.begin();
+            storage.update(recordCs);
+            storage.commit();
+        } finally {
+            storage.end();
+        }
+
+        try {
+            storage.begin();
+            storage.update(factory.read(repository, entityA1, ENTITY_A1_1_EMPTY));
+            storage.commit();
+        } finally {
+            storage.end();
+        }
+
+        UserQueryBuilder qb = from(entityA1);
+        StorageResults results = storage.fetch(qb.getSelect());
+        assertEquals(1, results.getCount());
+
+        try {
+            storage.begin();
+            storage.update(factory.read(repository, entityA2, ENTITY_A2_1));
+            storage.commit();
+        } finally {
+            storage.end();
+        }
+
+        qb = from(entityA2);
+        results = storage.fetch(qb.getSelect());
+        assertEquals(1, results.getCount());
+
+        // ENTITY_A1_EMPTY has no FK record, so delete this table will success
+        Exception e_a11 = null;
+        qb = from(entityA1);
+        try {
+            storage.begin();
+            storage.delete(qb.getSelect());
+            storage.commit();
+        } catch (Exception e) {
+            e_a11 = e;
+        } finally {
+            storage.end();
+        }
+        assertNull(e_a11);
+
+        qb = from(entityA1);
+        results = storage.fetch(qb.getSelect());
+        assertEquals(0, results.getCount());
+
+        // ENTITY_C1 is FK of entity A2, so delete this table will fail
+        qb = from(entityC).where(eq(entityC.getField("C_Id"), "C1"));
+        try {
+            storage.begin();
+            storage.delete(qb.getSelect());
+            storage.commit();
+        } catch (ConstraintViolationException e) {
+            e_a11 = e;
+        } finally {
+            storage.end();
+        }
+        assertNotNull(e_a11);
+
+        results = storage.fetch(qb.getSelect());
+        assertEquals(1, results.getCount());
     }
 
     private MetadataRepository prepareMetadata(String xsd) {
