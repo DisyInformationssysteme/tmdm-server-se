@@ -15,7 +15,6 @@
     <properties>
         <activemq.version>5.16.5</activemq.version>
         <woodstox.core.version>6.4.0</woodstox.core.version>
-        <joda.time.version>2.12.5</joda.time.version>
         <hazelcast.version>5.3.1</hazelcast.version>
     </properties>
 
@@ -226,7 +225,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>${joda.time.version}</version>
         </dependency> 
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
