@@ -13,7 +13,7 @@
     <name>org.talend.mdm.core</name>
 
     <properties>
-        <activemq.version>5.16.5</activemq.version>
+        <activemq.version>5.16.7</activemq.version>
         <woodstox.core.version>6.4.0</woodstox.core.version>
         <hazelcast.version>5.3.1</hazelcast.version>
     </properties>
@@ -190,7 +190,7 @@
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
-            <version>4.20</version>
+            <version>4.24</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
